@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="pt_BR">
+  <head>
+    <!-- Meta Dados -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Portfolio do Desenvolvedor Web Diego Matos"
+    />
+    <meta name="author" content="Diego Matos" />
+    <meta
+      name="keywords"
+      content="portfolio, desenvolvedor, web, desenvolvedor web, Diego Matos"
+    />
+    <!-- Font Awesome -->
+    <script
+      src="https://kit.fontawesome.com/adf5bf69ed.js"
+      crossorigin="anonymous"
+    ></script>
+    <!-- CSS -->
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
+    <!-- <link rel="stylesheet" href="css/debuger.css"> -->
+    <link rel="stylesheet" href="css/style.css" />
+    <title>Diego Matos: Desenvolvedor Web</title>
+  </head>
+
+  <body>
+    <div class="site">
+      <header class="header">
+        <figure class="img">
+          <a href="#home">
+            <img src="imagens/logo.png" alt="Logo do site" />
+          </a>
+        </figure>
+        <nav class="nav main-nav">
+          <ul>
+            <li>
+              <a href="#home">Home</a>
+            </li>
+            <li>
+              <a href="#about">Sobre Mim</a>
+            </li>
+            <li class="sub-nav">
+              <a href="#trabalhos">Trabalhos</a>
+              <ul class="nav sub-nav-content">
+                <li>
+                  <a href="#">FlappyBird</a>
+                </li>
+                <li>
+                  <a href="#">Super Mario</a>
+                </li>
+                <li>
+                  <a href="#">Jogo da Nave</a>
+                </li>
+              </ul>
+            </li>
+            <li>
+              <a href="#contato">Contato</a>
+            </li>
+          </ul>
+        </nav>
+      </header>
+
+      <main class="main">
+        <section id="home">
+          <div class="container-apresentacao">
+            <h1>Desenvolvedor Full Stack</h1>
+            <figure>
+              <img
+                class=""
+                src="imagens/foto-perfil.png"
+                alt="Foto de Perfil"
+              />
+              <figcaption>Desenvolvedor Diego Matos</figcaption>
+            </figure>
+            <div class="flex-container areas-trabalho">
+              <div class="flex-item front-end">
+                <h2>Front End</h2>
+                <ul>
+                  <li>
+                    <i class="fas fa-check"></i>
+                    HTML5
+                  </li>
+                  <li>
+                    <i class="fas fa-check"> </i>
+                    CSS 3
+                  </li>
+                  <li>
+                    <i class="fas fa-check"></i>
+                    React
+                  </li>
+                </ul>
+              </div>
+              <div class="flex-item back-end">
+                <h2>Back End</h2>
+                <ul>
+                  <li>
+                    <i class="fas fa-check"> </i>
+                    Node JS
+                  </li>
+                  <li>
+                    <i class="fas fa-check"></i>
+                    Express
+                  </li>
+                  <li>
+                    <i class="fas fa-check"></i>
+                    MongoDB
+                  </li>
+                </ul>
+              </div>
+              <div class="flex-item">
+                <h2>Outras Linguagens</h2>
+                <ul>
+                  <li>
+                    <i class="fas fa-check"></i>
+                    C#
+                  </li>
+                  <li>
+                    <i class="fas fa-check"></i>
+                    MySQL
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <button class="btn" data-url="#about">
+              Saiba Mais
+            </button>
+          </div>
+        </section>
+
+        <section id="about">
+          <div class="container">
+            <h2 class="title">Sobre Mim</h2>
+            <p>
+              Olá, meu nome é
+              <strong>Diego Vasconcelos Schardosim de Matos</strong>, sou
+              <strong>estudante</strong> de
+              <strong>Ciencia da Computação</strong> na UFRJ e um entusiasta por
+              jogos. Meu conhecimento Web veio atráves da necessidade de
+              <strong>lecionar aulas</strong> sobre a Web e os Jogos modernos em
+              alguns cursos de tecnologia, abranjendo tecnologias de
+              <strong>Front-End</strong> e <strong>Back-End</strong>. Ainda sou
+              um novato nessa área mas estarei sempre me empenhando em aprender
+              e melhorar.
+            </p>
+            <p>
+              Tenho excelente base em C# e MySQL, consigo desenvolver tanto um
+              bom programa desktop como aplicações Web. Ingles Avançado pela
+              CCAA Idiomas e conhecimentos gerais sobre a informatica e redes.
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Error
+              sint possimus in voluptates quos laboriosam ad veniam modi
+              inventore sit?
+            </p>
+          </div>
+        </section>
+
+        <section id="trabalhos">
+          <div class="container">
+            <h2 class="title">Trabalhos</h2>
+            <p>Veja alguns de meus <strong>trabalhos</strong>:</p>
+            <div id="mansory-grid" class="mansory-grid">
+              <a href="#" class="mansory-item">
+                <article>
+                  <figure>
+                    <img
+                      class="img"
+                      src="imagens/flappybird.png"
+                      alt="Imagem do jogo FlappyBird"
+                      title="Imagem do jogo FlappyBird"
+                    />
+                    <figcaption>
+                      <strong>Clone</strong> do <strong>FlappyBird</strong> com
+                      <strong>banco de dados</strong>, usando
+                      <strong>Node JS</strong> e <strong>MongoDB</strong> no
+                      BackEnd
+                    </figcaption>
+                  </figure>
+                </article>
+              </a>
+
+              <a href="#" class="mansory-item">
+                <article>
+                  <figure>
+                    <img
+                      class="img"
+                      src="imagens/jogo-da-nave.png"
+                      alt="Imagem do jogo da Nave"
+                      title="Imagem do jogo da Nave"
+                    />
+                    <figcaption>
+                      <strong>Jogo da Nave</strong> usando o framework
+                      <strong>Phaser</strong>
+                    </figcaption>
+                  </figure>
+                </article>
+              </a>
+
+              <a href="#" class="mansory-item">
+                <article>
+                  <figure>
+                    <img
+                      class="img"
+                      src="imagens/super-mario.png"
+                      alt="Imagem do jogo do Super Mario Bros"
+                      title="Imagem do jogo do Super Mario Bros"
+                    />
+                    <figcaption>
+                      <strong>Clone</strong> do
+                      <strong>Super Mario Bros</strong> desenvolvido usando o
+                      framework <strong>Phaser</strong>
+                    </figcaption>
+                  </figure>
+                </article>
+              </a>
+            </div>
+          </div>
+        </section>
+
+        <section id="contato">
+          <div class="container">
+            <h2 class="title">Entre em contato</h2>
+            <div class="container-formulario">
+              <form class="formulario" action="/contato" method="POST">
+                <p>Digite seu nome:</p>
+                <input
+                  type="text"
+                  name="nome-completo"
+                  id="nome-completo"
+                  placeholder="Nome Completo"
+                  required
+                />
+                <p>Digite seu e-mail para contato:</p>
+                <input
+                  type="email"
+                  name="email"
+                  id="email"
+                  placeholder="Email"
+                  required
+                />
+                <p>Assunto:</p>
+                <input
+                  type="text"
+                  name="assunto"
+                  id="assunto"
+                  placeholder="Assunto"
+                  required
+                />
+                <p>Mensagem:</p>
+                <textarea
+                  name="mensagem"
+                  id="mensagem"
+                  cols="30"
+                  rows="15"
+                  required
+                ></textarea>
+                <input type="submit" value="Enviar" class="btn" />
+              </form>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer flex-container">
+        <div class="widget-area">
+          <h3 class="widget-title">
+            Redes Sociais
+          </h3>
+          <div class="widget-content">
+            <div class="widget-item">
+              <i class="fab fa-facebook-square"></i>
+              <p class="font-size-small">Facebook</p>
+            </div>
+            <div class="widget-item">
+              <i class="fab fa-instagram-square"></i>
+              <p class="font-size-small">Instagram</p>
+            </div>
+            <div class="widget-item">
+              <i class="fab fa-github-square"></i>
+              <p class="font-size-small">GitHub</p>
+            </div>
+          </div>
+        </div>
+        <div class="widget-area">
+          <h3 class="widget-title">
+            Entre em Contato
+          </h3>
+          <div class="widget-content">
+            <div class="widget-item">
+              <i class="fas fa-envelope-square"></i>
+              <p class="font-size-small">diegovasconcelos62@gmail.com</p>
+            </div>
+            <div class="widget-item">
+              <i class="fas fa-phone-square-alt"></i>
+              <p class="font-size-small">Telefone: (21) 9 9512-1978</p>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+    <script src="js/masonry.pkgd.min.js"></script>
+    <script>
+      let container = document.getElementById("mansory-grid");
+      let mansory = new Masonry(container, {
+        // options
+        columnWidth: 80,
+        itemSelector: ".mansory-item",
+        fitWidth: true,
+        gutter: 5,
+      });
+
+      let buttons = document.getElementsByClassName("btn");
+      for (let i = 0; i < buttons.length; i++) {
+        const button = buttons[i];
+        button.addEventListener("click", function (e) {
+          location.href = this.dataset.url;
+        });
+      }
+    </script>
+  </body>
+</html>

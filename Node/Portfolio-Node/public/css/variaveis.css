@@ -1,0 +1,20 @@
+/* Variaveis Customizadas */
+:root{
+    --tamanhoDaFonteH1: 2.4rem;
+    --tamanhoDaFonteH2: 2rem;
+    --tamanhoDaFonteH3: 1.6rem;
+    --tamanhoDaFonteTexto: 1.4rem;
+
+    --corPrincipalTexto: black;
+    --corSecundarioTexto: white;
+
+    --corFundo: whitesmoke;
+    --corFundoCabecalho: black;
+    --corSecundariaFundo: rgb(221, 221, 50);
+    --corFocus: darkBlue;
+
+    --corDoLink: blue;
+    --corDoLinkHover: #FCA311;
+    --corDaPaginaAtual: grey;
+    --corDaBorda: gold;
+}

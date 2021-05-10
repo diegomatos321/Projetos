@@ -1,0 +1,192 @@
+/* Fonts */
+@font-face {  
+    font-family: 'Old London';  
+    font-style: normal;  
+    font-display: swap;
+    unicode-range: U+000-5FF;
+    src: local('Old London'),       
+    url('../fonts/OldLondon.woff2') format('woff2'),        
+    url('../fonts/OldLondon.woff') format('woff');
+}
+/* Fonts End */
+
+/* Geral */
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Old London";
+}
+
+/* Geral End */
+
+/* Tipografia */
+
+h1 { font-size: 3rem;}
+h2 { font-size: 2.8rem;}
+h3 { font-size: 2.4rem;}
+
+p, label, input, select, button { font-size: 2rem;}
+figcaption{ font-size: 1.5rem;}
+
+/* Tipografia End */
+
+/* Site */
+body{
+    background-color: rgba(0, 0, 0, 0.4);
+    background-image: url("../imagens/background.jpg"); 
+    background-size: cover;
+    background-blend-mode: multiply;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+}
+.site{
+    display: grid;
+    justify-items: center;
+    grid-template-areas: 
+    "header"
+    "main"
+    "footer";
+}
+
+.main-header{
+    grid-area: header;
+}
+
+.main-container{
+    grid-area: main;
+}
+
+.main-footer{
+    grid-area: footer;
+}
+
+/* Site End */
+
+/* Header */
+.main-header{
+    color: white;
+    text-align: center;
+}
+
+/* Header End*/
+
+/* Main */
+.main-container{
+    background-image: url("../imagens/background_1.jpg");
+    background-size: cover;
+    border-radius: 1em;
+    width: 90%;
+    /* margin: auto; */
+}
+
+.container{
+    max-width: 900px;
+    padding: 1em;
+}
+
+.title{
+    width: 80%;
+    border-bottom: 2px solid silver;
+}
+
+/* Formulario Section */
+
+.formulario input[type="text"]{
+    display: block;
+    width: 100%;
+    line-height: 0.8em;
+    border-radius: 1em;
+    padding: 0 0.5em;
+}
+
+.formulario input{
+    margin: 0.6em 0;
+}
+
+@media only screen and (max-width: 768px){
+    .formulario .genero{
+        display: block;
+        width: 100%;
+    }
+}
+
+.formulario select{
+    line-height: 0.8em;
+    border-radius: 1em;
+}
+
+/* Formulario Section End*/
+
+/* Classe Section */
+
+.classe{
+    display: grid;
+    justify-items: center;
+    row-gap: 1em;
+    grid-template-areas: 
+    "titulo"
+    "imagens"
+    "video"
+    "butao";
+}
+
+.classe h2{
+    grid-area: titulo;
+    justify-self: left;
+}
+
+.classe .flex-container{
+    grid-area: imagens;
+}
+
+.classe iframe{
+    grid-area: video;
+}
+
+.classe button{
+    grid-area: butao;
+    border-radius: 1em;
+    padding: 0.3em;
+    box-shadow: 2px 2px 5px 1px black;
+    transition: background 0.6s, box-shadow 0.6s;
+}
+
+.classe button:hover{
+    background-color: rgb(90, 143, 99);
+    box-shadow: 2px 2px 5px 1px green;
+}
+
+.flex-container{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.flex-item{
+    margin: 1em;
+    text-align: center;
+}
+
+.flex-item img{
+    padding: 1em;
+    border: 2px solid black;
+    border-radius: 1em;
+}
+
+.classe iframe{
+    width: 100%;
+    border-radius: 2em;
+}
+/* Classe Section End */
+
+/* Main End */
+
+/* Footer */
+footer{
+    color: whitesmoke;
+    text-align: center;
+}
+
+/* Footer End */

@@ -1,0 +1,74 @@
+@font-face{
+    src: url(../fonts/njnaruto.ttf);
+    font-family: ninja;
+}
+
+*{
+    font-family: ninja;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body{
+    background-image: url(../imagens/background.jpg);
+    background-position: center;
+    background-size: 100vw 100vh;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+
+    display: grid;
+    grid-template-columns: 100vw;
+    grid-template-rows: auto;
+    grid-template-areas: 
+    "header"
+    "main"
+    "footer";
+}
+header{
+    text-align: center;
+    color: black;
+    grid-area: header;
+}
+
+main{
+    grid-area: main;
+}
+
+footer{
+    grid-area: footer;
+    clear: both;
+    text-align: center;
+    color:yellow;
+}
+
+.container{
+    margin:auto;
+}
+.container-imagens{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+.container-info{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    width: 100%;
+    background-color: whitesmoke;
+    border-radius: 10px;
+}
+
+.pontuacao{
+    /* float: left; */
+    width: 30%;
+    text-align: center;
+}
+
+.timer{
+    /* float: left; */
+    margin-right: 5%;
+    text-align: center;
+    width: 30%;
+}

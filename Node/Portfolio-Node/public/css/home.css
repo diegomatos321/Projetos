@@ -1,0 +1,144 @@
+/* Todas as seções */
+.container{
+    max-width: 900px;
+    padding: 2em 2em;
+    margin: 0 auto;
+    border-bottom: 1.5px solid white;
+}
+
+section:last-child .container{
+    border-bottom: none;
+}
+
+
+/* Apresentação Section */
+
+.container-apresentacao{
+    background-color: rgba(0, 0, 0, 0.8);
+    background-image: url("../uploads/imagens/web-development-banner.webp");
+    background-size: cover;
+    background-blend-mode: multiply;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
+    color: var(--corSecundarioTexto);
+    text-align: center;
+    padding: 2em 0;
+}
+
+.container-apresentacao figure{
+    margin: 1em 0;
+}
+
+.container-apresentacao img{
+    border-radius: 20%;
+}
+
+.container-apresentacao .fa-check{
+    color:lightgreen;
+} 
+
+.areas-trabalho ul{
+    list-style: none;
+}
+
+.areas-trabalho li{
+    padding: 0.25em;
+}
+
+.buttons, .areas-trabalho{
+    justify-content: center;
+    align-content: center;
+}
+
+.buttons a{
+    text-align: inherit;
+}
+
+@media only screen and (min-width: 768px){
+    .container-apresentacao{
+        padding: 1em;
+        display:grid;
+        grid-template-columns: repeat(auto-fill, 1fr);
+        justify-content: center;
+        align-content: center;
+        column-gap: 0.6em;
+        row-gap: 0.6em;
+        height: 90vh;
+        grid-template-areas: 
+        "h1 h1"
+        "content img"
+        "btn img"
+    }
+    .container-apresentacao h1{
+        grid-area: h1;
+    }
+
+    .buttons{
+        grid-area: btn;
+        justify-content: center;
+        align-content: center;
+    }
+    .container-apresentacao figure{
+        grid-area: img;
+    }
+
+    .areas-trabalho .flex-item{
+        margin: 0.5em;
+    }
+
+    .container-apresentacao img{
+        border-radius: 20%;
+        margin-top: 0em;
+    }
+}
+
+/* Trabalhos Section */
+
+/* Entre em Contato Section */
+
+.container-contato{
+    background-color: rgba(0, 0, 0, 0.8);
+    background-image: url("../uploads/imagens/contato-banner.webp");
+    background-size: cover;
+    background-blend-mode: multiply;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
+    color: var(--corSecundarioTexto);
+    justify-content: center;
+    align-content: center;
+    flex-direction: column;
+    text-align: center;
+    padding: 1em;
+    height: 60vh;
+}
+
+.container-contato hr{
+    margin: 0.5em auto;
+    width: 30%;
+}
+
+@media only screen and (min-width: 768px){
+    .container-contato{
+        height: 50vh;
+    }
+}
+
+.info-item:first-child{
+    margin: 0;
+}
+
+.info-item{
+    margin: 0.5em;
+}
+
+hr.flex-item{
+    /* margin: auto; */
+    align-self: center;
+    justify-self: center;
+}
+
+.info-container .info-ico{
+    font-size: 2rem;
+}

@@ -1,0 +1,10 @@
+<% if(data.mensagem) { %>
+  <div class="mensagem">
+    <% data.mensagem.conteudo.forEach(texto => { %>
+      <% const msg = texto.msg || texto %> 
+      <div class="<%= data.mensagem.tipo %>">
+        <p><%= msg %> </p>
+      </div>
+    <% }); %>
+  </div>
+<% } %> 

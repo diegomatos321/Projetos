@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Diego Matos">
+    <meta name="description" content="Introdução ao desenvolvimento de jogos com o JavaScript">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Jogo do Quadrado</title>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        canvas {
+            border: solid 1px black;
+            image-rendering: crisp-edges;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: -webkit-optimize-contrast;
+            -ms-interpolation-mode: nearest-neighbor;
+            position: absolute;
+        }
+
+        .GameScreen {
+            position: relative;
+            display: inline-block;
+            margin: auto;
+            display:flex;
+            justify-content: center;
+            align-content: center;
+            width: 400px;
+            height: 400px;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Jogo da Nave</h1>
+    <div id="GameScreen" class="GameScreen">
+        <h3 id="loading-txt"></h3>
+        <!-- <canvas id= "canvas"></canvas> -->
+    </div>
+    <script type="module" src="./js/main.js"></script>
+</body>
+
+</html>

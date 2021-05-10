@@ -1,0 +1,49 @@
+{
+    "section1": {
+        "files": [
+            {
+                "url": "assets/imagens/background.png",
+                "type": "image",
+                "key": "background"
+            },
+            {
+                "url": "assets/imagens/enemy.png",
+                "type": "image",
+                "key": "enemy"
+            },
+            {
+                "url": "assets/Level.js",
+                "type": "sceneFile",
+                "key": "Level"
+            },
+            {
+                "url": [
+                    "assets/components/Physics.js"
+                ],
+                "type": "scripts",
+                "key": "Physics"
+            },
+            {
+                "url": "assets/imagens/player.png",
+                "type": "image",
+                "key": "player"
+            },
+            {
+                "url": "assets/prefabs/Player.js",
+                "type": "script",
+                "key": "Player"
+            },
+            {
+                "url": "assets/components/PlayerMovement.js",
+                "type": "script",
+                "key": "PlayerMovement"
+            }
+        ]
+    },
+    "meta": {
+        "app": "Phaser Editor 2D - Asset Pack Editor",
+        "contentType": "phasereditor2d.pack.core.AssetContentType",
+        "url": "https://phasereditor2d.com",
+        "version": 2
+    }
+}

@@ -1,0 +1,40 @@
+{
+    "components": [
+        {
+            "name": "Physics",
+            "baseClass": "",
+            "gameObjectType": "Phaser.GameObjects.Sprite",
+            "properties": [
+                {
+                    "name": "isCircle",
+                    "label": "É Circulo ?",
+                    "tooltip": "Altera a hitbox para um circulo",
+                    "defValue": false,
+                    "type": {
+                        "id": "boolean"
+                    }
+                },
+                {
+                    "name": "proporcaoCaixaColisao",
+                    "label": "Proporção Da Caixa de Colisa",
+                    "tooltip": "Um valor entre 0 até 1",
+                    "defValue": 1,
+                    "type": {
+                        "id": "number"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "PlayerMovement",
+            "baseClass": "",
+            "gameObjectType": "Phaser.GameObjects.Image",
+            "properties": []
+        }
+    ],
+    "meta": {
+        "app": "Phaser Editor 2D - Object Script Editor",
+        "url": "https://phasereditor2d.com",
+        "contentType": "phasereditor2d.core.scene.SceneContentType"
+    }
+}

@@ -1,0 +1,108 @@
+/* Header */
+
+.header{
+    background-color: var(--corFundoCabecalho);
+    border-top: 1.3px solid var(--corDaBorda);
+    width: 100%;
+    padding: 1em;
+    height: 15vh;
+    display: grid;
+    justify-items: center;
+    align-items: center;
+    position: fixed;
+    bottom: 0px;
+    z-index: 1000;
+    grid-template-columns: 1fr 6fr;
+    grid-template-rows: 1fr;
+    grid-template-areas: 
+    "logo nav";
+}
+
+.header li a{
+    font-size: 1rem;
+}
+
+.header .logo{
+    grid-area: logo;
+}
+.header .main-nav{
+    grid-area: nav;
+    justify-self: right;
+}
+
+.nav-item{
+    display: inline-block;
+    padding: 10px;
+    list-style-type: none;
+    margin: 0;
+}
+
+.item-about{
+    display: none;
+}
+
+.drop-down li{
+    border: 1px solid black;
+}
+
+.nav-item a {
+    color: var(--corSecundarioTexto);
+    text-decoration: none;
+}
+
+/* .nav-item:hover a, .sub-nav-item:hover a{
+    color: var(--corDoLinkHover);
+} */
+
+.sub-nav{
+    position: relative;
+}
+
+.sub-nav-item a{
+    color: var(--corPrincipalTexto);
+    display:block;
+}
+
+.drop-down{
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -200px;
+    max-height: 0;
+    opacity: 0;
+    transition: all 500ms ease-in;
+}
+
+.drop-down li{
+    padding: 10px;
+    color: black;
+    list-style: none;
+    opacity: inherit;
+    transition: inherit;
+}
+
+@media only screen and (min-width: 768px){
+    .header{
+        border-bottom: 1.3px solid var(--corDaBorda);
+        border-top: 0;
+        position: relative;
+        bottom: 0px;
+    }
+
+    .drop-down{
+        display: block;
+    }
+    .item-about{
+        display: inline-block;
+    }
+
+    .header li a{
+        font-size: 1.3rem;
+    }
+
+    .sub-nav:hover .drop-down{
+        max-height: 300px;
+        top: 35px;
+        opacity: 1;
+    }
+}

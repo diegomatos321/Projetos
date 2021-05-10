@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <!-- Meta dados -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Diego Matos">
+    <meta name="description" content="Simples site de cadastro baseado em jogos de RPG">
+    <meta name="keywords" content="HTML, CSS, JavaScript, Jogo, Fantasia, Medieval, Jogo de Fantasia Medieval, Cadastro">
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <title>Jogo de Fantasia</title>
+</head>
+
+<body>
+    <div class="site">
+        <!-- Header -->
+        <header class="main-header">
+            <h1>Jogo de Fantasia Medieval</h1>
+        </header>
+        <!-- Main -->
+        <main class="main-container container">
+            <section class="apresentacao">
+                <h2 class="title">Bem vindo aventureiro !</h2>
+                <p>Esse é um jogo de RPG baseado em turnos, nas regras de Dungeons and Dragons 5Ed ! Vamos
+                    começar, primeiramente preencha os campos abaixo para cadastrar seu aventureiro na Guilda !
+                </p>
+            </section>
+            <section class="formulario">
+                <label for="txtNome">Nome:</label>
+                <input type="text" id="txtNome" name="txtNome">
+
+                <label for="radSex" class="genero">Escolha seu gênero: </label>
+
+                <input type="radio" name="radSex" id="radSex01" checked>
+                <label for="radSex01">Homem</label>
+
+                <input type="radio" name="radSex" id="radSex02">
+                <label for="radioSex02">Mulher</label>
+                <p>Raça:
+                    <select name="raca" id="raca">
+                        <option value="Humano">Humano</option>
+                        <option value="Elfo">Elfo</option>
+                        <option value="Anão">Anão</option>
+                        <option value="Tiefling">Tiefling</option>
+                    </select>
+                </p>
+            </section>
+            <section class="classe">
+                <h2 class="title">Classes:</h2>
+                <div class="flex-container">
+                    <figure class="flex-item">
+                        <img name="foto" src="imagens/guerreiro_01.png" title="Guerreiro"
+                        alt="Classe Guerreiro" class="imgClasses">
+                        <figcaption>Guerreiro</figcaption>
+                    </figure>
+                    
+                    <figure class="flex-item">
+                        <img name="foto" src="imagens/mago_01.png" title="Mago" alt="Classe Mago"
+                        class="imgClasses">
+                        <figcaption>Mago</figcaption>
+                    </figure>
+
+                    <figure class="flex-item">
+                        <img name="foto" src="imagens/druida_01.png" title="Druida" alt="Classe Druida"
+                        class="imgClasses">
+                        <figcaption>Druida</figcaption>
+                    </figure>
+                    
+                    <figure class="flex-item">
+                        <img name="foto" src="imagens/bardo_01.png" title="Bardo" alt="Classe Bardo"
+                        class="imgClasses">
+                        <figcaption>Bardo</figcaption>
+                    </figure>
+                </div>
+                <!--<video width="320" height="240" autoplay>
+                            <source src="movie.mp4" type="video/mp4">
+                            <source src="movie.ogg" type="video/ogg">
+                          Seu navegador nao tem suporte para essa tag.
+                          </video>-->
+                <!-- Video de apresentacao da classe -->
+                <iframe id="video" class="video" width="727" height="409"
+                    src="https://www.youtube.com/embed/BgvHNlgmKro" frameborder="0"
+                    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen async>
+                </iframe>
+
+                <button id="button">Confirmar</button>
+            </section>
+        </main>
+        <!-- Footer -->
+        <footer class="main-footer">&copy; SOS Ilha Games</footer>
+        <script src="js/main.js"></script>
+        <script src="js/jogador.js"></script>
+    </div>
+</body>
+
+</html>

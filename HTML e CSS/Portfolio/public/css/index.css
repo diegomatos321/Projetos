@@ -1,0 +1,23 @@
+/* Site */
+
+.site{
+    display:grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1ft;
+    grid-template-areas: 
+    "header"
+    "main"
+    "footer";
+}
+
+.header{
+    grid-area: header;
+}
+
+.main{
+    grid-area: main;
+}
+
+.footer{
+    grid-area: footer;
+}

@@ -1,0 +1,104 @@
+.main {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto;
+  margin: auto;
+  padding: 1em;
+  max-width: 1200px;
+  grid-template-areas:
+    "title"
+    "aside"
+    "jogo";
+}
+
+.title {
+  grid-area: title;
+}
+
+.jogo{
+  grid-area: jogo;
+}
+
+.aside{
+  grid-area: aside;
+}
+
+.warning{
+  background-color: orange;
+}
+
+.mobile{
+  background-color: green;
+}
+
+.warning, .mobile{
+  padding: 1em;
+  border-radius: 2em;
+  margin-top: 1em;
+  text-align: center;
+}
+
+@media only screen and (min-width: 768px) {
+  .main {
+    grid-template-columns: 1fr 2fr;
+    grid-template-rows: auto;
+    /* justify-items: center; */
+    /* align-items: center; */
+    grid-template-areas:
+      "title title"
+      "aside jogo";
+  }
+  
+}
+
+.items li {
+  list-style-position: inside;
+  margin-left: 0.3em;
+}
+
+.jogo {
+  display: grid;
+  align-content: center;
+  padding: 1em;
+}
+
+.jogo-container{
+  height: 100vh;
+}
+
+.flappybird{
+  justify-self: center;
+}
+
+.aside div{
+  margin-bottom: 1em;
+}
+
+.game-screen{
+  position: relative;
+}
+
+.game-screen canvas{
+  position: absolute;
+}
+
+#background-layer {
+  z-index: 0;
+  background-color: #6288ce;
+}
+
+#pipeSouth-layer {
+  z-index: 1;
+}
+
+#ground-layer {
+  z-index: 2;
+}
+
+#game-layer {
+  z-index: 3;
+}
+
+#hud-layer {
+  z-index: 4;
+}

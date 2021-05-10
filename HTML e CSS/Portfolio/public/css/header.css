@@ -1,0 +1,65 @@
+/* Header */
+
+.header{
+    background-color: var(--corFundoCabecalho);
+    border-bottom: 1.3px solid var(--corDaBorda);
+    height: 15vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr;
+    grid-template-areas: 
+    "logo nav";
+}
+
+.header .img{
+    grid-area: logo;
+    padding: 10px;
+    align-self: center;
+}
+.header .nav{
+    grid-area: nav;
+    justify-self: center;
+    align-self: center;
+}
+.main-nav li{
+    display:inline-block;
+}
+
+.nav ul{
+    list-style-type: none;
+    margin: 0;
+}
+
+.nav li{
+    padding: 10px;
+}
+
+.nav a {
+    color: var(--corSecundarioTexto);
+    text-decoration: none;
+}
+.nav a:hover {
+    color: var(--corDoLinkHover);
+}
+
+.sub-nav{
+    position: relative;
+}
+
+.sub-nav-content{
+    display: none;
+    background-color: var(--corSecundarioTexto);
+    position: absolute;
+    font-size: 1.2rem;
+    z-index: 2;
+}
+.sub-nav-content li{
+    border: 1px solid black;
+}
+.sub-nav-content a{
+    color: var(--corPrincipalTexto);
+    display:block;
+}
+.sub-nav:hover .sub-nav-content{
+    display: block;
+}

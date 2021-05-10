@@ -1,0 +1,65 @@
+/* Geral */
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+}
+
+body{
+    color: var(--corPrincipalTexto);
+    background-color: var(--corFundo);
+}
+
+a{
+    color: var(--corDoLink);
+}
+a:hover{
+    color: var(--corDoLinkHover);
+}
+
+.btn{
+    background-color: white;
+    color: black;
+    padding: 0.5em;
+    border-radius: 0.25em;
+    border: 2px solid var(--corDaBorda);
+    width: 100px;
+    height: 40px;
+    transition: all 400ms;
+}
+
+.btn:hover{
+    background-color: var(--corDoLinkHover);
+    color: white;
+    border: 2px solid white;
+    cursor: pointer;
+}
+
+.img{
+    width: 100%;
+}
+.medium-size{
+    width: 260px;
+}
+
+.small-size{
+    width: 150px;
+}
+
+/* Tipografia */
+
+h1{ font-size: var(--tamanhoDaFonteH1);}
+h2{ font-size: var(--tamanhoDaFonteH2);}
+h3{ font-size: var(--tamanhoDaFonteH3)}
+p, li{ font-size: var(--tamanhoDaFonteTexto)}
+.container p{ margin-top: 1em}
+p:first-child{ margin-top: 0}
+
+.font-size-small{
+    font-size: 1rem;
+}
+
+.font-size-medium{
+    font-size: 1.4rem;
+}

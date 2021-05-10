@@ -1,0 +1,39 @@
+/* Footer */
+
+.footer{
+    background-color:var(--corFundoCabecalho);
+    color: var(--corSecundarioTexto);
+    border-top: 1.3px solid var(--corDaBorda);
+    justify-content: center;
+    align-content: center;
+}
+
+.widget-area{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-content: center;
+    text-align: center;
+}
+
+@media only screen and (max-width: 768px){
+    .footer{
+        margin-bottom: 15vh;
+    }
+}
+
+.widget-item {
+    margin: 0.5em;
+}
+
+.widget-item a{
+    color: white;
+}
+
+.widget-item a:hover{
+    color: var(--corDoLinkHover);
+}
+
+.widget-item p{
+    display: inline-block;
+}

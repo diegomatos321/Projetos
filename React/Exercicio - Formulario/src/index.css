@@ -1,0 +1,16 @@
+.container-formulario{
+  max-width: 600px;
+  margin:auto;
+}
+
+.item-formulario{
+  margin: 0.4em;
+}
+
+.formulario label{
+  margin-right: 5px;
+}
+
+.display .capitalize {
+  text-transform: capitalize;
+}

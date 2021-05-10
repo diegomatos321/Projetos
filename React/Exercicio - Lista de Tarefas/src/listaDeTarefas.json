@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "texto":"Estudar React",
+    "slug":"estudar-react",
+    "realizada":false
+  },
+  {
+    "id": 2,
+    "texto":"Estudar JavaScript",
+    "slug":"estudar-javascript",
+    "realizada":false
+  },
+  {
+    "id": 3,
+    "texto":"Estudar Node",
+    "slug":"estudar-node",
+    "realizada":false
+  },
+  {
+    "id": 4,
+    "texto":"Estudar CSS3",
+    "slug":"estudar-css3",
+    "realizada":true
+  }
+]

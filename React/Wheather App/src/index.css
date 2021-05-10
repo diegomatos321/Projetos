@@ -1,0 +1,237 @@
+:root{
+  --corTema: #89CBEC;
+  --corSelecao: #27a0dd;
+  --corDoTexto: #fff;
+  --corSecundarioTexto: grey;
+  --corPrimaria: #87D5CA;
+  --corFria: #22A98E;
+  --corSecundaria: #F28F3E;
+  --corQuente: #EF7200;
+}
+
+::selection{
+  background-color: var(--corTema);
+}
+
+* {
+  color: var(--corDoTexto);
+  transition: all 300ms ease-out;
+}
+
+.superior{
+  height: 65vh;
+  padding: 16px 16px 0 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  /* background-image: url("./images/dia-limpo.jpg"); */
+  background-color: rgba(0, 0, 0, 0.8);
+  background-blend-mode: multiply;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+.superior header h1{
+  font: bold 3rem "Times New Roman";
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.superior .campo-de-busca {
+  width: 100%;
+  max-width: 900px;
+}
+
+.superior .campo-de-busca fieldset{
+  border-top: 2px var(--corTema) solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  border-radius: 10px;
+}
+
+.superior .campo-de-busca fieldset legend{
+  padding: 0 4px;
+  margin: auto;
+  font: italic 20px "Times New Roman";
+}
+
+.campo-de-busca input[type=text]{
+  color: var(--corSecundarioTexto);
+  width: 70%;
+  font-size: 18px;
+  padding: 8px 16px;
+  border: 2px solid var(--corTema);
+  border-radius: 6px;
+  /* transition: border .3s ease; */
+}
+
+.campo-de-busca input[type=text]::placeholder{
+  font-style: italic;
+}
+
+.campo-de-busca input[type=text]:focus{
+  outline: none;
+  border-color: var(--corSelecao);
+}
+
+.campo-de-busca .search{
+  height: 41px;
+  width: 41px; 
+  margin-left: -16px;
+  background-color: var(--corTema);
+  border: 2px solid var(--corSelecao);
+  cursor: pointer;
+  border-left: none;
+  /* transition: background-color 300ms ease; */
+}
+
+.campo-de-busca .search:hover{
+  background-color: var(--corSelecao);
+}
+
+/* .campo-de-busca .search:{
+  outline: none;
+} */
+
+.main-info{
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  max-width: 800px;
+  max-height: 36vh;
+  overflow: auto;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.main-info .temp-info{
+  text-align: center;
+}
+
+.main-info .temp-info h2{
+  font: bold 1.5rem "Times New Roman";
+  margin: 15px;
+}
+
+.main-info .temp-info h3{
+  align-items: center;
+  font: bold 4rem "Times New Roman";
+  /* margin: 15px; */
+}
+
+.main-info .temp-details ul li{
+  margin: 12px;
+  font-size: 1.2rem;
+}
+
+.inferior{
+  height: 35vh;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-top: solid 2px var(--corDoTexto);
+}
+
+.inferior.cor-quente{
+  background-color: var(--corSecundaria);
+}
+
+.inferior.cor-fria{
+  background-color: var(--corPrimaria);
+}
+
+.inferior header h2 {
+  font: bold 2rem "Times New Roman";
+  margin: 10px 0;
+  text-align: center;
+}
+
+
+.previsao{
+  display: flex;
+  padding: 0 10px;
+  max-width: 100%;
+  height: 100%;
+  overflow: auto;
+}
+
+
+.cardPrevisao {
+  display: flex;
+  flex-shrink: 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /* cursor: pointer; */
+  width: 150px;
+  height: 80%;
+  background-color: var(--corQuente);
+  padding: 10px;
+  text-align: center;
+  margin: 10px;
+  border-radius: 10px;
+  box-shadow: 1px 1px 1px 1px black;
+  /* transition: background-color 300ms ease; */
+}
+
+.cardPrevisao.cor-quente{
+  background-color: var(--corQuente);
+}
+
+.cardPrevisao.cor-quente:hover {
+  background-color: var(--corSecundaria);
+}
+
+.cardPrevisao.cor-fria{
+  background-color: var(--corFria);
+}
+
+.cardPrevisao.cor-fria:hover {
+  background-color: var(--corPrimaria);
+}
+
+.cardPrevisao header h2 {
+  font: bold 2.5rem "Times New Roman"
+}
+
+.cardPrevisao header h3 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.cardPrevisao header h3 span {
+  margin-right: 5px;
+}
+
+@media only screen and (max-width: 414px){
+  .superior header h1{
+    font-size: 1.5rem;
+  }
+
+  .main-info .temp-info h2, .inferior header h2{
+    font-size: 1.5rem;
+  }
+  
+  .main-info .temp-info h3{
+    font-size: 3rem;
+  }
+  
+  .main-info .temp-details ul li{
+    font-size: 1rem;
+    line-height: 10px;
+  }
+
+  .campo-de-busca input[type=text]{
+    font-size: 16px;
+  }
+
+  .temp-details {
+    text-align: center;
+  }
+}

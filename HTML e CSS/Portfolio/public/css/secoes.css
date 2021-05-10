@@ -1,0 +1,145 @@
+/* Todas as seções */
+.container{
+    max-width: 900px;
+    padding: 2em 2em;
+    margin: 0 auto;
+    border-bottom: 1.5px solid white;
+}
+section:last-child .container{
+    border-bottom: none;
+}
+
+.title{
+    text-align: center;
+    width: 10em;
+    border-bottom: 1px solid var(--corDaBorda);
+    margin: 0 auto 1.5em auto;
+}
+
+
+/* Apresentação Section */
+
+.container-apresentacao{
+    background-color: rgba(0, 0, 0, 0.6);
+    background-image: url("../imagens/web-development-banner.jpg");
+    background-size: cover;
+    background-blend-mode: multiply;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
+    color: var(--corSecundarioTexto);
+    text-align: center;
+    padding: 2em;
+}
+.container-apresentacao img{
+    border-radius: 20%;
+    margin-top: 1em;
+}
+.container-apresentacao .btn{
+    width: 100%;
+    height: 100%;
+}
+.container-apresentacao .fa-check{
+    color:lightgreen;
+}  
+.flex-container{
+    display:flex;
+    flex-wrap: wrap;
+}
+.areas-trabalho{
+    justify-content: center;
+}
+.areas-trabalho ul{
+    list-style: none;
+}
+.areas-trabalho li{
+    padding: 0.25em;
+}
+.flex-item{
+    margin: 1em;
+}
+
+@media only screen and (min-width: 768px){
+    .container-apresentacao{
+        padding: 1em;
+        display:grid;
+        grid-template-columns: repeat(auto-fill, 1fr);
+        justify-items: center;
+        align-items: center;
+        justify-content: center;
+        align-content: center;
+        height: 85vh;
+        grid-template-areas: 
+        "h1 img"
+        "content img"
+        "btn img"
+    }
+    .container-apresentacao h1{
+        grid-area: h1;
+    }
+    .container-apresentacao .btn{
+        justify-self: center;
+        grid-area: btn;
+        width: 100px;
+        height: 40px;
+    }
+    .container-apresentacao figure{
+        grid-area: img;
+    }
+    .areas-trabalho{
+        grid-area: content;
+    }
+    .container-apresentacao img{
+        border-radius: 20%;
+        margin-top: 0em;
+    }
+}
+
+/* Trabalhos Section */
+
+.mansory-grid{
+    margin: 1em auto;
+}
+.mansory-item{
+    width: 300px;
+    margin-bottom: 5px;
+    text-align: center;
+    padding: 1em;
+    border-radius: 1em;
+    color: var(--corPrincipalTexto);
+    text-decoration: none;
+}
+
+.mansory-item:hover{
+    background-color: white;
+}
+
+/* Entre em Contato Section */
+
+.container-formulario{
+    background-color: white;
+    margin: auto;
+    border-radius: 2em;
+    padding: 1em;
+    box-shadow: 5px 5px 3px 2px grey;
+}
+.formulario input{
+    display: block;
+}
+
+.formulario input[type="text"]{
+    width:100%;
+    line-height: 2em;
+}
+.formulario input[type="email"]{
+    width:100%;
+    line-height: 2em;
+}
+
+.formulario input[type="submit"]{
+    margin: auto;
+}
+.formulario textarea{
+    width:100%;
+    resize:none;
+}

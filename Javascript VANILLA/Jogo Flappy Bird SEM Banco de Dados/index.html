@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt_br">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, 
+  user-scalable=no, initial-scale=1, maximum-scale=1, user-scalable=0" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <style type="text/css">
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    canvas {
+      image-rendering: crisp-edges;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: -webkit-optimize-contrast;
+      -ms-interpolation-mode: nearest-neighbor;
+      position: absolute;
+    }
+    #background-layer {
+      z-index: 0;
+      background: #5c94fc;
+    }
+
+    #pipeSouth-layer {
+      z-index: 1;
+    }
+
+    #ground-layer {
+      z-index: 2;
+    }
+
+    #game-layer {
+      z-index: 3;
+    }
+
+    #hud-layer {
+      z-index: 4;
+    }
+  </style>
+  <title>Flappy Bird</title>
+</head>
+
+<body>
+  <div id="loading-txt">
+
+  </div>
+  <div id="GameScreen">
+    <canvas id="hud-layer"></canvas>
+    <canvas id="game-layer"></canvas>
+    <canvas id="ground-layer"></canvas>
+    <canvas id="pipeSouth-layer"></canvas>
+    <canvas id="background-layer"></canvas>
+  </div>
+  <script type = "module" src="./js/main.js"></script>
+</body>
+
+</html>

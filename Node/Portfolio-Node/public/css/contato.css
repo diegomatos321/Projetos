@@ -1,0 +1,28 @@
+.container-formulario{
+    margin: auto;
+}
+.formulario input{
+    display: block;
+    width:100%;
+    line-height: 2em;
+    margin:auto;
+    padding: 0.2em 1em;
+    /* border-radius: 2em; */
+}
+
+input:focus, textarea:focus{
+    outline-color: var(--corFocus);
+}
+
+.formulario input[type="submit"]{
+    max-width: 200px;
+    margin-top: 1em;
+}
+.formulario textarea{
+    display: block;
+    line-height: 2em;
+    margin:auto;
+    padding: 0.2em 1em;
+    width:100%;
+    resize:none;
+}

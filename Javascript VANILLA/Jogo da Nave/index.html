@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt_br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Jogo da Nave</title>
+    <style>
+        #stage {
+            width: 320px;
+            height: 480px;
+            position: relative;
+            border: 2px solid black
+        }
+
+        canvas {
+            position: absolute;
+        }
+
+        #ui-layer {
+            z-index: 2
+        }
+
+        #game-layer {
+            z-index: 1
+        }
+    </style>
+</head>
+
+<body>
+    <div id="stage">
+        <canvas id="ui-layer" width="320" height="480"></canvas>
+        <canvas id="game-layer" width="320" height="480"></canvas>
+    </div>
+
+
+    <script src="./js/InputHandler.js"></script>
+    <script src="./js/Vector.js"></script>
+    <script src="./js/CarregarArquivo.js"></script>
+    <script src="./js/CollisionHandler.js"></script>
+    <script src="./js/GameObject.js"></script>
+    <script src="./js/ExplosionSFX.js"></script>
+    <script src="./js/Bullet.js"></script>
+    <script src="./js/Player.js"></script>
+    <script src="./js/Enemy.js"></script>
+    <script src="./js/Game.js"></script>
+    <script src="./js/Level0.js"></script>
+    <script src="./js/Level1.js"></script>
+    <script src="./js/Main.js"></script>
+</body>
+
+</html>

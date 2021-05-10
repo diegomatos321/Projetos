@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt_BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Drag and Drop Demo</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="site">
+      <main class="main-content">
+        <header class="title">
+          <h1>Praticando Drag and Drop de arquivos</h1>
+        </header>
+        <section>
+          <div
+            id="drop-zone"
+            class="drop-zone"
+          >
+            <div id="drop-input" class="drop-input">
+              <svg id="icon" class="icon" width="50" height="43" viewBox="0 0 50 43">
+                <path
+                  d="M48.4 26.5c-.9 0-1.7.7-1.7 1.7v11.6h-43.3v-11.6c0-.9-.7-1.7-1.7-1.7s-1.7.7-1.7 1.7v13.2c0 .9.7 1.7 1.7 1.7h46.7c.9 0 1.7-.7 1.7-1.7v-13.2c0-1-.7-1.7-1.7-1.7zm-24.5 6.1c.3.3.8.5 1.2.5.4 0 .9-.2 1.2-.5l10-11.6c.7-.7.7-1.7 0-2.4s-1.7-.7-2.4 0l-7.1 8.3v-25.3c0-.9-.7-1.7-1.7-1.7s-1.7.7-1.7 1.7v25.3l-7.1-8.3c-.7-.7-1.7-.7-2.4 0s-.7 1.7 0 2.4l10 11.6z"
+                ></path>
+              </svg>
+              <input type="file" multiple id="file-input" class="file-input" />
+              <label id="file-label" for="file-input" class="file-label"
+                ><strong>Escolha os arquivos</strong> ou solte-os aqui.</label
+              >
+            </div>
+          </div>
+        </section>
+        <section>
+          <header>
+            <h2>Arquivos selecionados:</h2>
+          </header>
+          <div id="container-lista" class="container-lista">
+            <ul id="lista-arquivos" class="lista-arquivos">
+              <li id="arquivo-exemplo" class="arquivo">
+                <div class="preview-arquivo">
+                  <img width="121" class="img-preview" src="image-placeholder.png" alt="" />
+                  <p>Nome do arquivo</p>
+                  <progress value="32" max="100"></progress>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script src="main.js"></script>
+  </body>
+</html>

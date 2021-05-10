@@ -1,0 +1,40 @@
+/* Footer */
+
+.footer{
+    background-color:var(--corFundoCabecalho);
+    color: var(--corSecundarioTexto);
+    /* height: 25vh; */
+    border-top: 1.3px solid var(--corDaBorda);
+    justify-content: center;
+    align-content: center;
+}
+
+.widget-area{
+    display:grid;
+    grid-column: 1fr;
+    grid-row: 3fr;
+    margin: 0 1em;
+    justify-items: center;
+    align-items: center;
+    grid-template-areas: 
+    "titulo"
+    "content"
+}
+
+.widget-title{
+    grid-area:titulo;
+}
+.widget-content{
+    grid-area:content;
+}
+
+.widget-item {
+    margin: 1em;
+}
+.widget-item p{
+    display: inline-block;
+}
+
+.fa-facebook-square{
+    color: white;
+}

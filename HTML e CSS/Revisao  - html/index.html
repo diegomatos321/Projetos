@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jogo de Fantasia</title>
+    <meta
+      name="description"
+      content="Simples site de cadastro baseado em jogos de RPG"
+    />
+    <link rel="stylesheet" href="./css/style.css">
+  </head>
+  <body>
+    <div class="site">
+      <main>
+        <header>
+          <h1>Jogo de Fantasia Medieval</h1>
+        </header>
+        <section>
+          <header>
+            <h2>Bem vindo Aventureiro !</h2>
+          </header>
+          <p>
+            Esse é um jogo de RPG baseado em turnos, nas regras de Dungeons and
+            Dragons 5Ed ! Vamos começar, primeiramente preencha os campos abaixo
+            para cadastrar seu aventureiro na Guilda !
+          </p>
+        </section>
+        <section>
+          <form>
+            <fieldset>
+              <legend>Dados do Jogador</legend>
+
+              <label for="nome">Nome:</label>
+              <input id="nome" type="text"/>
+
+              <label for="homem">Homem:</label>
+              <input id="homem" name="sexo" type="radio"/>
+
+              <label for="mulher">Mulher:</label>
+              <input id="mulher" name="sexo" type="radio"/>
+
+              <label for="nome">Raça:</label>
+              <select>
+                <optgroup label="Anão">
+                  <option>Anão da Colina</option>
+                  <option>Anão da Montanha</option>  
+                </optgroup>
+                <optgroup label="Elfo">
+                  <option>Elfo da Floresta</option>
+                  <option>Alto Elfo</option>  
+                  <option>Elfo Negro</option>
+                </optgroup>
+                <option>Humano</option>
+                <option>Tiefling</option>
+              </select>
+            </fieldset>
+            <fieldset>
+              <legend>Selecione uma Classe</legend>
+              <picture>
+                <img src="/images/guerreiro_01.png" alt="Guerreiro" width="300px">
+                <figcaption>Imagem do Guerreiro</figcaption>
+              </picture>
+              <picture>
+                <img src="/images/mago_01.png" alt="Mago" width="300px">
+                <figcaption>Imagem do Mago</figcaption>
+              </picture>
+              <picture>
+                <img src="/images/druida_01.png" alt="Druida" width="300px">
+                <figcaption>Imagem do Druida</figcaption>
+              </picture>
+              <picture>
+                <img src="/images/bardo_01.png" alt="Bardo" width="300px">
+                <figcaption>Imagem do Bardo</figcaption>
+              </picture>
+
+              <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/BgvHNlgmKro" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+              <button>Confirmar</button>
+            </fieldset>
+          </form>
+        </section>
+      </main>
+      <footer>
+        &copy; SOS Ilha Games
+      </footer>
+    </div>
+  </body>
+</html>

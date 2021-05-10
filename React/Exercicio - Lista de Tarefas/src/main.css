@@ -1,0 +1,10 @@
+.container-tarefas{
+  padding: 1em;
+  max-width: 400px;
+  margin: auto;
+}
+
+input:checked + label{
+  text-decoration: line-through;
+  font-style: italic;
+}
