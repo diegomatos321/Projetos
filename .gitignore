@@ -1,0 +1,16 @@
+node_modules/
+*.env
+*.zip
+*.txt
+
+# Godot-specific ignores
+Godot/*/.import/
+Godot/*/export.cfg
+Godot/*/export_presets.cfg
+
+# Imported translations (automatically generated from CSV files)
+Godot/*/*.translation
+
+# Mono-specific ignores
+Godot/*/.mono/
+Godot/*/data_*/
