@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/batman-spritesheet.png-6289da542134f1a7e153b1d5da5e8126.stex"
+path="res://.import/batman_idle.png-c94cad25668b401aed270295cc1a42a6.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/images/player/batman-spritesheet.png"
-dest_files=[ "res://.import/batman-spritesheet.png-6289da542134f1a7e153b1d5da5e8126.stex" ]
+source_file="res://assets/images/player/batman_idle.png"
+dest_files=[ "res://.import/batman_idle.png-c94cad25668b401aed270295cc1a42a6.stex" ]
 
 [params]
 

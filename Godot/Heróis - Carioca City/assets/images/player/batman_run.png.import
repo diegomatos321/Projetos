@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/run.png-5a8557be0ed785f870ca8932d136b655.stex"
+path="res://.import/batman_run.png-0a16b675d293b7b28c338d465f748cc6.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/images/player/run.png"
-dest_files=[ "res://.import/run.png-5a8557be0ed785f870ca8932d136b655.stex" ]
+source_file="res://assets/images/player/batman_run.png"
+dest_files=[ "res://.import/batman_run.png-0a16b675d293b7b28c338d465f748cc6.stex" ]
 
 [params]
 
