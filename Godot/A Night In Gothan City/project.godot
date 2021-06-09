@@ -11,6 +11,7 @@ config_version=4
 [application]
 
 config/name="A Night In Gothan City"
+config/description="Um jogo inspirado em The Adventures of Batman & Robin (SNES). Meu intuito é apenas de aprendizado."
 run/main_scene="res://scenes/main_scene.tscn"
 config/icon="res://icon.png"
 
@@ -23,6 +24,8 @@ settings/stdout/verbose_stdout=true
 
 window/size/width=600
 window/size/height=480
+window/stretch/mode="2d"
+window/stretch/aspect="keep"
 
 [importer_defaults]
 
