@@ -1,6 +1,6 @@
-[gd_scene load_steps=27 format=2]
+[gd_scene load_steps=48 format=2]
 
-[ext_resource path="res://assets/images/player/batman_spritesheet.png" type="Texture" id=1]
+[ext_resource path="res://assets/images/player/batman_spritesheet_1.png" type="Texture" id=1]
 [ext_resource path="res://scripts/player.gd" type="Script" id=3]
 
 [sub_resource type="RectangleShape2D" id=1]
@@ -64,8 +64,63 @@ tracks/1/keys = {
 "values": [ Vector2( 0, 0 ) ]
 }
 
-[sub_resource type="Animation" id=22]
-resource_name = "run_left"
+[sub_resource type="Animation" id=4]
+resource_name = "jab_left_hand"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/path = NodePath("Body:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1, 0.2, 0.3, 0.4, 0.5 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 22, 23, 24, 25, 26, 27 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Body:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ Vector2( 0, 0 ) ]
+}
+
+[sub_resource type="Animation" id=5]
+resource_name = "jab_right_hand"
+length = 0.4
+tracks/0/type = "value"
+tracks/0/path = NodePath("Body:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1, 0.2, 0.3, 0.4 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 28, 29, 30, 31, 32 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Body:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ Vector2( 0, 0 ) ]
+}
+
+[sub_resource type="Animation" id=6]
 length = 0.8
 loop = true
 tracks/0/type = "value"
@@ -105,8 +160,7 @@ tracks/2/keys = {
 "values": [ Vector2( 16, 0 ) ]
 }
 
-[sub_resource type="Animation" id=4]
-resource_name = "run_right"
+[sub_resource type="Animation" id=7]
 length = 0.8
 loop = true
 tracks/0/type = "value"
@@ -146,8 +200,7 @@ tracks/2/keys = {
 "values": [ Vector2( -16, 0 ) ]
 }
 
-[sub_resource type="Animation" id=23]
-resource_name = "start_run_left"
+[sub_resource type="Animation" id=8]
 length = 0.6
 tracks/0/type = "value"
 tracks/0/path = NodePath("Body:frame")
@@ -186,8 +239,7 @@ tracks/2/keys = {
 "values": [ Vector2( 8, 0 ), Vector2( 16, 0 ) ]
 }
 
-[sub_resource type="Animation" id=5]
-resource_name = "start_run_right"
+[sub_resource type="Animation" id=9]
 length = 0.6
 tracks/0/type = "value"
 tracks/0/path = NodePath("Body:frame")
@@ -226,31 +278,153 @@ tracks/2/keys = {
 "values": [ Vector2( 0, 0 ), Vector2( -16, 0 ) ]
 }
 
-[sub_resource type="AnimationNodeAnimation" id=8]
+[sub_resource type="Animation" id=10]
+length = 0.3
+tracks/0/type = "value"
+tracks/0/path = NodePath("Body:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1, 0.2, 0.3 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 18, 19, 20, 21 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Body:flip_h")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ true ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Body:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ Vector2( 0, 0 ) ]
+}
+
+[sub_resource type="Animation" id=11]
+length = 0.3
+tracks/0/type = "value"
+tracks/0/path = NodePath("Body:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1, 0.2, 0.3 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 18, 19, 20, 21 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Body:flip_h")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ false ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Body:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ Vector2( 0, 0 ) ]
+}
+
+[sub_resource type="AnimationNodeAnimation" id=12]
+animation = "combat_idle"
+
+[sub_resource type="AnimationNodeAnimation" id=13]
 animation = "idle"
 
-[sub_resource type="AnimationNodeAnimation" id=37]
+[sub_resource type="AnimationNodeAnimation" id=14]
+animation = "jab_left_hand"
+
+[sub_resource type="AnimationNodeAnimation" id=15]
+animation = "jab_right_hand"
+
+[sub_resource type="AnimationNodeAnimation" id=16]
 animation = "run_left"
 
-[sub_resource type="AnimationNodeAnimation" id=38]
+[sub_resource type="AnimationNodeAnimation" id=17]
 animation = "run_right"
 
-[sub_resource type="AnimationNodeAnimation" id=27]
+[sub_resource type="AnimationNodeAnimation" id=18]
 animation = "start_run_left"
 
-[sub_resource type="AnimationNodeAnimation" id=28]
+[sub_resource type="AnimationNodeAnimation" id=19]
 animation = "start_run_right"
+
+[sub_resource type="AnimationNodeAnimation" id=20]
+animation = "stop_run_left"
+
+[sub_resource type="AnimationNodeAnimation" id=21]
+animation = "stop_run_right"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=22]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=23]
+switch_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=24]
+switch_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=25]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=26]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=27]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=28]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=29]
+switch_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=30]
+switch_mode = 2
 
 [sub_resource type="AnimationNodeStateMachineTransition" id=31]
 
 [sub_resource type="AnimationNodeStateMachineTransition" id=32]
 
+[sub_resource type="AnimationNodeStateMachineTransition" id=33]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=34]
+
 [sub_resource type="AnimationNodeStateMachineTransition" id=35]
 
 [sub_resource type="AnimationNodeStateMachineTransition" id=36]
 
+[sub_resource type="AnimationNodeStateMachineTransition" id=37]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=38]
+
 [sub_resource type="AnimationNodeStateMachineTransition" id=39]
-switch_mode = 2
 
 [sub_resource type="AnimationNodeStateMachineTransition" id=40]
 
@@ -258,39 +432,47 @@ switch_mode = 2
 switch_mode = 2
 
 [sub_resource type="AnimationNodeStateMachineTransition" id=42]
+switch_mode = 2
+advance_condition = "combo_1"
 
 [sub_resource type="AnimationNodeStateMachineTransition" id=43]
+switch_mode = 2
 
-[sub_resource type="AnimationNodeStateMachineTransition" id=44]
-
-[sub_resource type="AnimationNodeStateMachine" id=20]
-states/idle/node = SubResource( 8 )
+[sub_resource type="AnimationNodeStateMachine" id=44]
+states/combat_idle/node = SubResource( 12 )
+states/combat_idle/position = Vector2( 523, 200.299 )
+states/idle/node = SubResource( 13 )
 states/idle/position = Vector2( 523, 80 )
-states/run_left/node = SubResource( 37 )
-states/run_left/position = Vector2( 267, -49.1541 )
-states/run_right/node = SubResource( 38 )
-states/run_right/position = Vector2( 786, -49.1541 )
-states/start_run_left/node = SubResource( 27 )
+states/jab_left_hand/node = SubResource( 14 )
+states/jab_left_hand/position = Vector2( 378, 337.299 )
+states/jab_right_hand/node = SubResource( 15 )
+states/jab_right_hand/position = Vector2( 614, 337.299 )
+states/run_left/node = SubResource( 16 )
+states/run_left/position = Vector2( 267, -175.154 )
+states/run_right/node = SubResource( 17 )
+states/run_right/position = Vector2( 786, -175.154 )
+states/start_run_left/node = SubResource( 18 )
 states/start_run_left/position = Vector2( 267, 80 )
-states/start_run_right/node = SubResource( 28 )
+states/start_run_right/node = SubResource( 19 )
 states/start_run_right/position = Vector2( 786, 80 )
-transitions = [ "idle", "start_run_right", SubResource( 31 ), "start_run_right", "idle", SubResource( 32 ), "idle", "start_run_left", SubResource( 35 ), "start_run_left", "idle", SubResource( 36 ), "start_run_left", "run_left", SubResource( 39 ), "run_left", "idle", SubResource( 40 ), "start_run_right", "run_right", SubResource( 41 ), "run_right", "idle", SubResource( 42 ), "run_left", "run_right", SubResource( 43 ), "run_right", "run_left", SubResource( 44 ) ]
+states/stop_run_left/node = SubResource( 20 )
+states/stop_run_left/position = Vector2( 388, -58.8232 )
+states/stop_run_right/node = SubResource( 21 )
+states/stop_run_right/position = Vector2( 628, -58.8232 )
+transitions = [ "idle", "start_run_left", SubResource( 22 ), "start_run_left", "run_left", SubResource( 23 ), "start_run_right", "run_right", SubResource( 24 ), "run_left", "run_right", SubResource( 25 ), "run_right", "run_left", SubResource( 26 ), "run_left", "stop_run_left", SubResource( 27 ), "run_right", "stop_run_right", SubResource( 28 ), "stop_run_left", "idle", SubResource( 29 ), "stop_run_right", "idle", SubResource( 30 ), "start_run_left", "stop_run_left", SubResource( 31 ), "start_run_right", "stop_run_right", SubResource( 32 ), "idle", "start_run_right", SubResource( 33 ), "combat_idle", "start_run_left", SubResource( 34 ), "stop_run_left", "combat_idle", SubResource( 35 ), "stop_run_right", "combat_idle", SubResource( 36 ), "combat_idle", "start_run_right", SubResource( 37 ), "combat_idle", "idle", SubResource( 38 ), "idle", "combat_idle", SubResource( 39 ), "combat_idle", "jab_left_hand", SubResource( 40 ), "jab_left_hand", "combat_idle", SubResource( 41 ), "jab_left_hand", "jab_right_hand", SubResource( 42 ), "jab_right_hand", "combat_idle", SubResource( 43 ) ]
 start_node = "idle"
-graph_offset = Vector2( 0, -109.154 )
+graph_offset = Vector2( 0, 127.629 )
 
-[sub_resource type="AnimationNodeStateMachinePlayback" id=21]
+[sub_resource type="AnimationNodeStateMachinePlayback" id=45]
 
 [node name="Player" type="KinematicBody2D"]
 script = ExtResource( 3 )
-speed = 180
-jump_force = 400
-gravity = 800
 
 [node name="Body" type="Sprite" parent="."]
 texture = ExtResource( 1 )
 offset = Vector2( 0, -32 )
-hframes = 5
-vframes = 4
+hframes = 6
+vframes = 6
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2( 0, -32 )
@@ -300,14 +482,21 @@ shape = SubResource( 1 )
 playback_process_mode = 0
 anims/combat_idle = SubResource( 2 )
 anims/idle = SubResource( 3 )
-anims/run_left = SubResource( 22 )
-anims/run_right = SubResource( 4 )
-anims/start_run_left = SubResource( 23 )
-anims/start_run_right = SubResource( 5 )
+anims/jab_left_hand = SubResource( 4 )
+anims/jab_right_hand = SubResource( 5 )
+anims/run_left = SubResource( 6 )
+anims/run_right = SubResource( 7 )
+anims/start_run_left = SubResource( 8 )
+anims/start_run_right = SubResource( 9 )
+anims/stop_run_left = SubResource( 10 )
+anims/stop_run_right = SubResource( 11 )
 
 [node name="AnimationTree" type="AnimationTree" parent="."]
-tree_root = SubResource( 20 )
+tree_root = SubResource( 44 )
 anim_player = NodePath("../AnimationPlayer")
 active = true
 process_mode = 0
-parameters/playback = SubResource( 21 )
+parameters/playback = SubResource( 45 )
+parameters/conditions/combo_1 = false
+
+[connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_AnimationPlayer_animation_finished"]

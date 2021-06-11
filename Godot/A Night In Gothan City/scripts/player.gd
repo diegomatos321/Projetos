@@ -1,47 +1,111 @@
 extends KinematicBody2D
 
-onready var Player = get_parent()
-onready var animationTree = get_node("AnimationTree")
-onready var animation_mode = animationTree.get("parameters/playback")
+enum {
+	IDLE,
+	COMBAT_IDLE,
+	JUMP,
+	RUN,
+	COMBAT
+}
 
-var velocityVector = Vector2()
+onready var animationTree: AnimationTree = get_node("AnimationTree")
+onready var animation_mode: AnimationNodeStateMachinePlayback = animationTree.get("parameters/playback")
+onready var animation_conditions = animationTree.get("parameters/conditions")
 
-export (int) var speed # pixels / sec
-export (int) var jump_force # pixels / sec
-export (int) var gravity
+export (int) var MAX_SPEED = 200
+export (int) var JUMP_FORCE = 400
+export (int) var GRAVITY_FORCE = 1200
 
-func _ready():
+var direction_input := Vector2.ZERO
+var velocity := Vector2.ZERO
+var prevState: int = -1
+var currentState: int = IDLE
+
+func _physics_process(dt: float) -> void:
 	
-	pass # Replace with function Player.
-
-func _process(dt):
+	gravity(dt)
+	
+	match currentState:
+		IDLE:
+			idleState(dt)
+		COMBAT_IDLE:
+			combatIdleState(dt)
+		JUMP:
+			jumpState(dt)
+		RUN:
+			runState(dt)
+		COMBAT:
+			combatState(dt)
 	pass
 
-func _physics_process(dt):
-	handlePlayerMovement(dt)
+func idleState(dt: float) -> void:
+	handleBasicInputs()
+	animation_mode.travel("idle")
 	pass
 
-func handlePlayerMovement(dt):
-	velocityVector.x = 0
-	velocityVector.y += gravity * dt
+func combatIdleState(dt: float) -> void:
+	handleBasicInputs()
+	animation_mode.travel("combat_idle")
+	pass
+
+func runState(dt: float) -> void:
+	handleBasicInputs()
+	animation_mode.travel("run")
+	
+	velocity.x = direction_input.x * MAX_SPEED
+	move()
+	pass
+
+func jumpState(dt: float) -> void:
+	print("JUMP STATE")
+	velocity.y += direction_input.y * JUMP_FORCE
+	move()
+	
+	changeState(IDLE)
+	pass
+
+func combatState(dt: float) -> void:
+	
+	pass
+
+func handleBasicInputs() -> void:
+	direction_input.x = 0
+	direction_input.y = 0
 	
 	if Input.is_action_pressed("ui_right"):
-		velocityVector.x = speed
-		# Player.flip_h = false
-		animation_mode.travel("run_right")
+		direction_input.x = 1
+		changeState(RUN)
 	elif Input.is_action_pressed("ui_left"):
-		velocityVector.x = -speed
-		# Player.flip_h = true
-		animation_mode.travel("run_left")
+		direction_input.x = -1
+		changeState(RUN)
 	else:
-		velocityVector.x = 0
-		animation_mode.travel("idle")
+		if currentState == COMBAT:
+			changeState(COMBAT_IDLE)
+		else:
+			changeState(IDLE)
 	
 	if is_on_floor():
-		velocityVector.y = 0
-		
 		if Input.is_action_just_pressed("ui_up"):
-			velocityVector.y = -jump_force
+			direction_input.y = -1
+			changeState(JUMP)
 	
-	move_and_slide(velocityVector, Vector2(0, -1));
+	direction_input.normalized()
+	pass
+
+func gravity(dt: float) -> void:
+	if is_on_floor():
+		velocity.y = 0
+	else:
+		velocity.y += GRAVITY_FORCE * dt
+	
+	move()
+	pass
+
+func move() -> void:
+	move_and_slide(velocity, Vector2.UP)
+	pass
+
+func changeState(newState) -> void:
+	prevState = currentState
+	currentState = newState
 	pass
