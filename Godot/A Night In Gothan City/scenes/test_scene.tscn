@@ -533,3 +533,4 @@ tile_data = PoolIntArray( 262139, 2, 0, 196608, 2, 65537 )
 
 [node name="Player" parent="." instance=ExtResource( 1 )]
 position = Vector2( -256, 88 )
+MAX_SPEED = 130

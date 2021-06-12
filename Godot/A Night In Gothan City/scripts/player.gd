@@ -12,7 +12,7 @@ onready var animationTree: AnimationTree = get_node("AnimationTree")
 onready var animation_mode: AnimationNodeStateMachinePlayback = animationTree.get("parameters/playback")
 onready var animation_conditions = animationTree.get("parameters/conditions")
 
-export (int) var MAX_SPEED = 200
+export (int) var MAX_SPEED = 130
 export (int) var JUMP_FORCE = 400
 export (int) var GRAVITY_FORCE = 1200
 
@@ -22,8 +22,7 @@ var prevState: int = -1
 var currentState: int = IDLE
 
 func _physics_process(dt: float) -> void:
-	
-	gravity(dt)
+	applyGravity(dt)
 	
 	match currentState:
 		IDLE:
@@ -36,10 +35,13 @@ func _physics_process(dt: float) -> void:
 			runState(dt)
 		COMBAT:
 			combatState(dt)
+	
+	move()
 	pass
 
 func idleState(dt: float) -> void:
 	handleBasicInputs()
+	velocity.x = 0
 	animation_mode.travel("idle")
 	pass
 
@@ -50,18 +52,29 @@ func combatIdleState(dt: float) -> void:
 
 func runState(dt: float) -> void:
 	handleBasicInputs()
-	animation_mode.travel("run")
+	
+	if test_move(transform, velocity):
+		changeState(prevState)
+		return
 	
 	velocity.x = direction_input.x * MAX_SPEED
-	move()
+	
+	if velocity.x > 0:
+		animation_mode.travel("run_right")
+	elif velocity.x < 0:
+		animation_mode.travel("run_left")
+	
 	pass
 
+var isJumping = false
 func jumpState(dt: float) -> void:
-	print("JUMP STATE")
-	velocity.y += direction_input.y * JUMP_FORCE
-	move()
-	
-	changeState(IDLE)
+	if !isJumping:
+		velocity.y = direction_input.y * JUMP_FORCE
+		isJumping = true
+
+	if is_on_floor():
+		isJumping = false
+		changeState(prevState)
 	pass
 
 func combatState(dt: float) -> void:
@@ -89,23 +102,20 @@ func handleBasicInputs() -> void:
 			direction_input.y = -1
 			changeState(JUMP)
 	
-	direction_input.normalized()
+	if Input.is_action_pressed("attack"):
+		changeState(COMBAT)
 	pass
 
-func gravity(dt: float) -> void:
-	if is_on_floor():
-		velocity.y = 0
-	else:
-		velocity.y += GRAVITY_FORCE * dt
-	
-	move()
+func applyGravity(dt: float) -> void:
+	velocity.y += GRAVITY_FORCE * dt
 	pass
 
 func move() -> void:
-	move_and_slide(velocity, Vector2.UP)
+	velocity = move_and_slide(velocity, Vector2.UP)
 	pass
 
 func changeState(newState) -> void:
-	prevState = currentState
-	currentState = newState
+	if currentState != newState:
+		prevState = currentState
+		currentState = newState
 	pass

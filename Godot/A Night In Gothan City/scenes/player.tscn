@@ -461,12 +461,13 @@ states/stop_run_right/node = SubResource( 21 )
 states/stop_run_right/position = Vector2( 628, -58.8232 )
 transitions = [ "idle", "start_run_left", SubResource( 22 ), "start_run_left", "run_left", SubResource( 23 ), "start_run_right", "run_right", SubResource( 24 ), "run_left", "run_right", SubResource( 25 ), "run_right", "run_left", SubResource( 26 ), "run_left", "stop_run_left", SubResource( 27 ), "run_right", "stop_run_right", SubResource( 28 ), "stop_run_left", "idle", SubResource( 29 ), "stop_run_right", "idle", SubResource( 30 ), "start_run_left", "stop_run_left", SubResource( 31 ), "start_run_right", "stop_run_right", SubResource( 32 ), "idle", "start_run_right", SubResource( 33 ), "combat_idle", "start_run_left", SubResource( 34 ), "stop_run_left", "combat_idle", SubResource( 35 ), "stop_run_right", "combat_idle", SubResource( 36 ), "combat_idle", "start_run_right", SubResource( 37 ), "combat_idle", "idle", SubResource( 38 ), "idle", "combat_idle", SubResource( 39 ), "combat_idle", "jab_left_hand", SubResource( 40 ), "jab_left_hand", "combat_idle", SubResource( 41 ), "jab_left_hand", "jab_right_hand", SubResource( 42 ), "jab_right_hand", "combat_idle", SubResource( 43 ) ]
 start_node = "idle"
-graph_offset = Vector2( 0, 127.629 )
+graph_offset = Vector2( 0, -97.3834 )
 
 [sub_resource type="AnimationNodeStateMachinePlayback" id=45]
 
 [node name="Player" type="KinematicBody2D"]
 script = ExtResource( 3 )
+MAX_SPEED = 120
 
 [node name="Body" type="Sprite" parent="."]
 texture = ExtResource( 1 )
@@ -498,5 +499,3 @@ active = true
 process_mode = 0
 parameters/playback = SubResource( 45 )
 parameters/conditions/combo_1 = false
-
-[connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_AnimationPlayer_animation_finished"]
