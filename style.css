@@ -1,0 +1,102 @@
+* {
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.site {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto;
+  grid-template-areas:
+    "mensagem"
+    "jogo"
+}
+
+.mensagem{
+  grid-area: mensagem;
+}
+
+.jogo{
+  grid-area: jogo;
+  display: grid;
+}
+
+.sucesso,
+.error {
+  justify-self: center;
+  max-width: 500px;
+  margin: 1em auto;
+  text-align: center;
+  border-radius: 1em;
+  padding: 1em;
+  transition: all 600ms;
+}
+
+.sucesso:last-child,
+.error:last-child {
+  margin-bottom: 0;
+}
+
+.sucesso {
+  background-color: green;
+}
+
+.error {
+  background-color: red;
+}
+
+.jogo{
+  height: 100vh;
+  margin-bottom: 1em;
+}
+
+.jogo-container{
+  height: 100%;
+}
+
+.flappybird {
+  justify-self: center;
+}
+
+.formulario-container{
+  max-width: 300px;
+  margin:auto;
+}
+
+.hidden{
+  display:none;
+}
+
+.game-screen {
+  position: relative;
+}
+
+.game-screen canvas {
+  image-rendering: crisp-edges;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: -webkit-optimize-contrast;
+  -ms-interpolation-mode: nearest-neighbor;
+  position: absolute;
+}
+
+#background-layer {
+  z-index: 0;
+  background-color: #6288ce;
+}
+
+#pipeSouth-layer {
+  z-index: 1;
+}
+
+#ground-layer {
+  z-index: 2;
+}
+
+#game-layer {
+  z-index: 3;
+}
+
+#hud-layer {
+  z-index: 4;
+}
+
