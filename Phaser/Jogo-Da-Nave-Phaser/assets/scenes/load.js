@@ -29,27 +29,27 @@ export default class LoadScene extends Phaser.Scene{
         })
 
         // CARREGAMENTO DAS IMAGENS
-        this.load.image("Fundo", "/assets/imagens/jogo-da-nave/background.webp")
-        this.load.image("Tiro", "/assets/imagens/jogo-da-nave/tiro.webp")
+        this.load.image("Fundo", "/assets/imagens/background.webp")
+        this.load.image("Tiro", "/assets/imagens/tiro.webp")
 
         // CARREGAMENTO DOS SPRITE SHEETS
-        this.load.spritesheet("Inimigo", "/assets/imagens/jogo-da-nave/inimigo.webp", {
+        this.load.spritesheet("Inimigo", "/assets/imagens/inimigo.webp", {
             frameWidth: 92, frameHeight: 100
         })
 
-        this.load.spritesheet("Jogador", "/assets/imagens/jogo-da-nave/player.webp", {
+        this.load.spritesheet("Jogador", "/assets/imagens/player.webp", {
             frameWidth: 39, frameHeight: 43
         })
 
-        this.load.spritesheet("Explosion", "/assets/imagens/jogo-da-nave/explosion.webp", {
+        this.load.spritesheet("Explosion", "/assets/imagens/explosion.webp", {
             frameWidth: 16, frameHeight: 16
         })
 
         // CARREGAMENTO DOS AUDIOS
-        this.load.audio("motorSFX", "/assets/audio/jogo-da-nave/engine_sound.mp3")
-        this.load.audio("explosaoSFX", "/assets/audio/jogo-da-nave/explosion_sound.mp3")
-        this.load.audio("tiroSFX", "/assets/audio/jogo-da-nave/shoot_sound.mp3")
-        this.load.audio("startUpSFX", "/assets/audio/jogo-da-nave/start-up_sound.mp3")
+        this.load.audio("motorSFX", "/assets/audio/engine_sound.mp3")
+        this.load.audio("explosaoSFX", "/assets/audio/explosion_sound.mp3")
+        this.load.audio("tiroSFX", "/assets/audio/shoot_sound.mp3")
+        this.load.audio("startUpSFX", "/assets/audio/start-up_sound.mp3")
     }
 
     create(){
@@ -83,7 +83,7 @@ export default class LoadScene extends Phaser.Scene{
             repeat: 0
         });
 
-        explosao.on("complete", (currentAnim, currentFrame, sprite) =>{
+        explosao.on(Phaser.Animations.Events.ANIMATION_COMPLETE, (currentAnim, currentFrame, sprite) =>{
             sprite.destroy()
         })
 
