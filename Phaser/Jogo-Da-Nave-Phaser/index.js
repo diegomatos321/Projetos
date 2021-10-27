@@ -1,9 +1,9 @@
 // SOLID
 // 1º Principio: Princípio de única responsabilidade
-import BootScene from "./boot.js"
-import LoadScene from "./load.js"
-import MenuScene from "./menu.js"
-import GameScene from "./game.js"
+import BootScene from "./assets/scenes/boot.js"
+import LoadScene from "./assets/scenes/load.js"
+import MenuScene from "./assets/scenes/menu.js"
+import GameScene from "./assets/scenes/game.js"
 
 let config = {
     width: 320,
