@@ -76,16 +76,12 @@ export default class LoadScene extends Phaser.Scene{
             repeat: -1
         });
 
-        let explosao = this.anims.create({
+        this.anims.create({
             key: "Explosao",
             frames: this.anims.generateFrameNumbers("Explosion", {start: 0, end: 4}),
             frameRate: 10,
             repeat: 0
         });
-
-        explosao.on(Phaser.Animations.Events.ANIMATION_COMPLETE, (currentAnim, currentFrame, sprite) =>{
-            sprite.destroy()
-        })
 
         let enterKey = this.input.keyboard.addKey("ENTER");
         enterKey.once("down", () =>{

@@ -191,6 +191,9 @@ export default class GameScene extends Phaser.Scene {
         let explosao = this.add.sprite(x, y, "Explosion")
         explosao.setScale(2);
         explosao.anims.play("Explosao");
+        explosao.on(Phaser.Animations.Events.ANIMATION_COMPLETE, (animation, frame, gameObject, frameKey) => {
+          gameObject.destroy();
+        });
         this.explosaoSound.play();
     }
 
