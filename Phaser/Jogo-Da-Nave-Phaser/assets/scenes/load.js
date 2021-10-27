@@ -29,27 +29,27 @@ export default class LoadScene extends Phaser.Scene{
         })
 
         // CARREGAMENTO DAS IMAGENS
-        this.load.image("Fundo", "/assets/imagens/background.webp")
-        this.load.image("Tiro", "/assets/imagens/tiro.webp")
+        this.load.image("Fundo", "./assets/imagens/background.webp")
+        this.load.image("Tiro", "./assets/imagens/tiro.webp")
 
         // CARREGAMENTO DOS SPRITE SHEETS
-        this.load.spritesheet("Inimigo", "/assets/imagens/inimigo.webp", {
+        this.load.spritesheet("Inimigo", "./assets/imagens/inimigo.webp", {
             frameWidth: 92, frameHeight: 100
         })
 
-        this.load.spritesheet("Jogador", "/assets/imagens/player.webp", {
+        this.load.spritesheet("Jogador", "./assets/imagens/player.webp", {
             frameWidth: 39, frameHeight: 43
         })
 
-        this.load.spritesheet("Explosion", "/assets/imagens/explosion.webp", {
+        this.load.spritesheet("Explosion", "./assets/imagens/explosion.webp", {
             frameWidth: 16, frameHeight: 16
         })
 
         // CARREGAMENTO DOS AUDIOS
-        this.load.audio("motorSFX", "/assets/audio/engine_sound.mp3")
-        this.load.audio("explosaoSFX", "/assets/audio/explosion_sound.mp3")
-        this.load.audio("tiroSFX", "/assets/audio/shoot_sound.mp3")
-        this.load.audio("startUpSFX", "/assets/audio/start-up_sound.mp3")
+        this.load.audio("motorSFX", "./assets/audio/engine_sound.mp3")
+        this.load.audio("explosaoSFX", "./assets/audio/explosion_sound.mp3")
+        this.load.audio("tiroSFX", "./assets/audio/shoot_sound.mp3")
+        this.load.audio("startUpSFX", "./assets/audio/start-up_sound.mp3")
     }
 
     create(){
