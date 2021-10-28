@@ -1,7 +1,8 @@
 {
-  "name": "local",
+  "name": "clone-flappy-bird-com-banco-de-dados",
   "version": "1.0.0",
-  "description": "",
+  "description": "Clone do Flappy Bird com Banco de Dados",
+  "private": true,
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
@@ -10,11 +11,12 @@
   "author": "Diego Matos",
   "license": "ISC",
   "dependencies": {
-    "body-parser": "^1.19.0",
-    "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-validator": "^6.6.0",
-    "mongoose": "^5.9.6",
-    "nodemon": "^2.0.2"
+    "mongoose": "^6.0.12"
+  },
+  "devDependencies": {
+    "dotenv": "^10.0.0",
+    "nodemon": "^2.0.14"
   }
 }
