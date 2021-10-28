@@ -8,7 +8,7 @@
     "node": "16.x"
   },
   "scripts": {
-    "start": "node --optimize_for_size --max_old_space_size=460 --gc_interval=100 server.js",
+    "start": "node --optimize_for_size --max_old_space_size=460 --gc_interval=100 app.js",
     "devStart": "nodemon app.js"
   },
   "author": "Diego Matos",
