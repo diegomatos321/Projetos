@@ -46,7 +46,7 @@ flappybirdRouter.post("/", [
 
             res.status(201).json(jogadorSalvo);
         } else {
-            res.status(404).json(jogador);
+            res.status(200).json(jogador);
             return;
         }
     } catch (error) {
