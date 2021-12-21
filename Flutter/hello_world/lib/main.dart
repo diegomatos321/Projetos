@@ -9,8 +9,16 @@ void main(List<String> args) {
   ));
 }
 
-class HelloWorld extends StatelessWidget {
+class HelloWorld extends StatefulWidget {
   const HelloWorld({ Key? key }) : super(key: key);
+
+  @override
+  State<HelloWorld> createState() => _HelloWorldState();
+}
+
+class _HelloWorldState extends State<HelloWorld> {
+  var texto = "Escreva alguma coisa";
+  TextEditingController _textoController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -19,21 +27,29 @@ class HelloWorld extends StatelessWidget {
         title: const Text("Minha primeira Aplicação em Flutter")
       ),
       body: Center(
-        child: Container(
-          width: 100,
-          height: 100,
-          color: Colors.black,
-          alignment: Alignment.center,
-          child: const Text(          
-            "Hello World",
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 24,
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            )
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Card(
+            child: Column(
+              children: <Widget>[
+                Text(
+                  texto,
+                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                ),
+                Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: TextField(
+                    controller: _textoController,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: "Blah Blah Blah"
+                    ),
+                  ),
+                )
+              ],
+            ),
           ),
-        ),
+        )
       ),
       drawer: Drawer(
         child: ListView(
@@ -47,18 +63,23 @@ class HelloWorld extends StatelessWidget {
               )
             ),
             ListTile(
-              leading: Icon(Icons.person_rounded),
-              title: Text("Diego Matos"),
-              subtitle: Text("Desenvolvedor"),
-              trailing: Icon(Icons.contact_phone),
+              leading: const Icon(Icons.person_rounded),
+              title: const Text("Diego Matos"),
+              subtitle: const Text("Desenvolvedor"),
+              trailing: const Icon(Icons.contact_phone),
               onTap: (){},
             )
           ],
         )
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: (){},
-        child: const Icon(Icons.edit),
+        onPressed: (){
+          texto = _textoController.text;
+          setState(() {
+            
+          });
+        },
+        child: const Icon(Icons.send),
       ),
     );
   }
