@@ -18,62 +18,47 @@ class HelloWorld extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Minha primeira Aplicação em Flutter")
       ),
-      body: Container(
-        width: 500,
-        height: 500,
-        color: Colors.black,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Container(
-              width: 100,
-              height: 100,
-              decoration: BoxDecoration(
-                color: Colors.red,
-                borderRadius: BorderRadius.circular(10),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey,
-                    blurRadius: 10
-                  )]
-              ),
-              alignment: Alignment.center,
-              child: const Text(
-                "Hello World",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 24,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                )
-              ),
-            ),
-            Container(
-              width: 100,
-              height: 100,
-              decoration: BoxDecoration(
-                color: Colors.yellow,
-                borderRadius: BorderRadius.circular(10),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey,
-                    blurRadius: 10
-                  )]
-              ),
-              alignment: Alignment.center,
-              child: const Text(
-                "Hello World",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 24,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                )
-              ),
-            ),
-          ],
+      body: Center(
+        child: Container(
+          width: 100,
+          height: 100,
+          color: Colors.black,
+          alignment: Alignment.center,
+          child: const Text(          
+            "Hello World",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 24,
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            )
+          ),
         ),
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: const EdgeInsets.all(0),
+          children: <Widget>[
+            const UserAccountsDrawerHeader(
+              accountName: Text("Diego Matos"), 
+              accountEmail: Text("example@email.com"),
+              currentAccountPicture: CircleAvatar(
+                backgroundImage: NetworkImage("https://avatars.githubusercontent.com/u/59349414?v=4")
+              )
+            ),
+            ListTile(
+              leading: Icon(Icons.person_rounded),
+              title: Text("Diego Matos"),
+              subtitle: Text("Desenvolvedor"),
+              trailing: Icon(Icons.contact_phone),
+              onTap: (){},
+            )
+          ],
+        )
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: (){},
+        child: const Icon(Icons.edit),
       ),
     );
   }
