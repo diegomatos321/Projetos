@@ -18,8 +18,31 @@ class HelloWorld extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Minha primeira Aplicação em Flutter")
       ),
-      body: Container(
-        child: const Text("Hello World"),
+      body: Center(
+        child: Container(
+          width: 100,
+          height: 100,
+          decoration: BoxDecoration(
+            color: Colors.red,
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey,
+                blurRadius: 10
+              )
+            ]
+          ),
+          alignment: Alignment.center,
+          child: const Text(
+            "Hello World",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 24,
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+            ),
+        ),
       ),
     );
   }
