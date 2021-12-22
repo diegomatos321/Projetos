@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt_BR">
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -8,7 +8,8 @@
 </head>
 <body>
   <?php
-    echo "Hello World";
+    $nome = "Tom";
+    echo "<h1>$nome é muito querido</h1";
   ?>
 </body>
 </html>
