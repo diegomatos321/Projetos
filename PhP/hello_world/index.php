@@ -9,7 +9,12 @@
 <body>
   <?php
     $nome = "Tom";
-    echo "<h1>$nome é muito querido</h1";
+    $idade = 2;
+    $fofura = 10.0;
+    $isMale = true;
+
+    echo "<h1>Tipos de Variáveis</h1>";
+    echo "<p>$nome tem $idade anos e é uma fofura nota $fofura</p>";
   ?>
 </body>
 </html>
