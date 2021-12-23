@@ -8,22 +8,15 @@
 </head>
 <body>
   <?php
-    $nome = "Tom";
-    $idade = 2;
-    $comidas_favoritas = array();
-    if($_POST) {
-      $nome = $_POST["nome"];
-      $idade = $_POST["idade"];
-      $comidas_favoritas = $_POST["comidas"];
-    }
 
-    $fofura = 10.0;
-    $isMale = true;
+    require_once "cachorro.php";
+
+    $tom = new Cachorro("Tom", 2, null, 10, true);
 
     echo "<h1>Formulários</h1>";
-    echo "<p>$nome tem $idade anos e é uma fofura nota $fofura</p>";
+    echo "<p>$tom->nome tem $tom->idade anos e é uma fofura nota $tom->fofura</p>";
 
-    if(count($comidas_favoritas) > 0) {
+/*     if(count($comidas_favoritas) > 0) {
       echo "<p>Ele adora comer</p>";
       echo "<ul>";
 
@@ -32,7 +25,7 @@
       }
 
       echo "</ul>";
-    }
+    } */
   ?>
 
   <form action="/hello_world/index.php" method="POST">
