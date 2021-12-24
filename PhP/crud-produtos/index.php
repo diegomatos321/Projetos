@@ -39,14 +39,19 @@
     <tbody>
       <?php foreach ($produtos as $produto): ?>
         <tr>
-          <th scope="row"><?php echo $produto["id"] ?></th>
+          <th scope="row">
+            <?php echo $produto["id"] ?>
+            <?php if ($produto["imagem"] && !empty($produto["imagem"])): ?>
+              <img src=<?php echo $produto["imagem"] ?> alt=<?php echo $produto["imagem"] ?> width=100/>
+            <?php endif;?>
+          </th>
           <td><?php echo $produto["nome"] ?></td>
           <td><?php echo $produto["descricao"] ?></td>
           <td><?php echo $produto["preco"] ?></td>
           <td><?php echo $produto["data_criacao"] ?></td>
           <td>
-            <button type="button" class="btn btn-info">Editar</button>
-            <button type="button" class="btn btn-danger">Deletar</button>
+            <a href="update.php?id=<?php echo $produto["id"]?>" class="btn btn-info">Editar</a>
+            <a href="delete.php?id=<?php echo $produto["id"]?>" class="btn btn-danger">Deletar</a>
           </td>
         </tr>
       <?php endforeach; ?>
