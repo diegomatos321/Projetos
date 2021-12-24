@@ -16,7 +16,7 @@
       array_push($errors, "O Produto precisa ter um preço.");
     }
 
-    if (!is_dir("./uploads")) {
+    if (!is_dir("uploads")) {
       mkdir("uploads");
     }
 
@@ -32,7 +32,7 @@
 
       if ($imagem && !empty($imagem["name"])) {
         $image_name = $imagem["name"];
-        $image_path = "./uploads/$image_name";
+        $image_path = "uploads/$image_name";
 
         move_uploaded_file($imagem["tmp_name"], $image_path);
       } else {
@@ -54,7 +54,7 @@
   </div>
 <?php endif; ?>
 
-<form action="./" method="POST" enctype="multipart/form-data">
+<form action="" method="POST" enctype="multipart/form-data">
   <div class="mb-3">
     <label for="nome" class="form-label">Nome do Produto</label>
     <input type="text" class="form-control" id="nome" name="nome" aria-describedby="Nome do Produto">
