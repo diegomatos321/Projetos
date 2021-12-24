@@ -6,7 +6,6 @@
   if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $nome = $_POST["nome"];
     $descricao = $_POST["descricao"];
-    // $imagem = $_POST["imagem"];
     $preco = $_POST["preco"];
 
     if (!$nome || empty($nome)) {
@@ -17,13 +16,30 @@
       array_push($errors, "O Produto precisa ter um preço.");
     }
 
+    if (!is_dir("./uploads")) {
+      mkdir("uploads");
+    }
+
     if (empty($errors)) {
+      $imagem = $_FILES["imagem"] ?? null;
+      $image_path = "";
+
       // $sql = "INSERT INTO produtos (nome, descricao, imagem, preco) VALUES (:nome, :descricao, :imagem, :preco)";
-      $sql = "INSERT INTO produtos (nome, descricao, preco) VALUES (:nome, :descricao, :preco)";
+      $sql = "INSERT INTO produtos (nome, descricao, imagem, preco) VALUES (:nome, :descricao, :imagem, :preco)";
       $statement = $pdo->prepare($sql);
       $statement->bindValue(":nome", $nome);
       $statement->bindValue(":descricao", $descricao);
-      // $statement->bindValue(":imagem", $imagem);
+
+      if ($imagem && !empty($imagem["name"])) {
+        $image_name = $imagem["name"];
+        $image_path = "./uploads/$image_name";
+
+        move_uploaded_file($imagem["tmp_name"], $image_path);
+      } else {
+        $image_name = null;
+      }
+      
+      $statement->bindValue(":imagem", $image_path);
       $statement->bindValue(":preco", $preco);
       $statement->execute();  
     }
