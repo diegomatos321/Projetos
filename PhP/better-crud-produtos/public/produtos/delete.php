@@ -1,6 +1,5 @@
 <?php
-
-require_once "database_connection.php";
+require_once "../../utils/database_connection.php";
 
 $id = $_GET["id"];
 
