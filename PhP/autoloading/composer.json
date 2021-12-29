@@ -1,0 +1,15 @@
+{
+  "name": "diego/autoloading",
+  "autoload": {
+    "psr-4": {
+      "app\\": "./app"
+    }
+  },
+  "authors": [
+    {
+      "name": "diegomatos",
+      "email": "diegovasconcelos62@gmail.com"
+    }
+  ],
+  "require": {}
+}
