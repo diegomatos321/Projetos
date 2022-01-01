@@ -10,10 +10,9 @@ class ProductController {
   }
 
   public function index() {
-    echo "Home Page";
-    // $allProducts = $this->dataBaseConnection->selectAll("produtos");
+    $allProducts = $this->dataBaseConnection->selectAll("produtos");
 
-    // $this->print($allProducts);
+    var_dump($allProducts);
   }
 
   public function create() {
@@ -38,9 +37,5 @@ class ProductController {
 
   public function deletePage() {
     echo "Show Product Delete Page";
-  }
-
-  private function print(array $items) {
-    var_dump($items);
   }
 }

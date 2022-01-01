@@ -30,11 +30,8 @@ class Database {
       return [];
     }
 
-    $sql = "SELECT * FROM :table;";
-
-    $statement = $this->pdo->prepare($sql);
-    $statement->bindValue(":table", $tableName);
-    $statement->execute();
+    $sql = "SELECT * FROM $tableName";
+    $statement = $this->pdo->query($sql);
 
     $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
 
