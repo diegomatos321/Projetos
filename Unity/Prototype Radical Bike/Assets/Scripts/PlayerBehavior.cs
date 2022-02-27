@@ -5,12 +5,12 @@ using UnityEngine.InputSystem;
 
 public class PlayerBehavior : MonoBehaviour
 {
+    [SerializeField] private Wheel backWheelCollider;
+    [SerializeField] private Wheel frontWheelCollider;
     [SerializeField] private Vector2 engineForce;
     [SerializeField] private float torqueForce = 10f;
-    [SerializeField] private LayerMask groundLayerMask;
 
     private Rigidbody2D playerRigidBody;
-    private CapsuleCollider2D collider;
     private int playerSprintInput = 0;
     private float playerSprintToque = 0;
 
@@ -18,7 +18,6 @@ public class PlayerBehavior : MonoBehaviour
     void Start()
     {
         this.playerRigidBody = GetComponent<Rigidbody2D>();
-        this.collider = GetComponent<CapsuleCollider2D>();
     }
 
     // Update is called once per frame
@@ -51,9 +50,10 @@ public class PlayerBehavior : MonoBehaviour
     }
 
     private bool IsGrounded() {
-        float extraHeight = 0.1f;
-        float distance = this.collider.bounds.extents.y + extraHeight;
-        Vector2 centerOfPlayer = this.collider.bounds.center;
+        return this.backWheelCollider.IsGrounded() || this.frontWheelCollider.IsGrounded();
+        /* float extraHeight = 0.1f;
+        float distance = this.GetComponent<Collider>().bounds.extents.y + extraHeight;
+        Vector2 centerOfPlayer = this.GetComponent<Collider>().bounds.center;
         RaycastHit2D raycastToGround = Physics2D.Raycast(centerOfPlayer, Vector2.down, distance, this.groundLayerMask);
 
         Color rayColor;
@@ -64,8 +64,8 @@ public class PlayerBehavior : MonoBehaviour
             rayColor = Color.red;
         }
 
-        Debug.DrawRay(this.collider.bounds.center, Vector2.down * distance, rayColor);
+        Debug.DrawRay(this.GetComponent<Collider>().bounds.center, Vector2.down * distance, rayColor);
 
-        return raycastToGround.collider != null;
+        return raycastToGround.collider != null; */
     }
 }
