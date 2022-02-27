@@ -121,6 +121,7 @@ PolygonCollider2D:
       - {x: 0.29730064, y: -0.6889352}
       - {x: 0.30239052, y: -0.7097372}
       - {x: -0.17710724, y: -0.74125993}
+      - {x: -0.58187103, y: -0.2958498}
       - {x: -1.1134405, y: -0.1408098}
       - {x: -1.1146526, y: 0.05020012}
       - {x: -0.5329753, y: -0.14481649}
@@ -219,10 +220,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 035adef3b91c8234aaa915daf92c7452, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  backWheelCollider: {fileID: 2516455946783630543}
-  frontWheelCollider: {fileID: 2411031394576292566}
+  frontWheel: {fileID: 2411031394576292566}
+  backWheel: {fileID: 2516455946783630543}
   engineForce: {x: 120, y: 0}
-  torqueForce: 20
+  playerRotation: 20
 --- !u!1 &663344075040393337
 GameObject:
   m_ObjectHideFlags: 0
@@ -362,8 +363,8 @@ FixedJoint2D:
   m_BreakForce: Infinity
   m_BreakTorque: Infinity
   m_AutoConfigureConnectedAnchor: 1
-  m_Anchor: {x: -0.14, y: 0.31}
-  m_ConnectedAnchor: {x: 0.59500027, y: -0.26999998}
+  m_Anchor: {x: -0.24205399, y: 0.42663312}
+  m_ConnectedAnchor: {x: 0.49294615, y: -0.1533668}
   m_DampingRatio: 0
   m_Frequency: 0
 --- !u!114 &2411031394576292566
@@ -520,8 +521,8 @@ FixedJoint2D:
   m_BreakForce: Infinity
   m_BreakTorque: Infinity
   m_AutoConfigureConnectedAnchor: 1
-  m_Anchor: {x: 0.405797, y: 0.10840678}
-  m_ConnectedAnchor: {x: -0.37120342, y: -0.5395932}
+  m_Anchor: {x: 0.7265377, y: 0.14728451}
+  m_ConnectedAnchor: {x: -0.050462723, y: -0.5007155}
   m_DampingRatio: 0
   m_Frequency: 0
 --- !u!114 &2516455946783630543

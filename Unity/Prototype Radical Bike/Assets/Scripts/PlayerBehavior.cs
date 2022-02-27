@@ -5,10 +5,10 @@ using UnityEngine.InputSystem;
 
 public class PlayerBehavior : MonoBehaviour
 {
-    [SerializeField] private Wheel backWheelCollider;
-    [SerializeField] private Wheel frontWheelCollider;
+    [SerializeField] private Wheel frontWheel;
+    [SerializeField] private Wheel backWheel;
     [SerializeField] private Vector2 engineForce;
-    [SerializeField] private float torqueForce = 10f;
+    [SerializeField] private float playerRotation = 10f;
 
     private Rigidbody2D playerRigidBody;
     private int playerSprintInput = 0;
@@ -25,12 +25,14 @@ public class PlayerBehavior : MonoBehaviour
     {
         if (this.IsGrounded())
         {
-            this.playerRigidBody.AddRelativeForce(this.engineForce * this.playerSprintInput);
+            // this.playerRigidBody.AddRelativeForce(this.engineForce * this.playerSprintInput, ForceMode2D.Impulse);
+            this.backWheel.Forward(this.engineForce, this.playerSprintInput);
         }
 
-        this.playerRigidBody.AddTorque(this.torqueForce * this.playerSprintToque);
+        this.playerRigidBody.AddTorque(this.playerRotation * this.playerSprintToque);
     }
 
+    // TODO: Alterar InputAction para botão
     public void Sprint(InputAction.CallbackContext context){
         if (context.canceled) {
             this.playerSprintInput = 0;
@@ -50,7 +52,7 @@ public class PlayerBehavior : MonoBehaviour
     }
 
     private bool IsGrounded() {
-        return this.backWheelCollider.IsGrounded() || this.frontWheelCollider.IsGrounded();
+        return this.backWheel.IsGrounded() || this.frontWheel.IsGrounded();
         /* float extraHeight = 0.1f;
         float distance = this.GetComponent<Collider>().bounds.extents.y + extraHeight;
         Vector2 centerOfPlayer = this.GetComponent<Collider>().bounds.center;

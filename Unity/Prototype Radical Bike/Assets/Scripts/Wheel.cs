@@ -7,11 +7,13 @@ public class Wheel : MonoBehaviour
     [SerializeField] private LayerMask groundLayerMask;
 
     private CircleCollider2D collider;
+    private Rigidbody2D rigidbody2D;
 
     // Start is called before the first frame update
     void Start()
     {
         this.collider = GetComponent<CircleCollider2D>();    
+        this.rigidbody2D = GetComponent<Rigidbody2D>();
     }
 
     public bool IsGrounded() {
@@ -31,5 +33,9 @@ public class Wheel : MonoBehaviour
         Debug.DrawRay(this.collider.bounds.center, Vector2.down * distance, rayColor);
 
         return raycastToGround.collider != null;
+    }
+
+    public void Forward(Vector2 engineForce, int input) {
+        this.rigidbody2D.AddRelativeForce(engineForce * input, ForceMode2D.Impulse);
     }
 }
