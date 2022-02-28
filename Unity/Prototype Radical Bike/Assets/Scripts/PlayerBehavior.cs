@@ -7,7 +7,7 @@ public class PlayerBehavior : MonoBehaviour
 {
     [SerializeField] private Wheel frontWheel;
     [SerializeField] private Wheel backWheel;
-    [SerializeField] private Vector2 engineForce;
+    [SerializeField] private float engineForce = 1f;
     [SerializeField] private float playerRotation = 10f;
 
     private Rigidbody2D playerRigidBody;
@@ -20,16 +20,11 @@ public class PlayerBehavior : MonoBehaviour
         this.playerRigidBody = GetComponent<Rigidbody2D>();
     }
 
-    // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-        if (this.IsGrounded())
-        {
-            // this.playerRigidBody.AddRelativeForce(this.engineForce * this.playerSprintInput, ForceMode2D.Impulse);
-            this.backWheel.Forward(this.engineForce, this.playerSprintInput);
-        }
+        this.backWheel.Forward(this.engineForce, this.playerSprintInput);
 
-        this.playerRigidBody.AddTorque(this.playerRotation * this.playerSprintToque);
+        this.playerRigidBody.AddTorque(this.playerRotation * this.playerSprintToque * Time.fixedDeltaTime);
     }
 
     // TODO: Alterar InputAction para botão
@@ -53,21 +48,5 @@ public class PlayerBehavior : MonoBehaviour
 
     private bool IsGrounded() {
         return this.backWheel.IsGrounded() || this.frontWheel.IsGrounded();
-        /* float extraHeight = 0.1f;
-        float distance = this.GetComponent<Collider>().bounds.extents.y + extraHeight;
-        Vector2 centerOfPlayer = this.GetComponent<Collider>().bounds.center;
-        RaycastHit2D raycastToGround = Physics2D.Raycast(centerOfPlayer, Vector2.down, distance, this.groundLayerMask);
-
-        Color rayColor;
-
-        if (raycastToGround.collider != null) {
-            rayColor = Color.green;
-        } else {
-            rayColor = Color.red;
-        }
-
-        Debug.DrawRay(this.GetComponent<Collider>().bounds.center, Vector2.down * distance, rayColor);
-
-        return raycastToGround.collider != null; */
     }
 }
