@@ -5,13 +5,14 @@ using UnityEngine.InputSystem;
 
 public class PlayerBehavior : MonoBehaviour
 {
-    [SerializeField] private Rigidbody2D frontWheel;
-    [SerializeField] private Rigidbody2D backWheel;
-    [SerializeField] private float speed = 100f;
-    [SerializeField] private float rotationSpeed = 500f;
+    [SerializeField] private Wheel frontWheel;
+    [SerializeField] private Wheel backWheel;
+    [SerializeField] private float speed = 150f;
+    [SerializeField] private float rotation = 800f;
 
     private Rigidbody2D playerRigidBody;
-    private int playerInput = 0;
+    private Vector2 movementInput;
+    private int jumpInput;
     private float playerRotationInput = 0;
 
     // Start is called before the first frame update
@@ -22,32 +23,22 @@ public class PlayerBehavior : MonoBehaviour
 
     void FixedUpdate()
     {
-        this.backWheel.AddTorque(-this.speed * this.playerInput * Time.fixedDeltaTime);
-        this.frontWheel.AddTorque(-this.speed * this.playerInput * Time.fixedDeltaTime);
+        this.backWheel.Forward(this.speed, this.movementInput);
+        this.frontWheel.Forward(this.speed, this.movementInput);
 
-        this.playerRigidBody.AddTorque(this.rotationSpeed * this.playerRotationInput * Time.fixedDeltaTime);
+        this.playerRigidBody.AddTorque(-this.rotation * this.movementInput.x * Time.fixedDeltaTime);
     }
 
-    // TODO: Alterar InputAction para botão
-    public void Sprint(InputAction.CallbackContext context){
+    public void ReadPlayerMovementInput(InputAction.CallbackContext context){
         if (context.canceled) {
-            this.playerInput = 0;
-            return;
-        }
-
-        this.playerInput = 1;
-    }
-
-    public void ChangeDirection(InputAction.CallbackContext context) {
-        if (context.canceled) {
-            this.playerRotationInput = 0;
+            this.movementInput = Vector2.zero;
             return;
         };
 
-        this.playerRotationInput = context.ReadValue<float>();
+        this.movementInput = context.ReadValue<Vector2>();
     }
 
-    /* private bool IsGrounded() {
+    private bool IsGrounded() {
         return this.backWheel.IsGrounded() || this.frontWheel.IsGrounded();
-    } */
+    }
 }

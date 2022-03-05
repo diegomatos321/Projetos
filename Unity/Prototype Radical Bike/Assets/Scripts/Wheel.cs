@@ -35,7 +35,7 @@ public class Wheel : MonoBehaviour
         return raycastToGround.collider != null;
     }
 
-    public void Forward(float speed, int input) {
-        this.rigidbody2D.AddTorque(speed * input * Time.fixedDeltaTime);
+    public void Forward(float speed, Vector2 input) {
+        this.rigidbody2D.AddTorque(-speed * input.y * Time.fixedDeltaTime);
     }
 }

@@ -119,6 +119,7 @@ PolygonCollider2D:
     m_Paths:
     - - {x: 0.00590837, y: -0.23470317}
       - {x: 0.7254079, y: 0.08339155}
+      - {x: 0.75968987, y: -0.11327362}
       - {x: 0.38429004, y: -0.3732198}
       - {x: 0.29730064, y: -0.6889352}
       - {x: 0.30239052, y: -0.7097372}
@@ -146,7 +147,7 @@ Rigidbody2D:
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 0
 --- !u!235 &6687452982594933575
 WheelJoint2D:
@@ -165,8 +166,8 @@ WheelJoint2D:
   m_Anchor: {x: 0.73499995, y: -0.6}
   m_ConnectedAnchor: {x: 0, y: 0}
   m_Suspension:
-    m_DampingRatio: 0.9
-    m_Frequency: 2
+    m_DampingRatio: 1
+    m_Frequency: 100
     m_Angle: 120
   m_UseMotor: 0
   m_Motor:
@@ -189,8 +190,8 @@ WheelJoint2D:
   m_Anchor: {x: -0.777, y: -0.6}
   m_ConnectedAnchor: {x: 0, y: 0}
   m_Suspension:
-    m_DampingRatio: 0.9
-    m_Frequency: 2
+    m_DampingRatio: 1
+    m_Frequency: 100
     m_Angle: 15
   m_UseMotor: 0
   m_Motor:
@@ -225,7 +226,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 9049427765319100908}
         m_TargetAssemblyTypeName: PlayerBehavior, Assembly-CSharp
-        m_MethodName: Sprint
+        m_MethodName: ReadPlayerMovementInput
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -241,7 +242,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 9049427765319100908}
         m_TargetAssemblyTypeName: PlayerBehavior, Assembly-CSharp
-        m_MethodName: ChangeDirection
+        m_MethodName: ReadPlayerJumpInput
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -251,8 +252,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-    m_ActionId: cbe63634-48c4-4d62-9ac4-bc21a98eaf38
-    m_ActionName: Bike/Rotate[/Keyboard/d,/Keyboard/a,/Keyboard/rightArrow,/Keyboard/leftArrow]
+    m_ActionId: 60ad2a46-14ba-43e5-b244-66c01d584d58
+    m_ActionName: Bike/Jump[/Keyboard/space]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Bike
@@ -270,10 +271,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 035adef3b91c8234aaa915daf92c7452, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  frontWheel: {fileID: 6224236107322629652}
-  backWheel: {fileID: 8454989925937626044}
-  speed: 260
-  rotationSpeed: 1400
+  frontWheel: {fileID: 2411031394576292566}
+  backWheel: {fileID: 2516455946783630543}
+  speed: 150
+  rotation: 1200
 --- !u!1 &663344075040393337
 GameObject:
   m_ObjectHideFlags: 0
@@ -396,7 +397,7 @@ Rigidbody2D:
   m_Material: {fileID: 6200000, guid: 433a843672c0fcf4b8ea04f60ad43567, type: 2}
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 0
 --- !u!114 &2411031394576292566
 MonoBehaviour:
@@ -528,14 +529,14 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 5
+  m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 1
   m_Material: {fileID: 6200000, guid: 433a843672c0fcf4b8ea04f60ad43567, type: 2}
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 0
 --- !u!114 &2516455946783630543
 MonoBehaviour:
