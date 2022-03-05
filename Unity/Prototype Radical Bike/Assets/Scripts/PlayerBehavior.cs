@@ -5,14 +5,14 @@ using UnityEngine.InputSystem;
 
 public class PlayerBehavior : MonoBehaviour
 {
-    [SerializeField] private Wheel frontWheel;
-    [SerializeField] private Wheel backWheel;
-    [SerializeField] private float engineForce = 1f;
-    [SerializeField] private float playerRotation = 10f;
+    [SerializeField] private Rigidbody2D frontWheel;
+    [SerializeField] private Rigidbody2D backWheel;
+    [SerializeField] private float speed = 100f;
+    [SerializeField] private float rotationSpeed = 500f;
 
     private Rigidbody2D playerRigidBody;
-    private int playerSprintInput = 0;
-    private float playerSprintToque = 0;
+    private int playerInput = 0;
+    private float playerRotationInput = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -22,31 +22,32 @@ public class PlayerBehavior : MonoBehaviour
 
     void FixedUpdate()
     {
-        this.backWheel.Forward(this.engineForce, this.playerSprintInput);
+        this.backWheel.AddTorque(-this.speed * this.playerInput * Time.fixedDeltaTime);
+        this.frontWheel.AddTorque(-this.speed * this.playerInput * Time.fixedDeltaTime);
 
-        this.playerRigidBody.AddTorque(this.playerRotation * this.playerSprintToque * Time.fixedDeltaTime);
+        this.playerRigidBody.AddTorque(this.rotationSpeed * this.playerRotationInput * Time.fixedDeltaTime);
     }
 
     // TODO: Alterar InputAction para botão
     public void Sprint(InputAction.CallbackContext context){
         if (context.canceled) {
-            this.playerSprintInput = 0;
+            this.playerInput = 0;
             return;
         }
 
-        this.playerSprintInput = 1;
+        this.playerInput = 1;
     }
 
     public void ChangeDirection(InputAction.CallbackContext context) {
         if (context.canceled) {
-            this.playerSprintToque = 0;
+            this.playerRotationInput = 0;
             return;
         };
 
-        this.playerSprintToque = context.ReadValue<float>();
+        this.playerRotationInput = context.ReadValue<float>();
     }
 
-    private bool IsGrounded() {
+    /* private bool IsGrounded() {
         return this.backWheel.IsGrounded() || this.frontWheel.IsGrounded();
-    }
+    } */
 }
