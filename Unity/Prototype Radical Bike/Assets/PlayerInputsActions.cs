@@ -29,18 +29,9 @@ public partial class @PlayerInputsActions : IInputActionCollection2, IDisposable
             ""actions"": [
                 {
                     ""name"": ""Sprint"",
-                    ""type"": ""Button"",
-                    ""id"": ""f5c5f82b-8ebd-4bd8-ba1d-cb23abf0c132"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""Rotate"",
                     ""type"": ""Value"",
-                    ""id"": ""cbe63634-48c4-4d62-9ac4-bc21a98eaf38"",
-                    ""expectedControlType"": ""Button"",
+                    ""id"": ""f5c5f82b-8ebd-4bd8-ba1d-cb23abf0c132"",
+                    ""expectedControlType"": ""Vector2"",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
@@ -48,91 +39,80 @@ public partial class @PlayerInputsActions : IInputActionCollection2, IDisposable
             ],
             ""bindings"": [
                 {
-                    ""name"": """",
-                    ""id"": ""01262153-bd5d-4a5e-a926-2d5aaf7e6500"",
-                    ""path"": ""<Keyboard>/space"",
+                    ""name"": ""Movement"",
+                    ""id"": ""94128ac6-f3fb-44f5-865d-71fb38da81a3"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Sprint"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""7ae50307-c0e6-410a-9d63-5aac855f8149"",
+                    ""path"": ""<Keyboard>/w"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Sprint"",
                     ""isComposite"": false,
-                    ""isPartOfComposite"": false
+                    ""isPartOfComposite"": true
                 },
                 {
-                    ""name"": ""AD"",
-                    ""id"": ""07494f45-d2ce-426d-b0cc-3acf8a37be68"",
-                    ""path"": ""1DAxis"",
+                    ""name"": ""down"",
+                    ""id"": ""12bc507e-3a3f-42b7-8c8a-836a7e2e6354"",
+                    ""path"": ""<Keyboard>/s"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Rotate"",
-                    ""isComposite"": true,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""negative"",
-                    ""id"": ""04308494-84bc-468e-b571-a8ce288eee4c"",
-                    ""path"": ""<Keyboard>/d"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Rotate"",
+                    ""action"": ""Sprint"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
                 {
-                    ""name"": ""positive"",
-                    ""id"": ""af63ed39-d726-4eb1-b379-5bc0ee23b165"",
+                    ""name"": ""left"",
+                    ""id"": ""5b430069-bb88-4612-96f9-b429f86f6d7f"",
                     ""path"": ""<Keyboard>/a"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Rotate"",
+                    ""action"": ""Sprint"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
                 {
-                    ""name"": ""Arrows"",
-                    ""id"": ""0e28ea13-a9d9-4c45-9dd4-1413a317dbe1"",
-                    ""path"": ""1DAxis"",
+                    ""name"": ""right"",
+                    ""id"": ""736a2585-f633-4d28-9244-a542def7e7e5"",
+                    ""path"": ""<Keyboard>/d"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Rotate"",
-                    ""isComposite"": true,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""negative"",
-                    ""id"": ""6c79d6bb-4e1b-4e81-a2c4-0f6278ce392e"",
-                    ""path"": ""<Keyboard>/rightArrow"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Rotate"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""positive"",
-                    ""id"": ""53700078-7f3a-4d1a-aae6-dbf8dd54471a"",
-                    ""path"": ""<Keyboard>/leftArrow"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Rotate"",
+                    ""action"": ""Sprint"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 }
             ]
         }
     ],
-    ""controlSchemes"": []
+    ""controlSchemes"": [
+        {
+            ""name"": ""Keyboard"",
+            ""bindingGroup"": ""Keyboard"",
+            ""devices"": [
+                {
+                    ""devicePath"": ""<Keyboard>"",
+                    ""isOptional"": false,
+                    ""isOR"": false
+                }
+            ]
+        }
+    ]
 }");
         // Bike
         m_Bike = asset.FindActionMap("Bike", throwIfNotFound: true);
         m_Bike_Sprint = m_Bike.FindAction("Sprint", throwIfNotFound: true);
-        m_Bike_Rotate = m_Bike.FindAction("Rotate", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -193,13 +173,11 @@ public partial class @PlayerInputsActions : IInputActionCollection2, IDisposable
     private readonly InputActionMap m_Bike;
     private IBikeActions m_BikeActionsCallbackInterface;
     private readonly InputAction m_Bike_Sprint;
-    private readonly InputAction m_Bike_Rotate;
     public struct BikeActions
     {
         private @PlayerInputsActions m_Wrapper;
         public BikeActions(@PlayerInputsActions wrapper) { m_Wrapper = wrapper; }
         public InputAction @Sprint => m_Wrapper.m_Bike_Sprint;
-        public InputAction @Rotate => m_Wrapper.m_Bike_Rotate;
         public InputActionMap Get() { return m_Wrapper.m_Bike; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -212,9 +190,6 @@ public partial class @PlayerInputsActions : IInputActionCollection2, IDisposable
                 @Sprint.started -= m_Wrapper.m_BikeActionsCallbackInterface.OnSprint;
                 @Sprint.performed -= m_Wrapper.m_BikeActionsCallbackInterface.OnSprint;
                 @Sprint.canceled -= m_Wrapper.m_BikeActionsCallbackInterface.OnSprint;
-                @Rotate.started -= m_Wrapper.m_BikeActionsCallbackInterface.OnRotate;
-                @Rotate.performed -= m_Wrapper.m_BikeActionsCallbackInterface.OnRotate;
-                @Rotate.canceled -= m_Wrapper.m_BikeActionsCallbackInterface.OnRotate;
             }
             m_Wrapper.m_BikeActionsCallbackInterface = instance;
             if (instance != null)
@@ -222,16 +197,21 @@ public partial class @PlayerInputsActions : IInputActionCollection2, IDisposable
                 @Sprint.started += instance.OnSprint;
                 @Sprint.performed += instance.OnSprint;
                 @Sprint.canceled += instance.OnSprint;
-                @Rotate.started += instance.OnRotate;
-                @Rotate.performed += instance.OnRotate;
-                @Rotate.canceled += instance.OnRotate;
             }
         }
     }
     public BikeActions @Bike => new BikeActions(this);
+    private int m_KeyboardSchemeIndex = -1;
+    public InputControlScheme KeyboardScheme
+    {
+        get
+        {
+            if (m_KeyboardSchemeIndex == -1) m_KeyboardSchemeIndex = asset.FindControlSchemeIndex("Keyboard");
+            return asset.controlSchemes[m_KeyboardSchemeIndex];
+        }
+    }
     public interface IBikeActions
     {
         void OnSprint(InputAction.CallbackContext context);
-        void OnRotate(InputAction.CallbackContext context);
     }
 }

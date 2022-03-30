@@ -7,12 +7,13 @@ public class PlayerBehavior : MonoBehaviour
 {
     [SerializeField] private Wheel frontWheel;
     [SerializeField] private Wheel backWheel;
-    [SerializeField] private Vector2 engineForce;
-    [SerializeField] private float playerRotation = 10f;
+    [SerializeField] private float speed = 150f;
+    [SerializeField] private float rotation = 800f;
 
     private Rigidbody2D playerRigidBody;
-    private int playerSprintInput = 0;
-    private float playerSprintToque = 0;
+    private Vector2 movementInput;
+    private int jumpInput;
+    private float playerRotationInput = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -20,54 +21,24 @@ public class PlayerBehavior : MonoBehaviour
         this.playerRigidBody = GetComponent<Rigidbody2D>();
     }
 
-    // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-        if (this.IsGrounded())
-        {
-            // this.playerRigidBody.AddRelativeForce(this.engineForce * this.playerSprintInput, ForceMode2D.Impulse);
-            this.backWheel.Forward(this.engineForce, this.playerSprintInput);
-        }
+        this.backWheel.Forward(this.speed, this.movementInput);
+        this.frontWheel.Forward(this.speed, this.movementInput);
 
-        this.playerRigidBody.AddTorque(this.playerRotation * this.playerSprintToque);
+        this.playerRigidBody.AddTorque(-this.rotation * this.movementInput.x * Time.fixedDeltaTime);
     }
 
-    // TODO: Alterar InputAction para botão
-    public void Sprint(InputAction.CallbackContext context){
+    public void ReadPlayerMovementInput(InputAction.CallbackContext context){
         if (context.canceled) {
-            this.playerSprintInput = 0;
-            return;
-        }
-
-        this.playerSprintInput = 1;
-    }
-
-    public void ChangeDirection(InputAction.CallbackContext context) {
-        if (context.canceled) {
-            this.playerSprintToque = 0;
+            this.movementInput = Vector2.zero;
             return;
         };
 
-        this.playerSprintToque = context.ReadValue<float>();
+        this.movementInput = context.ReadValue<Vector2>();
     }
 
     private bool IsGrounded() {
         return this.backWheel.IsGrounded() || this.frontWheel.IsGrounded();
-        /* float extraHeight = 0.1f;
-        float distance = this.GetComponent<Collider>().bounds.extents.y + extraHeight;
-        Vector2 centerOfPlayer = this.GetComponent<Collider>().bounds.center;
-        RaycastHit2D raycastToGround = Physics2D.Raycast(centerOfPlayer, Vector2.down, distance, this.groundLayerMask);
-
-        Color rayColor;
-
-        if (raycastToGround.collider != null) {
-            rayColor = Color.green;
-        } else {
-            rayColor = Color.red;
-        }
-
-        Debug.DrawRay(this.GetComponent<Collider>().bounds.center, Vector2.down * distance, rayColor);
-
-        return raycastToGround.collider != null; */
     }
 }
