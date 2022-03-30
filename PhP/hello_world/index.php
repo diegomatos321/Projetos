@@ -8,18 +8,24 @@
 </head>
 <body>
   <?php
-    $nome = "Tom";
-    $idade = 2;
-    if($_POST) {
-      $nome = $_POST["nome"];
-      $idade = $_POST["idade"];
-    }
 
-    $fofura = 10.0;
-    $isMale = true;
+    require_once "cachorro.php";
+
+    $tom = new Cachorro("Tom", 2, null, 10, true);
 
     echo "<h1>Formulários</h1>";
-    echo "<p>$nome tem $idade anos e é uma fofura nota $fofura</p>";
+    echo "<p>$tom->nome tem $tom->idade anos e é uma fofura nota $tom->fofura</p>";
+
+/*     if(count($comidas_favoritas) > 0) {
+      echo "<p>Ele adora comer</p>";
+      echo "<ul>";
+
+      for ($i = 0; $i < count($comidas_favoritas); $i++) { 
+        echo "<li>$comidas_favoritas[$i]</li>";
+      }
+
+      echo "</ul>";
+    } */
   ?>
 
   <form action="/hello_world/index.php" method="POST">
@@ -30,6 +36,13 @@
 
       <label for="idade">Idade:</label>
       <input type="text" id="idade" name="idade"/>
+
+      <label for="melao">Melão</label>
+      <input type="checkbox" name="comidas[]" id="melao" value="melao"/>
+      <label for="maca">Maçã</label>
+      <input type="checkbox" name="comidas[]" id="maca" value="maçã"/>
+      <label for="pera">Pêra</label>
+      <input type="checkbox" name="comidas[]" id="pera" value="pêra"/>
 
       <input type="submit" value="Enviar">
     </fieldset>

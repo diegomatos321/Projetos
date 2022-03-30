@@ -1,0 +1,18 @@
+{
+  "name": "exercicio/good-crud-produtos",
+  "description": "Exercicio PhP",
+  "type": "project",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "app\\": "./"
+    }
+  },
+  "authors": [
+    {
+      "name": "diegomatos",
+      "email": "diegovasconcelos62@gmail.com"
+    }
+  ],
+  "require": {}
+}
