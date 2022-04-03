@@ -2,7 +2,7 @@ import * as Phaser from "phaser";
 import "phaser/plugins/spine/dist/SpinePlugin";
 import Preload from "./preload";
 import Menu from "./scenes/Menu";
-import SpineDemoScene from "./scenes/SpineDemoScene";
+import MainGame from "./scenes/MainGame";
 
 const config: Phaser.Types.Core.GameConfig = {
 	type: Phaser.AUTO,
@@ -18,7 +18,7 @@ const config: Phaser.Types.Core.GameConfig = {
 			gravity: { y: 200 }
 		}
 	}, */
-	scene: [Preload, Menu, SpineDemoScene],
+	scene: [Preload, Menu, MainGame],
 	plugins: {
 		scene: [
 			{ key: 'SpinePlugin', plugin: window.SpinePlugin, mapping: 'spine' }

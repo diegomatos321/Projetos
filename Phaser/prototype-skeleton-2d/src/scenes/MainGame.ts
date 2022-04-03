@@ -1,11 +1,11 @@
-export default class SpineDemoScene extends Phaser.Scene {
+export default class MainGame extends Phaser.Scene {
   private GAME_WIDTH: number;
   private GAME_HEIGHT: number;
 
   private Player: SpineGameObject;
 
   constructor() {
-    super({ key: "SpineDemo "});
+    super({ key: "MainGame"});
   }
 
   private init = () => {
@@ -14,8 +14,7 @@ export default class SpineDemoScene extends Phaser.Scene {
   }
 
   private preload = (): void => {
-    this.load.spine("spineboy", "./assets/characters/spineboy.json", "./assets/characters/spineboy.atlas");
-    this.load.bitmapFont("typewrite", "./assets/fonts/mainfont_0.png", "./assets/fonts/mainfont.xml") 
+    this.load.spine("spineboy", "./assets/characters/player/spineboy.json", "./assets/characters/player/spineboy.atlas");
   }
 
   private create = (): void => {
