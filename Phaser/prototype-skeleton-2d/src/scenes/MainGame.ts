@@ -2,7 +2,7 @@ export default class MainGame extends Phaser.Scene {
   private GAME_WIDTH: number;
   private GAME_HEIGHT: number;
 
-  private Player: SpineGameObject;
+  private player: SpineGameObject;
 
   constructor() {
     super({ key: "MainGame"});
@@ -14,11 +14,17 @@ export default class MainGame extends Phaser.Scene {
   }
 
   private preload = (): void => {
-    this.load.spine("spineboy", "./assets/characters/player/spineboy.json", "./assets/characters/player/spineboy.atlas");
+    
   }
 
   private create = (): void => {
-    this.Player = this.add.spine(400, 600, "spineboy", "idle", true).setScale(0.5);
+    this.player = this.add.spine(250, 550, "spineboy", "idle", true).setScale(0.3);
+
+    this.physics.add.existing(this.player);
+    
+    const playerBody = this.player.body as Phaser.Physics.Arcade.Body;
+    playerBody.setCollideWorldBounds(true);
+
     this.add.bitmapText(this.GAME_WIDTH / 2, 20, "typewrite", "Teste de Fonte").setOrigin(0.5).setFontSize(64);
   }
 }
