@@ -4,7 +4,9 @@ export default class Preload extends Phaser.Scene {
   }
 
   private preload = (): void => {
-    this.load.atlas("loading", "./assets/animations/Bean Eater-1s-200px/loading-pacman.png", "./assets/animations/Bean Eater-1s-200px/loading-pacman.json")
+    this.load.atlas("loading", "./assets/animations/Bean Eater-1s-200px/loading-pacman.png", "./assets/animations/Bean Eater-1s-200px/loading-pacman.json");
+    this.load.spine("spineboy", "./assets/characters/player/spineboy.json", "./assets/characters/player/spineboy.atlas");
+    this.load.bitmapFont("typewrite", "./assets/fonts/mainfont_0.png", "./assets/fonts/mainfont.xml") 
   }
 
   private create = (): void => {
