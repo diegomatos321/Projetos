@@ -1,5 +1,5 @@
 {
-  "name": "prototype-skeleton-2d",
+  "name": "spine2d-prototype",
   "version": "1.0.0",
   "description": "Simple scene with Skeleton 2D attached to a Character",
   "scripts": {
