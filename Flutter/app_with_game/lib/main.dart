@@ -2,77 +2,88 @@ import 'package:flutter/material.dart';
 
 void main() {
   runApp(MaterialApp(
-    home: HomePage(),
-    theme: ThemeData(
-      primarySwatch: Colors.deepPurple
-    )
-  ));
+      home: HomePage(), theme: ThemeData(primarySwatch: Colors.deepPurple)));
 }
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  var pokemonName = 'Tudo sobre Pokemons';
+  TextEditingController pokemonNameController = TextEditingController();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Hello World'),
-        ),
-        body: Column(
+      appBar: AppBar(
+        title: Text('Hello World'),
+      ),
+      body: SingleChildScrollView(
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Container(
-              padding: EdgeInsets.all(8),
-              color: Colors.red,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Container(
-                    child: Text('Conheça mais sobre pokemons'),
+            Card(
+              child: Column(children: <Widget>[
+                Image.asset('images/pokemon-logo.png', fit: BoxFit.fitWidth),
+                const SizedBox(height: 20),
+                Text(
+                  pokemonName,
+                  style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 20),
+                Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: TextField(
+                    controller: pokemonNameController,
+                    decoration: const InputDecoration(
+                        labelText: 'Pesquise por um pokemon'),
                   ),
-                  Container(
-                    child: Text('Eles são muito legais')
-                  )
-                ],
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.all(8),
-              color: Colors.yellow,
-              child: Row(
-                children: <Widget>[
-                  Container(
-                    child: Text('Conheça mais sobre pokemons'),
-                  ),
-                  Container(
-                    child: Text('Eles são muito legais')
-                  )
-                ],
-              ),
+                )
+              ]),
             )
           ],
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: (() => {}),
-          child: Icon(Icons.wysiwyg),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: (() {
+          pokemonName = pokemonNameController.text;
+          setState(() {});
+        }),
+        child: const Icon(Icons.send),
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: const EdgeInsets.all(0),
+          children: const <Widget>[
+            DrawerHeader(
+              child: Text('Pokemon'),
+              decoration: BoxDecoration(color: Colors.yellow),
+            ),
+            ListTile(
+              leading: Icon(Icons.catching_pokemon),
+              title: Text('O Pokemon'),
+            ),
+            ListTile(
+              leading: Icon(Icons.catching_pokemon),
+              title: Text('O Pokemon'),
+            )
+          ],
         ),
-        drawer: Drawer(
-          child: ListView(
-            padding: const EdgeInsets.all(0),
-            children: const <Widget>[
-              DrawerHeader(
-                child: Text('Pokemon'),
-                decoration: BoxDecoration(color: Colors.yellow),
-              ),
-              ListTile(
-                leading: Icon(Icons.catching_pokemon),
-                title: Text('O Pokemon'),
-              ),
-              ListTile(
-                leading: Icon(Icons.catching_pokemon),
-                title: Text('O Pokemon'),
-              )
-            ],
-          ),
-        ),
-      );
+      ),
+    );
   }
 }
