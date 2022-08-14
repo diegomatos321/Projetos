@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 import '../../AppDrawer.dart';
-import 'SearchPokemonWidget.dart';
+import 'MemeSearchWidget.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -9,19 +10,28 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  var pokemonName = 'Tudo sobre Pokemons';
-  TextEditingController pokemonNameController = TextEditingController();
+  var memeName = '';
+  TextEditingController memeNameController = TextEditingController();
+
+  var api = 'api.imgflip.com';
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    fetchData();
   }
 
   @override
   void dispose() {
     // TODO: implement dispose
     super.dispose();
+  }
+
+  fetchData() async {
+    var endpoint = Uri.https(api, 'get_memes');
+    var response = await http.get(endpoint);
+    print(response.body);
   }
 
   @override
@@ -31,11 +41,11 @@ class _HomePageState extends State<HomePage> {
         title: const Text('Hello World'),
       ),
       body: SingleChildScrollView(
-        child: SearchPokemonWidget(pokemonName: pokemonName, pokemonNameController: pokemonNameController),
+        child: MemeSearchWidget(memeNameController: memeNameController),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: (() {
-          pokemonName = pokemonNameController.text;
+          memeName = memeNameController.text;
           setState(() {});
         }),
         child: const Icon(Icons.send),
