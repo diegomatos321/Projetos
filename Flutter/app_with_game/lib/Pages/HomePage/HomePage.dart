@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -10,10 +12,11 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  var memeName = '';
+  String memeName = '';
+  List memeList = [];
   TextEditingController memeNameController = TextEditingController();
 
-  var api = 'api.imgflip.com';
+  String api = 'api.imgflip.com';
 
   @override
   void initState() {
@@ -30,8 +33,12 @@ class _HomePageState extends State<HomePage> {
 
   fetchData() async {
     var endpoint = Uri.https(api, 'get_memes');
+
     var response = await http.get(endpoint);
-    print(response.body);
+    Map responseBody = jsonDecode(response.body);
+    
+    memeList = responseBody['data']['memes'];
+    setState(() { });
   }
 
   @override
@@ -40,9 +47,11 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: const Text('Hello World'),
       ),
-      body: SingleChildScrollView(
-        child: MemeSearchWidget(memeNameController: memeNameController),
-      ),
+      body: memeList.isEmpty
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              child: MemeSearchWidget(memeNameController: memeNameController),
+            ),
       floatingActionButton: FloatingActionButton(
         onPressed: (() {
           memeName = memeNameController.text;
