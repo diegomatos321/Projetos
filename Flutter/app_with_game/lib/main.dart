@@ -49,7 +49,30 @@ class HomePage extends StatelessWidget {
               ),
             )
           ],
-        )
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: (() => {}),
+          child: Icon(Icons.wysiwyg),
+        ),
+        drawer: Drawer(
+          child: ListView(
+            padding: const EdgeInsets.all(0),
+            children: const <Widget>[
+              DrawerHeader(
+                child: Text('Pokemon'),
+                decoration: BoxDecoration(color: Colors.yellow),
+              ),
+              ListTile(
+                leading: Icon(Icons.catching_pokemon),
+                title: Text('O Pokemon'),
+              ),
+              ListTile(
+                leading: Icon(Icons.catching_pokemon),
+                title: Text('O Pokemon'),
+              )
+            ],
+          ),
+        ),
       );
   }
 }
