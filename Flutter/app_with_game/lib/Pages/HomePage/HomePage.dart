@@ -7,6 +7,8 @@ import '../../AppDrawer.dart';
 import 'MemeSearchWidget.dart';
 
 class HomePage extends StatefulWidget {
+  static const String routeName = 'HomePage';
+
   @override
   State<HomePage> createState() => _HomePageState();
 }
@@ -47,6 +49,14 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Hello World'),
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.exit_to_app_sharp),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          )
+        ],
       ),
       body: memeList.isEmpty
           ? const Center(child: CircularProgressIndicator())
