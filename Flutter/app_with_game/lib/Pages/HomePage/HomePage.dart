@@ -37,8 +37,9 @@ class _HomePageState extends State<HomePage> {
     var response = await http.get(endpoint);
     Map responseBody = jsonDecode(response.body);
     
-    memeList = responseBody['data']['memes'];
-    setState(() { });
+    setState(() { 
+      memeList = responseBody['data']['memes'];
+    });
   }
 
   @override
@@ -49,9 +50,14 @@ class _HomePageState extends State<HomePage> {
       ),
       body: memeList.isEmpty
           ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              child: MemeSearchWidget(memeNameController: memeNameController),
-            ),
+          : ListView.builder(itemBuilder: (context, index) {
+              var currentElement = memeList[index];
+
+              return ListTile(
+                title: Text(currentElement['name']),
+                leading: Image.network(currentElement['url']),
+              );
+          }, itemCount: memeList.length,),
       floatingActionButton: FloatingActionButton(
         onPressed: (() {
           memeName = memeNameController.text;
