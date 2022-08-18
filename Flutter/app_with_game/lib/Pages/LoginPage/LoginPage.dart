@@ -1,6 +1,7 @@
 import 'package:app_with_game/Pages/HomePage/HomePage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   static const String routeName = 'LoginPage';
@@ -10,9 +11,27 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+
   final GlobalKey formKey = GlobalKey<FormState>();
   final TextEditingController _userNameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    isLoggedIn();
+  }
+
+  Future<void> isLoggedIn() async {
+    final SharedPreferences prefs = await _prefs;
+
+    final bool? loggedIn = prefs.getBool('loggedIn');
+
+    if (loggedIn != null && loggedIn == true) {
+      Navigator.pushReplacementNamed(context, HomePage.routeName);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,10 +75,12 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       SizedBox(height: 20),
                       RaisedButton(
-                        onPressed: () {
+                        onPressed: () async {
                           // formKey.currentState.validate();
+                          final SharedPreferences prefs = await _prefs;
+                          await prefs.setBool('loggedIn', true);
 
-                          Navigator.pushNamed(context, HomePage.routeName);
+                          Navigator.pushReplacementNamed(context, HomePage.routeName);
                         },
                         color: Colors.purple,
                         textColor: Colors.white,
