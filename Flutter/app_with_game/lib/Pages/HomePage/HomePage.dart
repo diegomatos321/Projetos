@@ -8,41 +8,21 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../AppDrawer.dart';
 import 'MemeSearchWidget.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends StatelessWidget {
   static const String routeName = 'HomePage';
-
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   String memeName = '';
-  List memeList = [];
   TextEditingController memeNameController = TextEditingController();
 
   String api = 'api.imgflip.com';
 
-  @override
-  void initState() {
-    super.initState();
-    fetchData();
-  }
+  Future<List> fetchData() async {
+    final Uri endpoint = Uri.https(api, 'get_memes');
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  Future<void> fetchData() async {
-    var endpoint = Uri.https(api, 'get_memes');
-
-    var response = await http.get(endpoint);
+    http.Response response = await http.get(endpoint);
     Map responseBody = jsonDecode(response.body);
-    
-    setState(() { 
-      memeList = responseBody['data']['memes'];
-    });
+
+    return responseBody['data']['memes'];
   }
 
   @override
@@ -63,22 +43,35 @@ class _HomePageState extends State<HomePage> {
           )
         ],
       ),
-      body: memeList.isEmpty
-          ? const Center(child: CircularProgressIndicator())
-          : ListView.builder(itemBuilder: (context, index) {
-              var currentElement = memeList[index];
-
-              return ListTile(
-                title: Text(currentElement['name']),
-                leading: Image.network(currentElement['url']),
+      body: FutureBuilder(
+        future: fetchData(),
+        builder: (context, AsyncSnapshot<List> snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.none:
+              return const Center(
+                child: Text('Fetch something'),
               );
-          }, itemCount: memeList.length,),
-      floatingActionButton: FloatingActionButton(
-        onPressed: (() {
-          memeName = memeNameController.text;
-          setState(() {});
-        }),
-        child: const Icon(Icons.send),
+            case ConnectionState.done:
+              if (snapshot.hasError) {
+                return const Center(child: Text('Ocorreu um problema, tente novamente mais tarde'));
+              }
+
+              return ListView.builder(
+                itemCount: snapshot.data?.length,
+                itemBuilder: (context, index) {
+                  final currentElement = snapshot.data?[index];
+                  return ListTile(
+                    title: Text(currentElement['name']),
+                    subtitle: Image.network(currentElement['url'])
+                  );
+                },
+              );
+            default:
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+          }
+        },
       ),
       drawer: const AppDrawer(),
     );
