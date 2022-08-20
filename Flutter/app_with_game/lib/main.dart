@@ -13,7 +13,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
         home: LoginPage(), 
-        theme: ThemeData(primarySwatch: Colors.deepPurple),
+        theme: ThemeData(
+          appBarTheme: AppBarTheme(
+            textTheme: TextTheme(title: AppBarTextStyle)
+          )
+        ),
         routes: {
           HomePage.routeName : (context) => HomePage(),
           LoginPage.routeName : (context) => LoginPage(),
