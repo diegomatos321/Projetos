@@ -32,25 +32,30 @@ class HomePage extends StatelessWidget {
               child: Text('Ocorreu um problema, tente novamente mais tarde'));
         }
 
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            ImageBanner('assets/memes-banner.jpg'),
-            ListView.builder(
-                itemCount: snapshot.data?.length,
-                itemBuilder: (context, index) {
-                  final currentElement = snapshot.data?[index];
-                  return Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: ListTile(
-                      title: Text(currentElement['name']),
-                      subtitle: Image.network(currentElement['url'])
-                    )
-                  );
-                }
-              )
-          ]
+        return SingleChildScrollView(
+          physics: const ScrollPhysics(),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              ImageBanner('assets/images/memes-banner.jpg'),
+              ListView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: snapshot.data?.length,
+                  itemBuilder: (context, index) {
+                    final currentElement = snapshot.data?[index];
+                    return Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: ListTile(
+                        title: Text(currentElement['name']),
+                        subtitle: Image.network(currentElement['url'])
+                      )
+                    );
+                  }
+                )
+            ]
+          ),
         );
       default:
         return const Center(
