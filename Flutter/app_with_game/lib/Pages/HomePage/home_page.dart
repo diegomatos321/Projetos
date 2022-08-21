@@ -1,81 +1,57 @@
-import 'dart:convert';
-
-import 'package:app_with_game/Widgets/SignOutBtn.dart';
-import 'package:app_with_game/Widgets/image_banner.dart';
+import 'package:app_with_game/Widgets/sign_out_btn.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-
-import '../../AppDrawer.dart';
 
 class HomePage extends StatelessWidget {
-  static const String routeName = 'HomePage';
-  String api = 'api.imgflip.com';
+  static const routeName = 'HomePage';
 
-  Future<List> fetchData() async {
-    final Uri endpoint = Uri.https(api, 'get_memes');
-
-    http.Response response = await http.get(endpoint);
-    Map responseBody = jsonDecode(response.body);
-
-    return responseBody['data']['memes'];
-  }
-
-  Widget handleDataFetched(BuildContext context, AsyncSnapshot<List> snapshot) {
-    switch (snapshot.connectionState) {
-      case ConnectionState.none:
-        return const Center(
-          child: Text('Fetch something'),
-        );
-      case ConnectionState.done:
-        if (snapshot.hasError) {
-          return const Center(
-              child: Text('Ocorreu um problema, tente novamente mais tarde'));
-        }
-
-        return SingleChildScrollView(
-          physics: const ScrollPhysics(),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              ImageBanner('assets/images/memes-banner.jpg'),
-              ListView.builder(
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: snapshot.data?.length,
-                  itemBuilder: (context, index) {
-                    final currentElement = snapshot.data?[index];
-                    return Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: ListTile(
-                        title: Text(currentElement['name']),
-                        subtitle: Image.network(currentElement['url'])
-                      )
-                    );
-                  }
-                )
-            ]
-          ),
-        );
-      default:
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
-    }
-  }
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Uma incrível lista de memes!'),
-        actions: <Widget>[SignOutBtn()],
+        title: const Text('Página Principal'),
+        actions: <Widget>[
+          SignOutBtn(),
+        ],
       ),
-      body: FutureBuilder(
-        future: fetchData(),
-        builder: handleDataFetched,
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Section('Memes', 'assets/images/memes-banner.jpg'),
+            Section('Jogos', 'assets/images/memes-banner.jpg'),
+          ],
+        ),
       ),
-      drawer: const AppDrawer(),
+    );
+  }
+}
+
+class Section extends StatelessWidget {
+  String _title = '';
+  String _bannerPath = '';
+
+  Section(String title, String bannerPath) {
+    _title = title;
+    _bannerPath = bannerPath;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Text(_title),
+      subtitle: Container(
+        constraints: const BoxConstraints.expand(
+          height: 100.0
+        ),
+        child: Image.asset(
+          _bannerPath,
+          fit: BoxFit.cover,
+        ),
+      ),
     );
   }
 }
