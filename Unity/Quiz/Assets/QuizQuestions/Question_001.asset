@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a0b2a8b7dbd45d9489a9ffcaef6e3631, type: 3}
-  m_Name: New Question
+  m_Name: Question_001
   m_EditorClassIdentifier: 
-  question: 
+  question: Which author wrote 'Harry Potter'?
   answers:
-  - 
-  - 
-  - 
-  - 
-  correctAnswerIndex: 0
+  - Christopher Tolkien
+  - Philip Pullman
+  - J. K. Rowling
+  - C. S. Lewis
+  correctAnswerIndex: 2
