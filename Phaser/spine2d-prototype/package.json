@@ -1,5 +1,5 @@
 {
-  "name": "prototype-skeleton-2d",
+  "name": "spine2d-prototype",
   "version": "1.0.0",
   "description": "Simple scene with Skeleton 2D attached to a Character",
   "scripts": {
@@ -10,10 +10,14 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "parcel": "^2.4.0",
     "phaser": "^3.55.2"
   },
   "devDependencies": {
+    "parcel": "^2.4.0",
     "parcel-reporter-static-files-copy": "^1.3.4"
+  },
+  "staticFiles": {
+    "staticPath": "./src/assets",
+    "staticOutPath": "assets"
   }
 }
