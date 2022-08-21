@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'Pages/HomePage/HomePage.dart';
 import 'package:app_with_game/Pages/LoginPage/LoginPage.dart';
+import 'style.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,16 +13,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        home: LoginPage(), 
-        theme: ThemeData(
-          appBarTheme: AppBarTheme(
-            textTheme: TextTheme(title: AppBarTextStyle)
-          )
-        ),
-        routes: {
-          HomePage.routeName : (context) => HomePage(),
-          LoginPage.routeName : (context) => LoginPage(),
-        },
-      );
+      home: LoginPage(),
+      routes: {
+        HomePage.routeName: (context) => HomePage(),
+        LoginPage.routeName: (context) => LoginPage(),
+      },
+    );
   }
 }
