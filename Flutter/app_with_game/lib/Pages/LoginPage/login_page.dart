@@ -36,13 +36,13 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Login Page'),
+        title: const Text('Página de Login'),
       ),
       body: Stack(
         fit: StackFit.expand,
         children: <Widget>[
         Image.asset(
-            'assets/images/pokemon-logo.png', 
+            'assets/images/memes-banner.png', 
             fit: BoxFit.cover,
             color: Colors.black.withOpacity(0.7),
             colorBlendMode: BlendMode.darken,
