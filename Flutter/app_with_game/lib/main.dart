@@ -1,5 +1,6 @@
+import 'package:app_with_game/Pages/HomePage/home_page.dart';
+import 'package:app_with_game/Pages/MemePage/meme_page.dart';
 import 'package:flutter/material.dart';
-import 'Pages/HomePage/home_page.dart';
 import 'package:app_with_game/Pages/LoginPage/login_page.dart';
 
 void main() {
@@ -14,8 +15,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       home: LoginPage(),
       routes: {
-        HomePage.routeName: (context) => HomePage(),
         LoginPage.routeName: (context) => LoginPage(),
+        HomePage.routeName: (context) => HomePage(),
+        MemePage.routeName: (context) => MemePage(),
       },
     );
   }
