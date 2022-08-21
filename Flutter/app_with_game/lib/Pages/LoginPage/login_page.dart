@@ -42,7 +42,7 @@ class _LoginPageState extends State<LoginPage> {
         fit: StackFit.expand,
         children: <Widget>[
         Image.asset(
-            'assets/images/memes-banner.png', 
+            'assets/images/memes-banner.jpg', 
             fit: BoxFit.cover,
             color: Colors.black.withOpacity(0.7),
             colorBlendMode: BlendMode.darken,
