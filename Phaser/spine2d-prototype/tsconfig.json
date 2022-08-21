@@ -1,0 +1,13 @@
+{
+	"compilerOptions": {
+		"module": "CommonJS",
+		"typeRoots": [
+			"@types",
+			"node_modules/@types",
+			"node_module/phaser/types"
+		],
+	},
+	"include": [
+		"src/**/*"
+	]
+}

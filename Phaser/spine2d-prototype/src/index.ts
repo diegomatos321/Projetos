@@ -1,18 +1,25 @@
 import * as Phaser from "phaser";
 import "phaser/plugins/spine/dist/SpinePlugin";
-import SpineDemoScene from "./SpineDemoScene";
+import Preload from "./preload";
+import Menu from "./scenes/Menu";
+import MainGame from "./scenes/MainGame";
 
 const config: Phaser.Types.Core.GameConfig = {
 	type: Phaser.AUTO,
-	width: 800,
-	height: 600,
-	/* physics: {
+	width: 1024,
+	height: 768,
+  scale: {
+    mode: Phaser.Scale.FIT,
+    autoCenter: Phaser.Scale.CENTER_BOTH
+  },
+	physics: {
 		default: 'arcade',
 		arcade: {
-			gravity: { y: 200 }
+      debug: true,
+      gravity: { y: 1200 }
 		}
-	}, */
-	scene: [SpineDemoScene],
+	},
+	scene: [Preload, Menu, MainGame],
 	plugins: {
 		scene: [
 			{ key: 'SpinePlugin', plugin: window.SpinePlugin, mapping: 'spine' }
