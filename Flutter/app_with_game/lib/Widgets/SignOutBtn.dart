@@ -1,4 +1,4 @@
-import 'package:app_with_game/Pages/LoginPage/LoginPage.dart';
+import 'package:app_with_game/Pages/LoginPage/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

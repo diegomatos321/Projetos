@@ -1,6 +1,5 @@
-import 'package:app_with_game/Pages/HomePage/HomePage.dart';
+import 'package:app_with_game/Pages/HomePage/home_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
