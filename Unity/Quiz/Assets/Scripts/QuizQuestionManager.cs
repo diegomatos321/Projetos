@@ -26,10 +26,13 @@ public class QuizQuestionManager : MonoBehaviour
     protected float currentTimeToAnswerTheQuestions;
     protected float currentTimeToShowCorrectAnswer;
     protected GAME_STATES CURRENT_GAME_STATE = GAME_STATES.PLAYING;
+    protected bool hasShowedAnswer = false;
 
     private void Start()
     {
         this.DisplayQuestion();
+        this.SetDefaultAnswerSprite();
+        this.ResetTimer();
     }
 
     private void Update()
@@ -39,19 +42,31 @@ public class QuizQuestionManager : MonoBehaviour
             case GAME_STATES.PLAYING:
                 this.currentTimeToAnswerTheQuestions = this.UpdateTimer(this.currentTimeToAnswerTheQuestions, timeToAnswerTheQuestions);
                 break;
+            case GAME_STATES.GAME_OVER:
+                if (hasShowedAnswer == false)
+                {
+                    this.ShowAnswer(-1);
+                    this.SetAnswerInteractable(false);
+                }
+
+                this.currentTimeToShowCorrectAnswer = this.UpdateTimer(this.currentTimeToShowCorrectAnswer, this.timeToShowCorrectAnswer);
+                break;
             case GAME_STATES.GAME_WON:
                 this.currentTimeToShowCorrectAnswer = this.UpdateTimer(this.currentTimeToShowCorrectAnswer, this.timeToShowCorrectAnswer);
                 break;
             case GAME_STATES.NEXT_QUESTION:
+                this.SetAnswerInteractable(true);
+                this.SetDefaultAnswerSprite();
+                this.ResetTimer();
+                this.DisplayQuestion();
+                this.CURRENT_GAME_STATE = GAME_STATES.PLAYING;
+                
                 break;
         }
     }
 
     private void DisplayQuestion()
     {
-        this.currentTimeToAnswerTheQuestions = this.timeToAnswerTheQuestions;
-        this.currentTimeToShowCorrectAnswer = this.timeToShowCorrectAnswer;
-
         this.questionTitle.text = this.questionData.GetQuestion();
 
         for (int index = 0; index < this.answersButtons.Length; index++)
@@ -63,9 +78,15 @@ public class QuizQuestionManager : MonoBehaviour
         }
     }
 
-    public void OnAnswerSelected(int index) 
+    public void OnAnswerSelected(int index)
     {
+        ShowAnswer(index);
 
+        this.SetAnswerInteractable(false);
+    }
+
+    private void ShowAnswer(int index)
+    {
         if (index == this.questionData.GetCorrectAnswerIndex())
         {
             Image buttonImage = this.answersButtons[index].GetComponent<Image>();
@@ -73,7 +94,9 @@ public class QuizQuestionManager : MonoBehaviour
             this.questionTitle.text = "Parabéns! Você Acertou!";
 
             this.CURRENT_GAME_STATE = GAME_STATES.GAME_WON;
-        } else {
+        }
+        else
+        {
             int correctAnswerIndex = this.questionData.GetCorrectAnswerIndex();
 
             this.answersButtons[correctAnswerIndex].GetComponent<Image>().sprite = this.correctAnswerSprite;
@@ -83,7 +106,7 @@ public class QuizQuestionManager : MonoBehaviour
             this.CURRENT_GAME_STATE = GAME_STATES.GAME_OVER;
         }
 
-        this.SetAnswerInteractable(false);
+        hasShowedAnswer = true;
     }
 
     protected void SetAnswerInteractable(bool newState) 
@@ -116,6 +139,8 @@ public class QuizQuestionManager : MonoBehaviour
                 this.CURRENT_GAME_STATE = GAME_STATES.GAME_OVER;                
             } else if (this.CURRENT_GAME_STATE == GAME_STATES.GAME_WON) {
                 this.CURRENT_GAME_STATE = GAME_STATES.NEXT_QUESTION;
+            } else if (this.CURRENT_GAME_STATE == GAME_STATES.GAME_OVER) {
+                this.CURRENT_GAME_STATE = GAME_STATES.NEXT_QUESTION;
             }
             currentTime = 0;
         } else {
@@ -125,5 +150,11 @@ public class QuizQuestionManager : MonoBehaviour
         this.circularTimer.fillAmount = currentTime / initialTime;
 
         return currentTime;
+    }
+
+    private void ResetTimer()
+    {
+        this.currentTimeToAnswerTheQuestions = this.timeToAnswerTheQuestions;
+        this.currentTimeToShowCorrectAnswer = this.timeToShowCorrectAnswer;
     }
 }
