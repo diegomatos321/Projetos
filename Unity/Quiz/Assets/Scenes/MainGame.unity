@@ -920,7 +920,7 @@ MonoBehaviour:
   - {fileID: 1509752440}
   - {fileID: 2036314270}
   correctAnswerSprite: {fileID: 21300000, guid: b8e10a4937e951042a9f8d94ec6ab0bc, type: 3}
-  wrongAnswerSprite: {fileID: 0}
+  defaultAnswerSprite: {fileID: 21300000, guid: 46fdbdd2cb83ad74e8793ea4c21bb78f, type: 3}
 --- !u!1 &1177420466
 GameObject:
   m_ObjectHideFlags: 0
