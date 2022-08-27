@@ -10,7 +10,8 @@ public class QuizQuestionManager : MonoBehaviour
     {
         PLAYING,
         GAME_OVER,
-        GAME_WON
+        GAME_WON,
+        NEXT_QUESTION
     }
 
     [SerializeField] protected QuestionTemplate questionData;
@@ -33,9 +34,16 @@ public class QuizQuestionManager : MonoBehaviour
 
     private void Update()
     {
-        if (this.CURRENT_GAME_STATE == GAME_STATES.PLAYING)
+        switch (this.CURRENT_GAME_STATE)
         {
-            this.UpdateTimer();
+            case GAME_STATES.PLAYING:
+                this.currentTimeToAnswerTheQuestions = this.UpdateTimer(this.currentTimeToAnswerTheQuestions, timeToAnswerTheQuestions);
+                break;
+            case GAME_STATES.GAME_WON:
+                this.currentTimeToShowCorrectAnswer = this.UpdateTimer(this.currentTimeToShowCorrectAnswer, this.timeToShowCorrectAnswer);
+                break;
+            case GAME_STATES.NEXT_QUESTION:
+                break;
         }
     }
 
@@ -100,16 +108,22 @@ public class QuizQuestionManager : MonoBehaviour
         }
     }
 
-    protected void UpdateTimer()
+    protected float UpdateTimer(float currentTime, float initialTime)
     {
-        if (this.currentTimeToAnswerTheQuestions - Time.deltaTime <= 0) {
-            this.CURRENT_GAME_STATE = GAME_STATES.GAME_OVER;
-            this.currentTimeToAnswerTheQuestions = 0;
+        if (currentTime - Time.deltaTime <= 0) {
+            if (this.CURRENT_GAME_STATE == GAME_STATES.PLAYING)
+            {
+                this.CURRENT_GAME_STATE = GAME_STATES.GAME_OVER;                
+            } else if (this.CURRENT_GAME_STATE == GAME_STATES.GAME_WON) {
+                this.CURRENT_GAME_STATE = GAME_STATES.NEXT_QUESTION;
+            }
+            currentTime = 0;
         } else {
-            this.currentTimeToAnswerTheQuestions -= Time.deltaTime;
+            currentTime -= Time.deltaTime;
         }
 
+        this.circularTimer.fillAmount = currentTime / initialTime;
 
-        this.circularTimer.fillAmount = this.currentTimeToAnswerTheQuestions / this.timeToAnswerTheQuestions;
+        return currentTime;
     }
 }
