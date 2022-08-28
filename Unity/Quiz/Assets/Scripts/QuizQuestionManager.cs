@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class QuizQuestionManager : MonoBehaviour
 {
@@ -14,6 +15,10 @@ public class QuizQuestionManager : MonoBehaviour
         NEXT_QUESTION,
         GAME_FINISHED
     }
+
+    [Header("Quiz Screens")]
+    [SerializeField] protected GameObject MainGameScreen;
+    [SerializeField] protected GameObject GameFinishedScreen;
 
     [Header("Question Data")]
     [SerializeField] protected TextMeshProUGUI questionTitle;
@@ -33,14 +38,21 @@ public class QuizQuestionManager : MonoBehaviour
     [SerializeField] protected Slider slider;
 
     protected QuestionTemplate currentQuestion;
-    protected int currentQuestionIndex = 0;
+    protected int currentQuestionIndex;
     protected float currentTimeToAnswerTheQuestions;
     protected float currentTimeToShowCorrectAnswer;
-    protected GAME_STATES CURRENT_GAME_STATE = GAME_STATES.PLAYING;
-    protected bool hasShowedAnswer = false;
+    protected GAME_STATES CURRENT_GAME_STATE;
+    protected bool hasShowedAnswer;
 
     private void Start()
     {
+        this.MainGameScreen.SetActive(true);
+        this.GameFinishedScreen.SetActive(false);
+
+        this.currentQuestionIndex = 0;
+        this.CURRENT_GAME_STATE = GAME_STATES.PLAYING;
+        this.hasShowedAnswer = false;
+
         this.currentQuestion = this.questionList[this.currentQuestionIndex];
 
         this.slider.value = this.currentQuestionIndex;
@@ -79,7 +91,7 @@ public class QuizQuestionManager : MonoBehaviour
                     this.CURRENT_GAME_STATE = GAME_STATES.GAME_FINISHED;
                     return;
                 }
-                
+
                 this.currentQuestion = this.questionList[this.currentQuestionIndex];
 
                 this.hasShowedAnswer = false;
@@ -92,9 +104,27 @@ public class QuizQuestionManager : MonoBehaviour
                 
                 break;
             case GAME_STATES.GAME_FINISHED:
-                Debug.Log("Fim de Jogo!");
+                if(this.GameFinishedScreen.active == false)
+                {
+                    Debug.Log("Show Game Finished Screen");
+                    this.MainGameScreen.SetActive(false);
+                    this.GameFinishedScreen.SetActive(true);                    
+                }
+
                 break;
         }
+    }
+
+    public void OnAnswerSelected(int index)
+    {
+        ShowAnswer(index);
+
+        this.SetAnswerInteractable(false);
+    }
+
+    public void RestartGame()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     private void DisplayQuestion()
@@ -108,13 +138,6 @@ public class QuizQuestionManager : MonoBehaviour
             TextMeshProUGUI answerButtonLabel = currentAnswerButton.GetComponentInChildren<TextMeshProUGUI>();
             answerButtonLabel.text = this.currentQuestion.GetAnswer(index);
         }
-    }
-
-    public void OnAnswerSelected(int index)
-    {
-        ShowAnswer(index);
-
-        this.SetAnswerInteractable(false);
     }
 
     private void ShowAnswer(int index)
