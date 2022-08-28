@@ -11,18 +11,26 @@ public class QuizQuestionManager : MonoBehaviour
         PLAYING,
         GAME_OVER,
         GAME_WON,
-        NEXT_QUESTION
+        NEXT_QUESTION,
+        GAME_FINISHED
     }
 
-    [SerializeField] protected QuestionTemplate questionData;
+    [Header("Question Data")]
     [SerializeField] protected TextMeshProUGUI questionTitle;
+    [SerializeField] protected List<QuestionTemplate> questionList;
+    [SerializeField] protected float timeToAnswerTheQuestions = 30f;
+    [SerializeField] protected float timeToShowCorrectAnswer = 10f;
+    
+    [Header("Answers Buttons Data")]
     [SerializeField] protected GameObject[] answersButtons;
     [SerializeField] protected Sprite correctAnswerSprite;
     [SerializeField] protected Sprite defaultAnswerSprite;
+    
+    [Header("Timer")]
     [SerializeField] protected Image circularTimer;
-    [SerializeField] protected float timeToAnswerTheQuestions = 30f;
-    [SerializeField] protected float timeToShowCorrectAnswer = 10f;
 
+    protected QuestionTemplate currentQuestion;
+    protected int currentQuestionIndex = 0;
     protected float currentTimeToAnswerTheQuestions;
     protected float currentTimeToShowCorrectAnswer;
     protected GAME_STATES CURRENT_GAME_STATE = GAME_STATES.PLAYING;
@@ -30,6 +38,7 @@ public class QuizQuestionManager : MonoBehaviour
 
     private void Start()
     {
+        this.currentQuestion = this.questionList[this.currentQuestionIndex];
         this.DisplayQuestion();
         this.SetDefaultAnswerSprite();
         this.ResetTimer();
@@ -55,26 +64,40 @@ public class QuizQuestionManager : MonoBehaviour
                 this.currentTimeToShowCorrectAnswer = this.UpdateTimer(this.currentTimeToShowCorrectAnswer, this.timeToShowCorrectAnswer);
                 break;
             case GAME_STATES.NEXT_QUESTION:
+                if (this.currentQuestionIndex == this.questionList.Count - 1)
+                {
+                    this.CURRENT_GAME_STATE = GAME_STATES.GAME_FINISHED;
+                    return;
+                }
+
+                this.hasShowedAnswer = false;
                 this.SetAnswerInteractable(true);
                 this.SetDefaultAnswerSprite();
                 this.ResetTimer();
+                
+                this.currentQuestionIndex++;
+                this.currentQuestion = this.questionList[this.currentQuestionIndex];
+
                 this.DisplayQuestion();
                 this.CURRENT_GAME_STATE = GAME_STATES.PLAYING;
                 
+                break;
+            case GAME_STATES.GAME_FINISHED:
+                Debug.Log("Fim de Jogo!");
                 break;
         }
     }
 
     private void DisplayQuestion()
     {
-        this.questionTitle.text = this.questionData.GetQuestion();
+        this.questionTitle.text = this.currentQuestion.GetQuestion();
 
         for (int index = 0; index < this.answersButtons.Length; index++)
         {
             GameObject currentAnswerButton = this.answersButtons[index];
 
             TextMeshProUGUI answerButtonLabel = currentAnswerButton.GetComponentInChildren<TextMeshProUGUI>();
-            answerButtonLabel.text = this.questionData.GetAnswer(index);
+            answerButtonLabel.text = this.currentQuestion.GetAnswer(index);
         }
     }
 
@@ -87,7 +110,7 @@ public class QuizQuestionManager : MonoBehaviour
 
     private void ShowAnswer(int index)
     {
-        if (index == this.questionData.GetCorrectAnswerIndex())
+        if (index == this.currentQuestion.GetCorrectAnswerIndex())
         {
             Image buttonImage = this.answersButtons[index].GetComponent<Image>();
             buttonImage.sprite = this.correctAnswerSprite;
@@ -97,10 +120,10 @@ public class QuizQuestionManager : MonoBehaviour
         }
         else
         {
-            int correctAnswerIndex = this.questionData.GetCorrectAnswerIndex();
+            int correctAnswerIndex = this.currentQuestion.GetCorrectAnswerIndex();
 
             this.answersButtons[correctAnswerIndex].GetComponent<Image>().sprite = this.correctAnswerSprite;
-            string correctAnswerText = this.questionData.GetAnswer(correctAnswerIndex);
+            string correctAnswerText = this.currentQuestion.GetAnswer(correctAnswerIndex);
             this.questionTitle.text = "Que pena, você errou, a resposta correta é:\n" + correctAnswerText;
 
             this.CURRENT_GAME_STATE = GAME_STATES.GAME_OVER;
