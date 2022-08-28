@@ -29,6 +29,9 @@ public class QuizQuestionManager : MonoBehaviour
     [Header("Timer")]
     [SerializeField] protected Image circularTimer;
 
+    [Header("Slider")]
+    [SerializeField] protected Slider slider;
+
     protected QuestionTemplate currentQuestion;
     protected int currentQuestionIndex = 0;
     protected float currentTimeToAnswerTheQuestions;
@@ -39,6 +42,10 @@ public class QuizQuestionManager : MonoBehaviour
     private void Start()
     {
         this.currentQuestion = this.questionList[this.currentQuestionIndex];
+
+        this.slider.value = this.currentQuestionIndex;
+        this.slider.maxValue = this.questionList.Count;
+
         this.DisplayQuestion();
         this.SetDefaultAnswerSprite();
         this.ResetTimer();
@@ -64,20 +71,22 @@ public class QuizQuestionManager : MonoBehaviour
                 this.currentTimeToShowCorrectAnswer = this.UpdateTimer(this.currentTimeToShowCorrectAnswer, this.timeToShowCorrectAnswer);
                 break;
             case GAME_STATES.NEXT_QUESTION:
-                if (this.currentQuestionIndex == this.questionList.Count - 1)
+                this.currentQuestionIndex++;
+                this.slider.value = this.currentQuestionIndex;
+
+                if (this.currentQuestionIndex >= this.questionList.Count)
                 {
                     this.CURRENT_GAME_STATE = GAME_STATES.GAME_FINISHED;
                     return;
                 }
+                
+                this.currentQuestion = this.questionList[this.currentQuestionIndex];
 
                 this.hasShowedAnswer = false;
                 this.SetAnswerInteractable(true);
                 this.SetDefaultAnswerSprite();
                 this.ResetTimer();
                 
-                this.currentQuestionIndex++;
-                this.currentQuestion = this.questionList[this.currentQuestionIndex];
-
                 this.DisplayQuestion();
                 this.CURRENT_GAME_STATE = GAME_STATES.PLAYING;
                 
