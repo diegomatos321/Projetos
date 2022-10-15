@@ -6,17 +6,19 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] protected float speed = 10f;
-    [SerializeField] protected float jumpSpeed = 5f;
+    [SerializeField] protected float jumpSpeed = 10f;
 
     protected Vector2 playerInput;
     protected Rigidbody2D rigidbody;
     protected Animator animator;
+    protected Collider2D body;
 
     // Start is called before the first frame update
     void Start()
     {
         this.rigidbody = this.GetComponent<Rigidbody2D>();
         this.animator = this.GetComponent<Animator>();
+        this.body = this.GetComponentInChildren<Collider2D>();  
     }
 
     // Update is called once per frame
@@ -62,7 +64,7 @@ public class PlayerController : MonoBehaviour
 
     protected void OnJump(InputValue value)
     {
-        if (value.isPressed)
+        if (value.isPressed && this.body.IsTouchingLayers(LayerMask.GetMask("Ground")))
         {
             this.rigidbody.velocity += new Vector2(0f, this.jumpSpeed);
         }
