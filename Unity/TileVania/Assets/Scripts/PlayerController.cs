@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] protected float speed = 10f;
-    [SerializeField] protected float jumpSpeed = 10f;
+    [SerializeField] protected float jumpSpeed = 6f;
 
     protected Vector2 playerInput;
     protected Rigidbody2D rigidbody;
