@@ -7,18 +7,21 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] protected float speed = 10f;
     [SerializeField] protected float jumpSpeed = 14.5f;
+    [SerializeField] protected float climbSpeed = 6f;
 
     protected Vector2 playerInput;
     protected Rigidbody2D rigidbody;
     protected Animator animator;
     protected Collider2D body;
+    protected float initialGravityScale;
 
     // Start is called before the first frame update
     void Start()
     {
         this.rigidbody = this.GetComponent<Rigidbody2D>();
         this.animator = this.GetComponent<Animator>();
-        this.body = this.GetComponentInChildren<Collider2D>();  
+        this.body = this.GetComponentInChildren<Collider2D>();
+        this.initialGravityScale = this.rigidbody.gravityScale;
     }
 
     // Update is called once per frame
@@ -27,6 +30,7 @@ public class PlayerController : MonoBehaviour
         this.MovePlayer();
         this.FlipPlayer();
         this.HandleAnimation();
+        this.HandleClimb();
     }
 
     protected void MovePlayer()
@@ -55,6 +59,27 @@ public class PlayerController : MonoBehaviour
         }
 
         this.animator.SetBool("isRunning", true);
+    }
+
+    protected void HandleClimb()
+    {
+        if (this.body.IsTouchingLayers(LayerMask.GetMask("Climbing")) == false)
+        {
+            this.rigidbody.gravityScale = this.initialGravityScale;
+            this.animator.SetBool("isClimbing", false);
+            return;
+        }
+
+        this.rigidbody.gravityScale = 0;
+        this.rigidbody.velocity = new Vector2(this.rigidbody.velocity.x, this.playerInput.y * this.climbSpeed);
+
+        if (Mathf.Abs(this.rigidbody.velocity.y) > Mathf.Epsilon)
+        {
+            this.transform.localScale = new Vector2(1, this.transform.localScale.y);
+            this.animator.SetBool("isClimbing", true);
+        } else {
+            this.animator.SetBool("isClimbing", false);
+        }
     }
 
     protected void OnMove(InputValue value)
