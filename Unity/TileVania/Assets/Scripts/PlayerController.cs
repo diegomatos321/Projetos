@@ -8,19 +8,19 @@ public class PlayerController : MonoBehaviour
     [SerializeField] protected float speed = 10f;
     [SerializeField] protected float jumpSpeed = 14.5f;
     [SerializeField] protected float climbSpeed = 6f;
+    [SerializeField] protected BoxCollider2D bodyCollider;
+    [SerializeField] protected BoxCollider2D feetCollider;
 
     protected Vector2 playerInput;
     protected Rigidbody2D rigidbody;
     protected Animator animator;
-    protected Collider2D body;
     protected float initialGravityScale;
 
     // Start is called before the first frame update
     void Start()
     {
         this.rigidbody = this.GetComponent<Rigidbody2D>();
-        this.animator = this.GetComponent<Animator>();
-        this.body = this.GetComponentInChildren<Collider2D>();
+        this.animator = this.GetComponent<Animator>();;
         this.initialGravityScale = this.rigidbody.gravityScale;
     }
 
@@ -63,7 +63,7 @@ public class PlayerController : MonoBehaviour
 
     protected void HandleClimb()
     {
-        if (this.body.IsTouchingLayers(LayerMask.GetMask("Climbing")) == false)
+        if (this.bodyCollider.IsTouchingLayers(LayerMask.GetMask("Climbing")) == false)
         {
             this.rigidbody.gravityScale = this.initialGravityScale;
             this.animator.SetBool("isClimbing", false);
@@ -89,7 +89,7 @@ public class PlayerController : MonoBehaviour
 
     protected void OnJump(InputValue value)
     {
-        if (value.isPressed && this.body.IsTouchingLayers(LayerMask.GetMask("Ground")))
+        if (value.isPressed && this.feetCollider.IsTouchingLayers(LayerMask.GetMask("Ground")))
         {
             this.rigidbody.velocity += new Vector2(0f, this.jumpSpeed);
         }
