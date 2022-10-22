@@ -11,10 +11,10 @@ TagManager:
   - Background
   - Water
   - UI
-  - Ground
+  - Plataforms
   - Climbing
   - Player
-  - 
+  - Enemies
   - 
   - 
   - 
@@ -53,6 +53,6 @@ TagManager:
   - name: Climbing
     uniqueID: 4178006467
     locked: 0
-  - name: Player
+  - name: Characters
     uniqueID: 3054074205
     locked: 0
