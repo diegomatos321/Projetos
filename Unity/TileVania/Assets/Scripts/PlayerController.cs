@@ -89,8 +89,9 @@ public class PlayerController : MonoBehaviour
 
     protected void OnJump(InputValue value)
     {
-        if (value.isPressed && this.feetCollider.IsTouchingLayers(LayerMask.GetMask("Ground")))
+        if (value.isPressed && this.feetCollider.IsTouchingLayers(LayerMask.GetMask("Plataforms")))
         {
+            Debug.Log("Pulou!");
             this.rigidbody.velocity += new Vector2(0f, this.jumpSpeed);
         }
     }
