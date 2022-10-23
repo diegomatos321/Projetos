@@ -15,6 +15,7 @@ public class PlayerController : MonoBehaviour
     protected Rigidbody2D rigidbody;
     protected Animator animator;
     protected float initialGravityScale;
+    protected bool isAlive = true;
 
     // Start is called before the first frame update
     void Start()
@@ -27,10 +28,35 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (this.isAlive == false)
+        {
+            return;
+        }
+
         this.MovePlayer();
         this.FlipPlayer();
         this.HandleAnimation();
         this.HandleClimb();
+    }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        Debug.Log(collision.gameObject.tag);
+
+        if (collision.gameObject.tag == "Enemy")
+        {
+            this.Die();
+        }
+    }
+
+    void OnTriggerEnter2D(Collider2D collider)
+    {
+        Debug.Log(collider.gameObject.tag);
+
+        if (collider.gameObject.tag == "Enemy")
+        {
+            this.Die();
+        }
     }
 
     protected void MovePlayer()
@@ -82,6 +108,12 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    protected void Die()
+    {
+        this.isAlive = false;
+        this.animator.SetTrigger("isDead");
+    }
+
     protected void OnMove(InputValue value)
     {
         this.playerInput = value.Get<Vector2>();
@@ -91,7 +123,6 @@ public class PlayerController : MonoBehaviour
     {
         if (value.isPressed && this.feetCollider.IsTouchingLayers(LayerMask.GetMask("Plataforms")))
         {
-            Debug.Log("Pulou!");
             this.rigidbody.velocity += new Vector2(0f, this.jumpSpeed);
         }
     }
