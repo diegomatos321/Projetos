@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - Enemy
+  - LevelFinished
   layers:
   - Default
   - TransparentFX
@@ -16,7 +17,7 @@ TagManager:
   - Climbing
   - Player
   - Enemies
-  - 
+  - Objects
   - 
   - 
   - 
@@ -53,6 +54,9 @@ TagManager:
     locked: 0
   - name: Climbing
     uniqueID: 4178006467
+    locked: 0
+  - name: Objects
+    uniqueID: 1049600901
     locked: 0
   - name: Characters
     uniqueID: 3054074205

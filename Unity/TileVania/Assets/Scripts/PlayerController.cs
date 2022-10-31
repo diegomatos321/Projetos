@@ -41,8 +41,6 @@ public class PlayerController : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D collision)
     {
-        Debug.Log(collision.gameObject.tag);
-
         if (collision.gameObject.tag == "Enemy")
         {
             this.Die();
@@ -51,8 +49,6 @@ public class PlayerController : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D collider)
     {
-        Debug.Log(collider.gameObject.tag);
-
         if (collider.gameObject.tag == "Enemy")
         {
             this.Die();
