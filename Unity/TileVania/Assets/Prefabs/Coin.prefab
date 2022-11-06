@@ -117,7 +117,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: 5c54ac8916487e7418d8d842a93e492b, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
-  m_ApplyRootMotion: 0
+  m_ApplyRootMotion: 1
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
   m_WarningMessage: 
@@ -232,3 +232,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f6c35739e03bd044b4f627c8f2c7cf1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  coinSfx: {fileID: 8300000, guid: fbed44ea4538a124787aea42c9c5373c, type: 3}
