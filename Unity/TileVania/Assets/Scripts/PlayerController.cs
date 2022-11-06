@@ -108,6 +108,7 @@ public class PlayerController : MonoBehaviour
     {
         this.isAlive = false;
         this.animator.SetTrigger("isDead");
+        GameSession.Instance.HandleDeath();
     }
 
     protected void OnMove(InputValue value)
