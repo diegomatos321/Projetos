@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:planner_app/Models/Task.dart';
 
-import 'Partials/AddTaksItemButton.dart';
+import 'Partials/AddTaskButton.dart';
 import 'Partials/AppBottomNavigation.dart';
 import 'ProgressHeader.dart';
-import 'TaskInput.dart';
-import 'TaskItem.dart';
 import 'TaskListView.dart';
 
 class HomePage extends StatefulWidget {
@@ -15,7 +14,41 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final List<TaskItem> _taskList = [];
+  final List<Task> _taskList = [
+    Task(
+        nome: 'Trabalhar no aplicativo',
+        createdTime: DateTime.now(),
+        descricao: 'Projetar apps elementares para me familiarizar com Flutter',
+        isDone: true,
+    ),
+    Task(
+        nome: 'Finalizar trabalho de BD',
+        createdTime: DateTime.now(),
+        descricao: 'Trabalho deve ser entregue hoje aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+        isDone: true
+    ),
+    Task(
+        nome: 'Finalizar trabalho de BD',
+        createdTime: DateTime.now(),
+        descricao: 'Trabalho deve ser entregue hoje aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+        isDone: true
+    ),Task(
+        nome: 'Finalizar trabalho de BD',
+        createdTime: DateTime.now(),
+        descricao: 'Trabalho deve ser entregue hoje aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+        isDone: true
+    ),Task(
+        nome: 'Finalizar trabalho de BD',
+        createdTime: DateTime.now(),
+        descricao: 'Trabalho deve ser entregue hoje aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+        isDone: true
+    ),Task(
+        nome: 'Finalizar trabalho de BD',
+        createdTime: DateTime.now(),
+        descricao: 'Trabalho deve ser entregue hoje aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+        isDone: true
+    ),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -24,13 +57,8 @@ class _HomePageState extends State<HomePage> {
         title: const Text('Space Exploration Planner'),
       ),
       bottomNavigationBar: const AppBottomNavigation(),
-      floatingActionButton: const AddTaskItemButton(),
-      body: Column(
-        children: <Widget>[
-          ProgressHeader(),
-          TaskListView(taskList: _taskList),
-        ],
-      ),
+      floatingActionButton: const AddTaskButton(),
+      body: TaskListView(taskList: _taskList)
     );
   }
 }

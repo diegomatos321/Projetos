@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class NewTaskItemDialog extends StatefulWidget {
-  const NewTaskItemDialog({Key? key}) : super(key: key);
+class NewTaskDialog extends StatefulWidget {
+  const NewTaskDialog({Key? key}) : super(key: key);
 
   @override
-  State<NewTaskItemDialog> createState() => _NewTaskItemDialogState();
+  State<NewTaskDialog> createState() => _NewTaskDialogState();
 }
 
-class _NewTaskItemDialogState extends State<NewTaskItemDialog> {
+class _NewTaskDialogState extends State<NewTaskDialog> {
   String _taskName = '';
   String _taskDescrition = '';
   bool _hasSaved = false;

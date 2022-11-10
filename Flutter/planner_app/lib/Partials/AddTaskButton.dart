@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:planner_app/Components/NewTaskItemDialog.dart';
+import 'package:planner_app/Components/NewTaskDialog.dart';
 
-class AddTaskItemButton extends StatelessWidget {
-  const AddTaskItemButton({Key? key}) : super(key: key);
+class AddTaskButton extends StatelessWidget {
+  const AddTaskButton({Key? key}) : super(key: key);
 
   void _handleOnPressed(BuildContext context) async {
     var hasNewTask = await showDialog(
         context: context,
         builder: (BuildContext context) {
-          return const NewTaskItemDialog();
+          return const NewTaskDialog();
         });
 
     print(hasNewTask);
