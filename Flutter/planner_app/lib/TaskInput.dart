@@ -26,31 +26,34 @@ class _TaskInputState extends State<TaskInput> {
     super.dispose();
   }
 
+  void onSubmit() {
+    final String newValue = _newTaskItemInput.text.trim();
+
+    if (newValue.isEmpty) {
+      return;
+    }
+
+    setState(() {
+      final newTaskItem = TaskItem(label: newValue);
+      widget.taskList.add(newTaskItem);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         TextField(
+          textAlignVertical: TextAlignVertical.top,
           controller: _newTaskItemInput,
           decoration: const InputDecoration(
             hintText: 'Digite uma nova tarefa',
+            contentPadding: EdgeInsets.all(16.0)
           ),
         ),
         TextButton(
-            onPressed: () {
-              final String newValue = _newTaskItemInput.text.trim();
-
-              if (newValue.isEmpty) {
-                return;
-              }
-
-              print("Novo Item: " + newValue);
-              setState(() {
-                final newTaskItem = TaskItem(label: newValue);
-                widget.taskList.add(newTaskItem);
-              });
-            },
-            child: Text('Adicionar')
+            onPressed: onSubmit,
+            child: const Text('Adicionar')
         )
       ],
     );

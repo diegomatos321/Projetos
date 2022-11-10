@@ -11,7 +11,9 @@ class ProgressHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        Text('Você está bem longe de completar suas tarefas!'),
+        const Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Text('Você está bem longe de completar suas tarefas!')),
         LinearProgressIndicator(value: _progress),
       ],
     );

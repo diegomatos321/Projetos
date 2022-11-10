@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'Partials/AddTaksItemButton.dart';
+import 'Partials/AppBottomNavigation.dart';
 import 'ProgressHeader.dart';
 import 'TaskInput.dart';
 import 'TaskItem.dart';
@@ -21,9 +23,10 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: const Text('Space Exploration Planner'),
       ),
+      bottomNavigationBar: const AppBottomNavigation(),
+      floatingActionButton: const AddTaskItemButton(),
       body: Column(
         children: <Widget>[
-          TaskInput(taskList: _taskList),
           ProgressHeader(),
           TaskListView(taskList: _taskList),
         ],
