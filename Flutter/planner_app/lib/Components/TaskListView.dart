@@ -9,11 +9,11 @@ class TaskListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<Task> listWidget = taskList.where((Task currentTask) {
-      return currentTask.isDone == true;
+    final List<Task> filteredList = taskList.where((Task currentTask) {
+      return currentTask.isDone == false;
     }).toList();
 
-    if (listWidget.isEmpty) {
+    if (filteredList.isEmpty) {
       return const Center(
         child: Text(
           'Não há tarefas',
@@ -27,11 +27,11 @@ class TaskListView extends StatelessWidget {
         physics: const BouncingScrollPhysics(),
         separatorBuilder: (BuildContext context, int index) => Container(height: 20),
         itemBuilder: (BuildContext context, int index) {
-          final Task task = listWidget[index];
+          final Task task = filteredList[index];
 
           return TaskWidget(task: task);
         },
-        itemCount: listWidget.length
+        itemCount: filteredList.length
     );
   }
 }

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:planner_app/Models/Task.dart';
 
+import 'Components/TaskListView.dart';
 import 'Partials/AddTaskButton.dart';
 import 'Partials/AppBottomNavigation.dart';
-import 'ProgressHeader.dart';
-import 'TaskListView.dart';
+import 'Components/ProgressHeader.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -16,37 +16,39 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final List<Task> _taskList = [
     Task(
-        nome: 'Trabalhar no aplicativo',
+        nome: 'Lorem ipsum dolor sit amet',
         createdTime: DateTime.now(),
-        descricao: 'Projetar apps elementares para me familiarizar com Flutter',
+        descricao: 'Curabitur velit lectus, tristique eget nisi vitae, cursus volutpat nibh. Nulla facilisi. Mauris ut euismod metus. Quisque gravida feugiat magna. Proin euismod eget diam eget finibus.',
         isDone: true,
     ),
     Task(
-        nome: 'Finalizar trabalho de BD',
-        createdTime: DateTime.now(),
-        descricao: 'Trabalho deve ser entregue hoje aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
-        isDone: true
+      nome: 'Lorem ipsum dolor sit amet',
+      createdTime: DateTime.now(),
+      descricao: 'Curabitur velit lectus, tristique eget nisi vitae, cursus volutpat nibh. Nulla facilisi. Mauris ut euismod metus. Quisque gravida feugiat magna. Proin euismod eget diam eget finibus.',
+      isDone: true,
     ),
     Task(
-        nome: 'Finalizar trabalho de BD',
-        createdTime: DateTime.now(),
-        descricao: 'Trabalho deve ser entregue hoje aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
-        isDone: true
-    ),Task(
-        nome: 'Finalizar trabalho de BD',
-        createdTime: DateTime.now(),
-        descricao: 'Trabalho deve ser entregue hoje aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
-        isDone: true
-    ),Task(
-        nome: 'Finalizar trabalho de BD',
-        createdTime: DateTime.now(),
-        descricao: 'Trabalho deve ser entregue hoje aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
-        isDone: true
-    ),Task(
-        nome: 'Finalizar trabalho de BD',
-        createdTime: DateTime.now(),
-        descricao: 'Trabalho deve ser entregue hoje aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
-        isDone: true
+      nome: 'Lorem ipsum dolor sit amet',
+      createdTime: DateTime.now(),
+      descricao: 'Curabitur velit lectus, tristique eget nisi vitae, cursus volutpat nibh. Nulla facilisi. Mauris ut euismod metus. Quisque gravida feugiat magna. Proin euismod eget diam eget finibus.',
+      isDone: false,
+    ),
+    Task(
+      nome: 'Lorem ipsum dolor sit amet',
+      createdTime: DateTime.now(),
+      isDone: true,
+    ),
+    Task(
+      nome: 'Lorem ipsum dolor sit amet',
+      createdTime: DateTime.now(),
+      descricao: 'Curabitur velit lectus, tristique eget nisi vitae, cursus volutpat nibh. Nulla facilisi. Mauris ut euismod metus. Quisque gravida feugiat magna. Proin euismod eget diam eget finibus.',
+      isDone: false,
+    ),
+    Task(
+      nome: 'Lorem ipsum dolor sit amet',
+      createdTime: DateTime.now(),
+      descricao: 'Curabitur velit lectus, tristique eget nisi vitae, cursus volutpat nibh. Nulla facilisi. Mauris ut euismod metus. Quisque gravida feugiat magna. Proin euismod eget diam eget finibus.',
+      isDone: true,
     ),
   ];
 
@@ -58,7 +60,12 @@ class _HomePageState extends State<HomePage> {
       ),
       bottomNavigationBar: const AppBottomNavigation(),
       floatingActionButton: const AddTaskButton(),
-      body: TaskListView(taskList: _taskList)
+      body: Column(
+        children: [
+          const ProgressHeader(),
+          Expanded(child: TaskListView(taskList: _taskList))
+        ],
+      )
     );
   }
 }

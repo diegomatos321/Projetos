@@ -2,6 +2,7 @@ import 'dart:collection';
 import 'dart:ffi';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'HomePage.dart';
 
 void main() {
@@ -13,12 +14,16 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent
+    ));
+    
     return MaterialApp(
       title: 'Exploration!',
       theme: ThemeData(
         scaffoldBackgroundColor: Color(0xFFf6f5ee),
       ),
-      home: HomePage(),
+      home: const HomePage(),
     );
   }
 }

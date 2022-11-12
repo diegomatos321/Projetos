@@ -34,37 +34,24 @@ class TaskWidget extends StatelessWidget {
       child: buildRow(context));
 
   Widget buildRow(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      padding: const EdgeInsets.all(20.0),
-      child: Row(
-        children: [
-          Checkbox(value: task.isDone, onChanged: (bool? newValue) {}),
-          const SizedBox(
-            width: 20,
-          ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  task.nome,
-                  style:
-                      const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-                ),
-                if (task.descricao.isNotEmpty)
-                  Container(
-                    margin: const EdgeInsets.only(top: 4),
-                    child: Text(
-                      task.descricao,
-                      style: const TextStyle(fontSize: 20, height: 1.5),
-                    ),
-                  )
-              ],
-            ),
-          )
-        ],
-      ),
+    int maxLength = 100;
+    String description = task.descricao;
+
+    if (description.length > maxLength) {
+      description = description.substring(0, maxLength);
+      description = '$description...';
+    }
+
+    return ListTile(
+        contentPadding: const EdgeInsets.all(16.0),
+        onTap: () {},
+        title: Text(task.nome),
+        tileColor: Colors.white,
+        leading: Checkbox(
+          onChanged: null,
+          value: task.isDone,
+        ),
+        subtitle: Text(description),
     );
   }
 }

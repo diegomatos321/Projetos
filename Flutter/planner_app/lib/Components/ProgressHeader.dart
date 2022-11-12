@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'TaskItem.dart';
-
 class ProgressHeader extends StatelessWidget {
   final double _progress = 1.0;
 

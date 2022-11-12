@@ -57,6 +57,7 @@ class _NewTaskDialogState extends State<NewTaskDialog> {
               contentPadding: EdgeInsets.all(16.0)),
         ),
         Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             TextButton(onPressed: null, child: const Text('Salvar')),
             TextButton(
