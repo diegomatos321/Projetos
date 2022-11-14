@@ -1,12 +1,8 @@
 class Task {
+  String id = DateTime.now().toString();
   String nome;
   String descricao;
-  DateTime createdTime;
   bool isDone;
 
-  Task({
-    required this.nome,
-    this.descricao = '',
-    required this.createdTime,
-    this.isDone = false});
+  Task({required this.nome, this.descricao = '', this.isDone = false});
 }

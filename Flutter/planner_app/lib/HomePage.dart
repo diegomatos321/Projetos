@@ -14,44 +14,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final List<Task> _taskList = [
-    Task(
-        nome: 'Lorem ipsum dolor sit amet',
-        createdTime: DateTime.now(),
-        descricao: 'Curabitur velit lectus, tristique eget nisi vitae, cursus volutpat nibh. Nulla facilisi. Mauris ut euismod metus. Quisque gravida feugiat magna. Proin euismod eget diam eget finibus.',
-        isDone: true,
-    ),
-    Task(
-      nome: 'Lorem ipsum dolor sit amet',
-      createdTime: DateTime.now(),
-      descricao: 'Curabitur velit lectus, tristique eget nisi vitae, cursus volutpat nibh. Nulla facilisi. Mauris ut euismod metus. Quisque gravida feugiat magna. Proin euismod eget diam eget finibus.',
-      isDone: true,
-    ),
-    Task(
-      nome: 'Lorem ipsum dolor sit amet',
-      createdTime: DateTime.now(),
-      descricao: 'Curabitur velit lectus, tristique eget nisi vitae, cursus volutpat nibh. Nulla facilisi. Mauris ut euismod metus. Quisque gravida feugiat magna. Proin euismod eget diam eget finibus.',
-      isDone: false,
-    ),
-    Task(
-      nome: 'Lorem ipsum dolor sit amet',
-      createdTime: DateTime.now(),
-      isDone: true,
-    ),
-    Task(
-      nome: 'Lorem ipsum dolor sit amet',
-      createdTime: DateTime.now(),
-      descricao: 'Curabitur velit lectus, tristique eget nisi vitae, cursus volutpat nibh. Nulla facilisi. Mauris ut euismod metus. Quisque gravida feugiat magna. Proin euismod eget diam eget finibus.',
-      isDone: false,
-    ),
-    Task(
-      nome: 'Lorem ipsum dolor sit amet',
-      createdTime: DateTime.now(),
-      descricao: 'Curabitur velit lectus, tristique eget nisi vitae, cursus volutpat nibh. Nulla facilisi. Mauris ut euismod metus. Quisque gravida feugiat magna. Proin euismod eget diam eget finibus.',
-      isDone: true,
-    ),
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
