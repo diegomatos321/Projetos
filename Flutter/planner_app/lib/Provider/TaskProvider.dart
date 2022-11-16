@@ -38,5 +38,8 @@ class TaskProvider extends ChangeNotifier {
 
   UnmodifiableListView<Task> get taskLists => UnmodifiableListView(_taskList);
 
-
+  void add(Task newTask) {
+    _taskList.add(newTask);
+    notifyListeners();
+  }
 }

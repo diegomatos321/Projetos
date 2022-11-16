@@ -6,14 +6,9 @@ import 'Partials/AddTaskButton.dart';
 import 'Partials/AppBottomNavigation.dart';
 import 'Components/ProgressHeader.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
 
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,9 +18,9 @@ class _HomePageState extends State<HomePage> {
       bottomNavigationBar: const AppBottomNavigation(),
       floatingActionButton: const AddTaskButton(),
       body: Column(
-        children: [
-          const ProgressHeader(),
-          Expanded(child: TaskListView(taskList: _taskList))
+        children: const [
+          ProgressHeader(),
+          Expanded(child: TaskListView())
         ],
       )
     );
