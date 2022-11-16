@@ -1,11 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:planner_app/Models/Task.dart';
+import 'package:planner_app/Provider/TaskProvider.dart';
+import 'package:planner_app/Utils.dart';
+import 'package:provider/provider.dart';
 
 class TaskWidget extends StatelessWidget {
   final Task task;
 
   const TaskWidget({Key? key, required this.task}) : super(key: key);
+
+  void deleteTask(BuildContext context) {
+    final provider = Provider.of<TaskProvider>(context, listen: false);
+    provider.remove(task);
+
+    Utils.showSnackBar(context, "Tarefa removida");
+  }
 
   @override
   Widget build(BuildContext context) => Slidable(
@@ -24,7 +34,7 @@ class TaskWidget extends StatelessWidget {
         motion: const DrawerMotion(),
         children: [
           SlidableAction(
-            onPressed: (BuildContext context) {},
+            onPressed: (BuildContext context) => deleteTask(context),
             backgroundColor: Colors.red,
             icon: Icons.delete,
             label: 'Excluir',
@@ -44,7 +54,12 @@ class TaskWidget extends StatelessWidget {
 
     return ListTile(
         contentPadding: const EdgeInsets.all(16.0),
-        onTap: () {},
+        onTap: () {
+          final provider = Provider.of<TaskProvider>(context, listen: false);
+          bool isDone = provider.toggleTask(task);
+
+          Utils.showSnackBar(context, isDone ? 'Tarefa concluída!' : 'Marcada como pendente');
+        },
         title: Text(task.nome),
         tileColor: Colors.white,
         leading: Checkbox(
