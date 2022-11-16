@@ -5,14 +5,16 @@ import 'package:planner_app/Provider/TaskProvider.dart';
 import 'package:provider/provider.dart';
 
 class TaskListView extends StatelessWidget {
-  const TaskListView({Key? key}) : super(key: key);
+  final bool filterTag;
+
+  const TaskListView({Key? key, required this.filterTag}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Consumer<TaskProvider>(
       builder: (BuildContext context, TaskProvider taskProvider, child) {
         final List<Task> filteredList = taskProvider.taskLists.where((Task currentTask) {
-          return currentTask.isDone == false;
+          return currentTask.isDone == filterTag;
         }).toList();
 
         if (filteredList.isEmpty) {
