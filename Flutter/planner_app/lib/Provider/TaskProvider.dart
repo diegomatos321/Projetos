@@ -43,6 +43,13 @@ class TaskProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void edit(Task taskToEdit, String newName, String newDescription) {
+    taskToEdit.nome = newName;
+    taskToEdit.descricao = newDescription;
+
+    notifyListeners();
+  }
+
   void remove(Task task) {
     _taskList.remove(task);
     notifyListeners();

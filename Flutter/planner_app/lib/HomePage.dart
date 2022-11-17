@@ -25,7 +25,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Space Exploration Planner'),
+        title: const Text('Planejador de Tarefas'),
       ),
       bottomNavigationBar: const AppBottomNavigation(),
       floatingActionButton: const AddTaskButton(),

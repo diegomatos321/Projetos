@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:planner_app/Models/Task.dart';
 import 'package:planner_app/Provider/TaskProvider.dart';
+import 'package:planner_app/Routes/EditTask.dart';
 import 'package:planner_app/Utils.dart';
 import 'package:provider/provider.dart';
 
@@ -23,7 +24,7 @@ class TaskWidget extends StatelessWidget {
         motion: const DrawerMotion(),
         children: [
           SlidableAction(
-            onPressed: (BuildContext context) {},
+            onPressed: (BuildContext context) => Navigator.of(context).push(MaterialPageRoute(builder: (context) => EditTask(task: task,))),
             backgroundColor: Colors.green,
             icon: Icons.edit,
             label: 'Editar',
