@@ -1,0 +1,16 @@
+{
+  "name": "pendulo-nao-linear",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "private": true,
+  "browserslist": "> 0.5%, last 2 versions, not dead",
+  "scripts": {
+    "start": "tsc --watch"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^5.2.2"
+  }
+}
