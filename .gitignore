@@ -3,6 +3,7 @@ node_modules/
 *.zip
 *.txt
 *.txt
+*.venv
 
 # Godot-specific ignores
 Godot/*/.import/
