@@ -94,23 +94,38 @@ int main(int, char *[])
     coneActor->GetProperty()->SetColor(colors->GetColor3d("MistyRose").GetData());
 
     //
-    // Create the Renderer and assign actors to it. A renderer is like a
-    // viewport. It is part or all of a window on the screen and it is
-    // responsible for drawing the actors it has.  We also set the background
-    // color here.
+    // Create two renderers and assign actors to them. A renderer renders into
+    // a viewport within the vtkRenderWindow. It is part or all of a window on
+    // the screen and it is responsible for drawing the actors it has.  We also
+    // set the background color here. In this example we are adding the same
+    // actor to two different renderers; it is okay to add different actors to
+    // different renderers as well.
     //
     vtkNew<vtkRenderer> ren1;
     ren1->AddActor(coneActor);
     ren1->SetBackground(colors->GetColor3d("MidnightBlue").GetData());
+    ren1->SetViewport(0.0, 0.0, 0.5, 1.0);
+
+    vtkNew<vtkRenderer> ren2;
+    ren2->AddActor(coneActor);
+    ren2->SetBackground(colors->GetColor3d("MidnightBlue").GetData());
+    ren2->SetViewport(0.5, 0.0, 1.0, 1.0);
 
     // Finally we create the render window which will show up on the screen.
     // We put our renderer into the render window using AddRenderer. We also
-    // set the size to be 300 pixels by 300.
+    // set the size to be 600 pixels by 300.
     //
     vtkNew<vtkRenderWindow> renWin;
     renWin->AddRenderer(ren1);
-    renWin->SetSize(300, 300);
-    renWin->SetWindowName("Tutorial_Step2");
+    renWin->AddRenderer(ren2);
+    renWin->SetSize(600, 300);
+    renWin->SetWindowName("Tutorial_Step3");
+
+    //
+    // Make one view 90 degrees from other.
+    //
+    ren1->ResetCamera();
+    ren1->GetActiveCamera()->Azimuth(-90);
 
     // Here is where we setup the observer.
     vtkNew<vtkMyCallback> mo1;
