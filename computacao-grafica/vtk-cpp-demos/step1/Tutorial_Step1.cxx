@@ -83,15 +83,40 @@ int main(int, char *[])
     coneMapper->SetInputConnection(cone->GetOutputPort());
 
     //
-    // Create an actor to represent the cone. The actor orchestrates rendering
-    // of the mapper's graphics primitives. An actor also refers to properties
-    // via a vtkProperty instance, and includes an internal transformation
-    // matrix. We set this actor's mapper to be coneMapper which we created
-    // above.
+    // Create an actor to represent the first cone. The actor's properties are
+    // modified to give it different surface properties. By default, an actor
+    // is create with a property so the GetProperty() method can be used.
     //
     vtkNew<vtkActor> coneActor;
     coneActor->SetMapper(coneMapper);
-    coneActor->GetProperty()->SetColor(colors->GetColor3d("MistyRose").GetData());
+    // coneActor->GetProperty()->SetColor(colors->GetColor3d("MistyRose").GetData());
+    coneActor->GetProperty()->SetColor(0.2, 0.63, 0.79);
+    coneActor->GetProperty()->SetDiffuse(0.7);
+    coneActor->GetProperty()->SetSpecular(0.4);
+    coneActor->GetProperty()->SetSpecularPower(20);
+
+    //
+    // Create a property and directly manipulate it. Assign it to the
+    // second actor.
+    //
+    vtkNew<vtkProperty> property;
+    // property->SetColor(colors->GetColor3d("Tomato").GetData());
+    property->SetDiffuse(0.7);
+    property->SetSpecular(0.4);
+    property->SetSpecularPower(20);
+
+    //
+    // Create a second actor and a property. The property is directly
+    // manipulated and then assigned to the actor. In this way, a single
+    // property can be shared among many actors. Note also that we use the
+    // same mapper as the first actor did. This way we avoid duplicating
+    // geometry, which may save lots of memory if the geometry is large.
+    vtkNew<vtkActor> coneActor2;
+    coneActor2->SetMapper(coneMapper);
+    coneActor2->GetProperty()->SetColor(colors->GetColor3d("LightSeaGreen").GetData());
+    coneActor2->SetProperty(property);
+    coneActor2->SetPosition(0, 2, 0);
+
 
     //
     // Create two renderers and assign actors to them. A renderer renders into
@@ -103,13 +128,14 @@ int main(int, char *[])
     //
     vtkNew<vtkRenderer> ren1;
     ren1->AddActor(coneActor);
+    ren1->AddActor(coneActor2);
     ren1->SetBackground(colors->GetColor3d("MidnightBlue").GetData());
-    ren1->SetViewport(0.0, 0.0, 0.5, 1.0);
+    // ren1->SetViewport(0.0, 0.0, 0.5, 1.0);
 
-    vtkNew<vtkRenderer> ren2;
-    ren2->AddActor(coneActor);
-    ren2->SetBackground(colors->GetColor3d("MidnightBlue").GetData());
-    ren2->SetViewport(0.5, 0.0, 1.0, 1.0);
+    // vtkNew<vtkRenderer> ren2;
+    // ren2->AddActor(coneActor);
+    // ren2->SetBackground(colors->GetColor3d("MidnightBlue").GetData());
+    // ren2->SetViewport(0.5, 0.0, 1.0, 1.0);
 
     // Finally we create the render window which will show up on the screen.
     // We put our renderer into the render window using AddRenderer. We also
@@ -117,9 +143,9 @@ int main(int, char *[])
     //
     vtkNew<vtkRenderWindow> renWin;
     renWin->AddRenderer(ren1);
-    renWin->AddRenderer(ren2);
-    renWin->SetSize(600, 300);
-    renWin->SetWindowName("Tutorial_Step3");
+    // renWin->AddRenderer(ren2);
+    renWin->SetSize(300, 300);
+    renWin->SetWindowName("Tutorial_Step4");
 
     //
     // Make one view 90 degrees from other.
