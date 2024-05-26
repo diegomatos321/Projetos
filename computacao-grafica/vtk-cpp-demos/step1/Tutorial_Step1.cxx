@@ -19,9 +19,10 @@
 #include <vtkNew.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkProperty.h>
-#include <vtkRenderWindow.h>
 #include <vtkRenderer.h>
+#include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
+#include <vtkInteractorStyleTrackballCamera.h>
 
 #include <iostream>
 
@@ -83,27 +84,30 @@ int main(int, char *[])
     coneMapper->SetInputConnection(cone->GetOutputPort());
 
     //
-    // Create an actor to represent the first cone. The actor's properties are
-    // modified to give it different surface properties. By default, an actor
-    // is create with a property so the GetProperty() method can be used.
+    // Create an actor to represent the cone. The actor orchestrates rendering
+    // of the mapper's graphics primitives. An actor also refers to properties
+    // via a vtkProperty instance, and includes an internal transformation
+    // matrix. We set this actor's mapper to be coneMapper which we created
+    // above.
     //
     vtkNew<vtkActor> coneActor;
     coneActor->SetMapper(coneMapper);
     // coneActor->GetProperty()->SetColor(colors->GetColor3d("MistyRose").GetData());
-    coneActor->GetProperty()->SetColor(0.2, 0.63, 0.79);
-    coneActor->GetProperty()->SetDiffuse(0.7);
-    coneActor->GetProperty()->SetSpecular(0.4);
-    coneActor->GetProperty()->SetSpecularPower(20);
+    coneActor->GetProperty()->SetColor(colors->GetColor3d("Bisque").GetData());
+    // coneActor->GetProperty()->SetColor(0.2, 0.63, 0.79);
+    // coneActor->GetProperty()->SetDiffuse(0.7);
+    // coneActor->GetProperty()->SetSpecular(0.4);
+    // coneActor->GetProperty()->SetSpecularPower(20);
 
     //
     // Create a property and directly manipulate it. Assign it to the
     // second actor.
     //
-    vtkNew<vtkProperty> property;
+    // vtkNew<vtkProperty> property;
     // property->SetColor(colors->GetColor3d("Tomato").GetData());
-    property->SetDiffuse(0.7);
-    property->SetSpecular(0.4);
-    property->SetSpecularPower(20);
+    // property->SetDiffuse(0.7);
+    // property->SetSpecular(0.4);
+    // property->SetSpecularPower(20);
 
     //
     // Create a second actor and a property. The property is directly
@@ -111,11 +115,11 @@ int main(int, char *[])
     // property can be shared among many actors. Note also that we use the
     // same mapper as the first actor did. This way we avoid duplicating
     // geometry, which may save lots of memory if the geometry is large.
-    vtkNew<vtkActor> coneActor2;
-    coneActor2->SetMapper(coneMapper);
-    coneActor2->GetProperty()->SetColor(colors->GetColor3d("LightSeaGreen").GetData());
-    coneActor2->SetProperty(property);
-    coneActor2->SetPosition(0, 2, 0);
+    // vtkNew<vtkActor> coneActor2;
+    // coneActor2->SetMapper(coneMapper);
+    // coneActor2->GetProperty()->SetColor(colors->GetColor3d("LightSeaGreen").GetData());
+    // coneActor2->SetProperty(property);
+    // coneActor2->SetPosition(0, 2, 0);
 
 
     //
@@ -128,7 +132,7 @@ int main(int, char *[])
     //
     vtkNew<vtkRenderer> ren1;
     ren1->AddActor(coneActor);
-    ren1->AddActor(coneActor2);
+    // ren1->AddActor(coneActor2);
     ren1->SetBackground(colors->GetColor3d("MidnightBlue").GetData());
     // ren1->SetViewport(0.0, 0.0, 0.5, 1.0);
 
@@ -145,7 +149,7 @@ int main(int, char *[])
     renWin->AddRenderer(ren1);
     // renWin->AddRenderer(ren2);
     renWin->SetSize(300, 300);
-    renWin->SetWindowName("Tutorial_Step4");
+    renWin->SetWindowName("Tutorial_Step5");
 
     //
     // Make one view 90 degrees from other.
@@ -169,11 +173,36 @@ int main(int, char *[])
        coneActor->RotateY(1.0);
      } */
 
+    //
+    // The vtkRenderWindowInteractor class watches for events (e.g., keypress,
+    // mouse) in the vtkRenderWindow. These events are translated into
+    // event invocations that VTK understands (see VTK/Common/vtkCommand.h
+    // for all events that VTK processes). Then observers of these VTK
+    // events can process them as appropriate.
     vtkNew<vtkRenderWindowInteractor> renWinInt;
     renWinInt->SetRenderWindow(renWin);
 
+      //
+    // By default the vtkRenderWindowInteractor instantiates an instance
+    // of vtkInteractorStyle. vtkInteractorStyle translates a set of events
+    // it observes into operations on the camera, actors, and/or properties
+    // in the vtkRenderWindow associated with the vtkRenderWinodwInteractor.
+    // Here we specify a particular interactor style.
+    vtkNew<vtkInteractorStyleTrackballCamera> style;
+    renWinInt->SetInteractorStyle(style);
+
     ren1->ResetCamera();
-    renWin->Render();
+
+    //
+    // Unlike the previous scripts where we performed some operations and then
+    // exited, here we leave an event loop running. The user can use the mouse
+    // and keyboard to perform the operations on the scene according to the
+    // current interaction style. When the user presses the "e" key, by default
+    // an ExitEvent is invoked by the vtkRenderWindowInteractor which is caught
+    // and drops out of the event loop (triggered by the Start() method that
+    // follows.
+    //
+    renWinInt->Initialize();
     renWinInt->Start();
 
     return EXIT_SUCCESS;
