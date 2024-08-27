@@ -1,0 +1,60 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "create-block/multi-columns",
+	"version": "0.1.0",
+	"title": "Multi Columns",
+	"category": "design",
+	"icon": "columns",
+	"description": "Example block scaffolded with Create Block tool.",
+	"example": {},
+	"supports": {
+		"html": true,
+		"color": {},
+		"spacing": {
+			"margin": true,
+			"padding": true
+		},
+		"style": {
+			"type": "object",
+			"default": {
+				"color": {
+					"text": "#3a3a3a",
+					"background": "#fbf9f4"
+				},
+				"spacing": {
+					"padding": {
+						"top": "20px",
+						"right": "20px",
+						"bottom": "20px",
+						"left": "20px"
+					}
+				}
+			}
+		}
+	},
+	"textdomain": "multi-columns",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css",
+	"viewScript": "file:./view.js",
+	"attributes": {
+		"content": {
+			"type": "string",
+			"source": "html",
+			"selector": "p"
+		},
+		"columnCount": {
+			"type": "integer",
+			"default": 4
+		},
+		"columnWidth": {
+			"type": "integer",
+			"default": 200
+		},
+		"columnGap": {
+			"type": "integer",
+			"default": 40
+		}
+	}
+}
