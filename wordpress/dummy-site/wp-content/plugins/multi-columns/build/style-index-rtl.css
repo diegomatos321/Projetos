@@ -12,3 +12,10 @@
   color: #fff;
   padding: 2px;
 }
+.wp-block-create-block-multi-columns.is-style-drop-cap p:first-of-type:first-letter {
+  color: var(--drop-cap-color);
+  float: right;
+  font-size: var(--drop-cap-font-size);
+  line-height: var(--drop-cap-line-height);
+  padding-left: 0.33rem;
+}
