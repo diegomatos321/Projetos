@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercise Shadertoy style</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <main>
+        <section class="container mx-auto overflow-x-auto">
+            <h1 class="text-3xl"><strong>Replicando resultados de Shader do professor Claudio Esperança</strong></h1>
+            <p>Referencia: <a href="https://observablehq.com/@esperanc/shadertoy-style-drawing" target="_blank">https://observablehq.com/@esperanc/shadertoy-style-drawing</a></p>
+
+            <canvas id="canvas" width="640" height="480"></canvas>
+
+            <div class="flex flex-wrap justify-center gap-4">
+                <div>
+                    <div class="flex gap-2">
+                        <label for="shape">Shape</label>
+                        <select name="shape" id="shape">
+                            <option value="box" selected>Box</option>
+                            <option value="circle">Circle</option>
+                            <option value="boxAndCircle">Box And Circle</option>
+                            <option value="boxOrCircle">Box Or Circle</option>
+                            <option value="boxMinusCircle">Box Minus Circle</option>
+                            <option value="circleMinusBox">Circle Minus Box</option>
+                            <option value="mystery">Mystery</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="flex gap-2">
+                        <label for="coloring">Coloring</label>
+                        <select name="coloring" id="coloring">
+                            <option value="plainColoring" selected>Plain Coloring</option>
+                            <option value="iqColoring">iqColoring</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="relative flex gap-2">
+                        <label for="offset">Offset</label>
+                        <input type="range" name="offset" id="offset" value="0" min="-1" max="1" step="0.05">
+                        <p>0</p>
+                    </div>
+                </div>
+            </div>
+
+            <script src="main.js"></script>
+        </section>
+    </main>
+</body>
+</html>
