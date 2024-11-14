@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Room</title>
+
+    <script defer src="/node_modules/alpinejs/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="main.css">
+</head>
+
+<body class="bg-gray-100 flex flex-col min-h-screen">
+
+    <!-- Header and Navigation -->
+    <header class="bg-gray-900 text-white py-4 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center px-4">
+            <h1 class="text-2xl"><strong>Private Chat</strong></h1>
+            <nav class="flex space-x-4">
+                <a href="/" class="hover:text-yellow-400">Home</a>
+                <a href="#" class="hover:text-yellow-400">Create Room</a>
+                <a href="#" class="hover:text-yellow-400">About</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Chat Room Container -->
+    <main class="flex-grow container grid grid-cols-1 justify-center content-center mx-auto p-4">
+        <div x-data="ClientChat" class="w-full bg-white rounded-lg shadow-lg overflow-">
+
+            <!-- Room Details and Invite Section -->
+            <section class="p-4 border-b flex justify-between items-center">
+                <div>
+                    <h2 class="text-xl font-semibold">Room #1234</h2>
+                    <p class="text-gray-500">Invite link: <a href="#"
+                            class="text-blue-600 hover:underline">https://chatapp.com/room/1234</a></p>
+                    <p class="text-gray-500">Expires in: <span class="font-semibold">30 mins</span></p>
+                </div>
+                <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Copy Invite Link</button>
+            </section>
+
+            <!-- Chat Area -->
+            <div class="p-4 h-96 overflow-y-auto space-y-4 bg-gray-50" id="chat-area">
+                <template x-for="message in messages">
+                    <div>
+                        <!-- Message from Other User -->
+                        <template x-if="message.name !== client_data.name">
+                            <div class="flex items-start space-x-3">
+                                <div class="bg-blue-200 p-3 rounded-lg max-w-xs">
+                                    <p x-text="message.name" class="text-sm font-semibold text-gray-700"></p>
+                                    <p x-text="message.content" class="text-gray-900"></p>
+                                    <span x-text="message.created_at" class="text-xs text-gray-500"></span>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- Message from Self -->
+                        <template x-if="message.name === client_data.name">
+                            <div class="flex items-start space-x-3 justify-end">
+                                <div class="bg-blue-600 text-white p-3 rounded-lg max-w-xs">
+                                    <p x-text="message.content">Yes, I'm here. What's up?</p>
+                                    <span x-text="message.created_at" class="text-xs text-gray-200"></span>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </template>
+            </div>
+
+            <!-- User Input Area -->
+            <form x-on:submit.prevent="HandleSendMsg" action="">
+                <div class="border-t p-4 flex items-center space-x-3">
+                    <input 
+                        type="text" 
+                        placeholder="Type your message..."
+                        x-model="userInput"
+                        class="flex-1 border rounded-lg p-2 focus:outline-none focus:ring focus:ring-blue-300" />
+                    <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Send</button>
+                </div>
+            </form>
+
+        </div>
+    </main>
+
+    <!-- Footer Section -->
+    <footer class="bg-gray-800 text-gray-400 py-4">
+        <div class="container mx-auto text-center">
+            <a href="#" class="hover:underline">Privacy Policy</a> •
+            <a href="#" class="hover:underline">Help</a>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('ClientChat', ClientChat)
+        })
+
+        function ClientChat() {
+            return {
+                userInput: '',
+                messages: [],
+                isLoading: false,
+
+                /** @type {WebSocket} */
+                ws: null,
+                client_data: {
+                    name: '',
+                    client_id: '',
+                },
+
+                init() {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    this.client_data.name = urlParams.get('username');
+
+                    const now = new Date()
+                    this.messages.push({
+                        name: 'System',
+                        content: 'Conectando...',
+                        created_at: this.CurrentLocalDatetime()
+                    })
+                    this.ws = new WebSocket('ws://localhost:8080')
+                    this.ws.addEventListener('open', (e) => this.OnOpen(e))
+                    this.ws.addEventListener('message', (e) => this.OnMesssage(e))
+                    this.ws.addEventListener('error', (e) => this.OnError(e))
+                },
+                OnOpen(e) {
+                    const now = new Date()
+                    this.messages.push({
+                        name: 'System',
+                        content: 'Conectado!',
+                        created_at: this.CurrentLocalDatetime()
+                    })
+                },
+                OnError(e) {
+                    console.error('Error')
+                },
+                OnMesssage(e) {
+                    const body = JSON.parse(e.data)
+
+                    switch (body.type) {
+                        case 'connected':
+                            this.client_data.client_id = body.data.client_id
+                            break;
+                        case 'updated':
+                            if (body.client_id === this.client_data.client_id) {
+                                this.isLoading = false
+                            }
+                            this.messages.push(body.data)
+                            console.dir(body.data)
+                            break;
+                        default:
+                            break;
+                    }
+                },
+                HandleSendMsg(e) {
+                    const body = {
+                        name: this.client_data.name,
+                        content: this.userInput
+                    }
+
+                    this.isLoading = true
+                    this.ws.send(JSON.stringify(body))
+                    this.userInput = ''
+                },
+                CurrentLocalDatetime() {
+                    const now = new Date();
+
+                    const day = String(now.getDate()).padStart(2, '0');
+                    const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed
+                    const year = now.getFullYear();
+
+                    const hours = String(now.getHours()).padStart(2, '0');
+                    const minutes = String(now.getMinutes()).padStart(2, '0');
+                    const seconds = String(now.getSeconds()).padStart(2, '0');
+
+                    return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>
