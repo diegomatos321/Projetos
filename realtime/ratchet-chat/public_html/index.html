@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Incrivel Chat</title>
+
+    <link rel="stylesheet" href="main.css">
+    <script defer src="node_modules/alpinejs/dist/cdn.min.js"></script>
+</head>
+
+<body>
+    <main>
+        <section x-data="ClientChat" class="container mx-auto space-y-4">
+            <h1 class="text-4xl"><strong>SuperChat</strong></h1>
+
+            <div class="flex gap-4">
+                <div class="flex gap-2">
+                    <label for="name">Digite seu nome:</label>
+                    <input id="name" name="name" x-model="client_data.name" class="border" type="text">
+                </div>
+
+                <button class="px-4 py-2 border rounded shadow-lg">Entrar</button>
+            </div>
+
+            <form x-on:submit.prevent="HandleSendMsg" novalidate autocomplete="off" class="shadow-lg">
+                <div style="height: 50vh;"
+                    class="p-4 w-full h-full bg-gray-100 border-x border-t rounded-t overflow-y-auto">
+                    <template x-for="message in messages">
+                        <p x-text="`${message.created_at}: ${message.name}: ${message.content}`"></p>
+                    </template>
+                </div>
+
+                <div class="flex">
+                    <input id="novaMensagem" name="novaMensagem" x-model="userInput"
+                        class="px-4 w-full border rounded-bl" type="text">
+                    <button x-bind:disabled="isLoading"
+                        class="px-4 py-2 rounded-br text-white bg-green-600 hover:bg-green-400">
+                        <span x-show="isLoading === false">Enviar</span>
+                        <span x-show="isLoading === true">Enviando...</span>
+                    </button>
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('ClientChat', ClientChat)
+        })
+
+        function ClientChat() {
+            return {
+                userInput: '',
+                messages: [],
+                isLoading: false,
+
+                /** @type {WebSocket} */
+                ws: null,
+                client_data: {
+                    name: '',
+                    client_id: '',
+                },
+
+                init() {
+                    const now = new Date()
+                    this.messages.push({
+                        name: 'System',
+                        content: 'Conectando...',
+                        created_at: this.CurrentLocalDatetime()
+                    })
+                    this.ws = new WebSocket('ws://localhost:8080')
+                    this.ws.addEventListener('open', (e) => this.OnOpen(e))
+                    this.ws.addEventListener('message', (e) => this.OnMesssage(e))
+                    this.ws.addEventListener('error', (e) => this.OnError(e))
+                },
+                OnOpen(e) {
+                    const now = new Date()
+                    this.messages.push({
+                        name: 'System',
+                        content: 'Conectado!',
+                        created_at: this.CurrentLocalDatetime()
+                    })
+                },
+                OnError(e) {
+                    console.error('Error')
+                },
+                OnMesssage(e) {
+                    const body = JSON.parse(e.data)
+
+                    switch (body.type) {
+                        case 'connected':
+                            this.client_data.client_id = body.data.client_id
+                            break;
+                        case 'updated':
+                            if (body.client_id === this.client_data.client_id) {
+                                this.isLoading = false
+                            }
+                            this.messages.push(body.data)
+                            break;
+                        default:
+                            break;
+                    }
+                },
+                HandleSendMsg(e) {
+                    const body = {
+                        name: this.client_data.name,
+                        content: this.userInput
+                    }
+
+                    this.isLoading = true
+                    this.ws.send(JSON.stringify(body))
+                    this.userInput = ''
+                },
+                CurrentLocalDatetime() {
+                    const now = new Date();
+
+                    const day = String(now.getDate()).padStart(2, '0');
+                    const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed
+                    const year = now.getFullYear();
+
+                    const hours = String(now.getHours()).padStart(2, '0');
+                    const minutes = String(now.getMinutes()).padStart(2, '0');
+                    const seconds = String(now.getSeconds()).padStart(2, '0');
+
+                    return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>
