@@ -31,9 +31,13 @@
             <!-- Room Details and Invite Section -->
             <section class="p-4 border-b flex justify-between items-center">
                 <div>
-                    <h2 class="text-xl font-semibold">Room #1234</h2>
-                    <p class="text-gray-500">Invite link: <a href="#"
-                            class="text-blue-600 hover:underline">https://chatapp.com/room/1234</a></p>
+                    <h2 class="text-xl font-semibold">Room #<span x-text="room.id">1234</span></h2>
+                    <p class="text-gray-500">Invite link:
+                        <a x-bind:href="'localhost:3000/chat.html?roomId=' + room.id"
+                            x-text="'localhost:3000/chat.html?roomId=' + room.id" class="text-blue-600 hover:underline">
+                            localhost:3000/chat.html?room_id=1234
+                        </a>
+                    </p>
                     <p class="text-gray-500">Expires in: <span class="font-semibold">30 mins</span></p>
                 </div>
                 <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Copy Invite Link</button>
@@ -44,7 +48,7 @@
                 <template x-for="message in messages">
                     <div>
                         <!-- Message from Other User -->
-                        <template x-if="message.name !== client_data.name">
+                        <template x-if="message.name !== clientData.name">
                             <div class="flex items-start space-x-3">
                                 <div class="bg-blue-200 p-3 rounded-lg max-w-xs">
                                     <p x-text="message.name" class="text-sm font-semibold text-gray-700"></p>
@@ -55,7 +59,7 @@
                         </template>
 
                         <!-- Message from Self -->
-                        <template x-if="message.name === client_data.name">
+                        <template x-if="message.name === clientData.name">
                             <div class="flex items-start space-x-3 justify-end">
                                 <div class="bg-blue-600 text-white p-3 rounded-lg max-w-xs">
                                     <p x-text="message.content">Yes, I'm here. What's up?</p>
@@ -70,10 +74,7 @@
             <!-- User Input Area -->
             <form x-on:submit.prevent="HandleSendMsg" action="">
                 <div class="border-t p-4 flex items-center space-x-3">
-                    <input 
-                        type="text" 
-                        placeholder="Type your message..."
-                        x-model="userInput"
+                    <input type="text" placeholder="Type your message..." x-model="userInput"
                         class="flex-1 border rounded-lg p-2 focus:outline-none focus:ring focus:ring-blue-300" />
                     <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Send</button>
                 </div>
@@ -103,14 +104,19 @@
 
                 /** @type {WebSocket} */
                 ws: null,
-                client_data: {
+                clientData: {
+                    id: '',
                     name: '',
-                    client_id: '',
+                },
+                room: {
+                    id: '',
+                    clients: [],
                 },
 
                 init() {
                     const urlParams = new URLSearchParams(window.location.search);
-                    this.client_data.name = urlParams.get('username');
+                    this.clientData.name = urlParams.get('username');
+                    this.room.id = urlParams.get('roomId');
 
                     const now = new Date()
                     this.messages.push({
@@ -123,30 +129,42 @@
                     this.ws.addEventListener('message', (e) => this.OnMesssage(e))
                     this.ws.addEventListener('error', (e) => this.OnError(e))
                 },
-                OnOpen(e) {
-                    const now = new Date()
-                    this.messages.push({
-                        name: 'System',
-                        content: 'Conectado!',
-                        created_at: this.CurrentLocalDatetime()
-                    })
-                },
+                OnOpen(e) { },
                 OnError(e) {
-                    console.error('Error')
+                    console.error(e)
                 },
                 OnMesssage(e) {
-                    const body = JSON.parse(e.data)
+                    const incomingBody = JSON.parse(e.data)
 
-                    switch (body.type) {
+                    switch (incomingBody.type) {
                         case 'connected':
-                            this.client_data.client_id = body.data.client_id
+                            this.clientData.id = incomingBody.data.client_id
+
+                            const body = {
+                                type: 'join',
+                                roomId: this.room.id,
+                                data: {
+                                    name: this.clientData.name
+                                }
+                            }
+                            this.ws.send(JSON.stringify(body))
+                            break;
+                        case 'joinned':
+                            if (incomingBody.data.client_id === this.clientData.id) {
+                                this.room.id = incomingBody.room_id
+                            }
+                            
+                            this.room.clients.push({
+                                id: incomingBody.data.client_id,
+                                name: incomingBody.data.name
+                            })
+                            this.messages.push(incomingBody.data.message)
                             break;
                         case 'updated':
-                            if (body.client_id === this.client_data.client_id) {
+                            if (incomingBody.clientId === this.clientData.id) {
                                 this.isLoading = false
                             }
-                            this.messages.push(body.data)
-                            console.dir(body.data)
+                            this.messages.push(incomingBody.data.message)
                             break;
                         default:
                             break;
@@ -154,8 +172,15 @@
                 },
                 HandleSendMsg(e) {
                     const body = {
-                        name: this.client_data.name,
-                        content: this.userInput
+                        type: 'update',
+                        roomId: this.room.id,
+                        data: {
+                            clientId: this.clientData.id,
+                            message: {
+                                name: this.clientData.name,
+                                content: this.userInput
+                            }
+                        }
                     }
 
                     this.isLoading = true
