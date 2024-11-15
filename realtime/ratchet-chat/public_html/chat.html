@@ -74,9 +74,20 @@
             <!-- User Input Area -->
             <form x-on:submit.prevent="HandleSendMsg" action="">
                 <div class="border-t p-4 flex items-center space-x-3">
-                    <input type="text" placeholder="Type your message..." x-model="userInput"
-                        class="flex-1 border rounded-lg p-2 focus:outline-none focus:ring focus:ring-blue-300" />
-                    <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Send</button>
+                    <input 
+                        type="text" 
+                        placeholder="Type your message..." 
+                        x-model="userInput"
+                        class="flex-1 border rounded-lg p-2 focus:outline-none focus:ring focus:ring-blue-300" 
+                    />
+                    <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                        <template x-if="clientData.id !== ''">
+                            <span>Send</span>
+                        </template>
+                        <template x-if="clientData.id === ''">
+                            <span>Join</span>
+                        </template>
+                    </button>
                 </div>
             </form>
 
@@ -115,19 +126,18 @@
 
                 init() {
                     const urlParams = new URLSearchParams(window.location.search);
-                    this.clientData.name = urlParams.get('username');
+                    this.clientData.name = urlParams.get('username') || '';
                     this.room.id = urlParams.get('roomId');
 
-                    const now = new Date()
-                    this.messages.push({
-                        name: 'System',
-                        content: 'Conectando...',
-                        created_at: this.CurrentLocalDatetime()
-                    })
-                    this.ws = new WebSocket('ws://localhost:8080')
-                    this.ws.addEventListener('open', (e) => this.OnOpen(e))
-                    this.ws.addEventListener('message', (e) => this.OnMesssage(e))
-                    this.ws.addEventListener('error', (e) => this.OnError(e))
+                    if (this.clientData.name !== '') {
+                        this.JoinRoom()
+                    } else {
+                        this.messages.push({
+                            name: 'System',
+                            content: 'Digite seu nome',
+                            created_at: this.CurrentLocalDatetime()
+                        })
+                    }
                 },
                 OnOpen(e) { },
                 OnError(e) {
@@ -142,7 +152,7 @@
 
                             const body = {
                                 type: 'join',
-                                roomId: this.room.id,
+                                room_id: this.room.id,
                                 data: {
                                     name: this.clientData.name
                                 }
@@ -153,7 +163,7 @@
                             if (incomingBody.data.client_id === this.clientData.id) {
                                 this.room.id = incomingBody.room_id
                             }
-                            
+
                             this.room.clients.push({
                                 id: incomingBody.data.client_id,
                                 name: incomingBody.data.name
@@ -171,21 +181,38 @@
                     }
                 },
                 HandleSendMsg(e) {
-                    const body = {
-                        type: 'update',
-                        roomId: this.room.id,
-                        data: {
-                            clientId: this.clientData.id,
-                            message: {
-                                name: this.clientData.name,
-                                content: this.userInput
+                    if (this.clientData.id === '' && this.userInput.length > 3) {
+                        this.clientData.name = this.userInput
+                        this.JoinRoom()
+                        this.userInput = ''
+                    } else {
+                        const body = {
+                            type: 'update',
+                            room_id: this.room.id,
+                            data: {
+                                clientId: this.clientData.id,
+                                message: {
+                                    name: this.clientData.name,
+                                    content: this.userInput
+                                }
                             }
                         }
-                    }
 
-                    this.isLoading = true
-                    this.ws.send(JSON.stringify(body))
-                    this.userInput = ''
+                        this.isLoading = true
+                        this.ws.send(JSON.stringify(body))
+                        this.userInput = ''
+                    }
+                },
+                JoinRoom() {
+                    this.messages.push({
+                        name: 'System',
+                        content: 'Conectando...',
+                        created_at: this.CurrentLocalDatetime()
+                    })
+                    this.ws = new WebSocket('ws://localhost:8080')
+                    this.ws.addEventListener('open', (e) => this.OnOpen(e))
+                    this.ws.addEventListener('message', (e) => this.OnMesssage(e))
+                    this.ws.addEventListener('error', (e) => this.OnError(e))
                 },
                 CurrentLocalDatetime() {
                     const now = new Date();

@@ -8,7 +8,7 @@ use Ratchet\ConnectionInterface;
 class Chat implements MessageComponentInterface
 {
     protected \SplObjectStorage $clients;
-    protected array $rooms;
+    protected array $rooms = [];
 
     public function __construct()
     {
@@ -40,21 +40,21 @@ class Chat implements MessageComponentInterface
                 // Handle Join request
             case 'join':
                 // $client_id = $this->clients[$from]['client_id'];
-                $room_id = $incomingData['room_id'];
+                $roomId = $incomingData['room_id'];
                 $name = $incomingData['data']['name'];
 
-                if (empty($room_id)) {
+                if (empty($roomId)) {
                     // Create new room 
-                    $room_id = uniqid('room_');
+                    $roomId = uniqid('room_');
                     $this->clients[$from]['name'] = $name;
 
-                    $this->rooms[$room_id] = [
+                    $this->rooms[$roomId] = [
                         'clients' => [$from]
                     ];
-                } else if (array_key_exists($room_id, $this->rooms)) {
+                } else if (array_key_exists($roomId, $this->rooms)) {
                     // Join existing room
                     $this->clients[$from]['name'] = $name;
-                    $this->rooms[$room_id]['clients'][] = $from;
+                    $this->rooms[$roomId]['clients'][] = $from;
                 } else {
                     $from->send('Room does not exists');
                     break;
@@ -62,7 +62,7 @@ class Chat implements MessageComponentInterface
 
                 $body = [
                     'type' => 'joinned',
-                    'room_id' => $room_id,
+                    'room_id' => $roomId,
                     'data' => [
                         'client_id' => $this->clients[$from]['client_id'],
                         'name' => $name,
@@ -75,11 +75,12 @@ class Chat implements MessageComponentInterface
                 ];
                 $encodedBody = json_encode($body);
                 // Broadcast to all users inside room
-                foreach ($this->rooms[$room_id]['clients'] as $client) {
+                foreach ($this->rooms[$roomId]['clients'] as $client) {
                     $client->send($encodedBody);
                 }
                 break;
             case 'update':
+                $roomId = $incomingData['room_id'];
                 // Sign with current date
                 $incomingData['data']['message']['created_at'] = date('d/m/Y H:m:s');
 
@@ -88,7 +89,7 @@ class Chat implements MessageComponentInterface
                     'data' => $incomingData['data']
                 ];
                 $bodyEncoded = json_encode($body);
-                foreach ($this->clients as $client) {
+                foreach ($this->rooms[$roomId]['clients'] as $client) {
                     $client->send($bodyEncoded);
                 }
                 break;
