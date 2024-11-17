@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model, View and Projection Demo</title>
+
+    <script src="/libs/tailwindcss-3.4.5.js"></script>
+    <script src="/libs/gl-matrix/dist/gl-matrix-min.js"></script>
+    <script src="/libs/regl.min.js"></script>
+</head>
+
+<body>
+    <main>
+        <section>
+            <div x-data="InteractApp" class="container mx-auto space-y-4">
+                <div>
+                    <h1 class="text-4xl"><strong>Model, View and Projection Demo</strong></h1>
+                    <p>Recriando resultados do notebook do professor Cláudio Esperança: <a
+                            class="text-blue-600 underline"
+                            href="https://observablehq.com/@esperanc/model-view-and-projection-demo"
+                            target="_blank">https://observablehq.com/@esperanc/model-view-and-projection-demo</a></p>
+                </div>
+                
+                <div>
+                    <p>A simple WebGL demo for helping understand how to set up a viewing frustum.</p>
+
+                    <canvas x-ref="canvas" id="canvas" width="400" height="400"></canvas>
+                </div>
+
+                <div x-data="MatrixModelTab" class="space-y-4">
+                    <p class="text-2xl"><strong>Modelview Matrix</strong></p>
+
+                    <div class="flex gap-2">
+                        <button x-on:click="OnAddTranslate" class="shadow px-4 py-2 hover:bg-gray-200">+Translate</button>
+                        <button x-on:click="OnAddScale" class="shadow px-4 py-2 hover:bg-gray-200">+Scale</button>
+                        <button x-on:click="OnAddRotate" class="shadow px-4 py-2 hover:bg-gray-200">+Rotate</button>
+                        <button x-on:click="OnAddLookAt" class="shadow px-4 py-2 hover:bg-gray-200">+LookAt</button>
+                        <button x-on:click="OnReset" class="shadow px-4 py-2 hover:bg-gray-200">Reset</button>
+                    </div>
+
+                    <template x-for="(transformation, i) in orderedTransformations">
+                        <div>
+                            <template x-if="transformation.type === 'translation'">
+                                <div class="flex gap-4">
+                                    <div>
+                                        <label for="translate-x">Translate X</label>
+                                        <input 
+                                            id="translate-x" 
+                                            name="translate-x" 
+                                            class="border" 
+                                            x-on:change="ComputeNewTranslation(i, 0, Number($event.target.value))"
+                                            type="number" 
+                                            value="0"
+                                            min="-2"
+                                            max="2"
+                                            step="0.1"
+                                        >
+                                    </div>
+        
+                                    <div>
+                                        <label for="translate-y">Translate Y</label>
+                                        <input 
+                                            id="translate-y" 
+                                            name="translate-y" 
+                                            class="border" 
+                                            x-on:change="ComputeNewTranslation(i, 1, Number($event.target.value))"
+                                            type="number" 
+                                            value="0"
+                                            min="-2"
+                                            max="2"
+                                            step="0.1"
+                                        >
+                                    </div>
+        
+                                    <div>
+                                        <label for="translate-z">Translate Z</label>
+                                        <input 
+                                            id="translate-z" 
+                                            name="translate-z" 
+                                            class="border" 
+                                            x-on:change="ComputeNewTranslation(i, 2, Number($event.target.value))"
+                                            type="number" 
+                                            value="0"
+                                            min="-2"
+                                            max="2"
+                                            step="0.1"
+                                        >
+                                    </div>
+                                </div>
+                            </template>
+                            
+                            <template x-if="transformation.type === 'scaling'">
+                                <div class="flex gap-4">
+                                    <div>
+                                        <label for="scale-x">Scale X</label>
+                                        <input 
+                                            id="scale-x" 
+                                            name="scale-x" 
+                                            class="border" 
+                                            x-on:change="ComputeNewScale(i, 0, Number($event.target.value))"
+                                            type="number" 
+                                            value="1"
+                                            min="-2"
+                                            max="2"
+                                            step="0.1"
+                                        >
+                                    </div>
+        
+                                    <div>
+                                        <label for="scale-y">Scale Y</label>
+                                        <input 
+                                            id="scale-y" 
+                                            name="scale-y" 
+                                            class="border"
+                                            x-on:change="ComputeNewScale(i, 1, Number($event.target.value))"
+                                            type="number" 
+                                            value="1"
+                                            min="-2"
+                                            max="2"
+                                            step="0.1"
+                                        >
+                                    </div>
+        
+                                    <div>
+                                        <label for="scale-z">Scale Z</label>
+                                        <input 
+                                            id="scale-z" 
+                                            name="scale-z" 
+                                            class="border"
+                                            x-on:change="ComputeNewScale(i, 2, Number($event.target.value))"
+                                            type="number" 
+                                            value="1"
+                                            min="-2"
+                                            max="2"
+                                            step="0.1"
+                                        >
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+
+                    <div id="latex-matrix"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="index.js" type="module"></script>
+
+    <!-- A library to help me manipulate the DOM -->
+    <script defer src="/libs/alpinejs.min.js"></script>
+</body>
+
+</html>
