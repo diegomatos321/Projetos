@@ -9,6 +9,7 @@
     <script src="/libs/tailwindcss-3.4.5.js"></script>
     <script src="/libs/gl-matrix/dist/gl-matrix-min.js"></script>
     <script src="/libs/regl.min.js"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 
 <body>
@@ -36,8 +37,10 @@
                         <button x-on:click="OnAddTranslate" class="shadow px-4 py-2 hover:bg-gray-200">+Translate</button>
                         <button x-on:click="OnAddScale" class="shadow px-4 py-2 hover:bg-gray-200">+Scale</button>
                         <button x-on:click="OnAddRotate" class="shadow px-4 py-2 hover:bg-gray-200">+Rotate</button>
-                        <button x-on:click="OnAddLookAt" class="shadow px-4 py-2 hover:bg-gray-200">+LookAt</button>
-                        <button x-on:click="OnReset" class="shadow px-4 py-2 hover:bg-gray-200">Reset</button>
+                        <button x-on:click="
+                            orderedTransformations = []
+                            UpdateMatrix()
+                        " class="shadow px-4 py-2 hover:bg-gray-200">Reset</button>
                     </div>
 
                     <template x-for="(transformation, i) in orderedTransformations">
@@ -50,7 +53,10 @@
                                             id="translate-x" 
                                             name="translate-x" 
                                             class="border" 
-                                            x-on:change="ComputeNewTranslation(i, 0, Number($event.target.value))"
+                                            x-on:change="
+                                                transformation.data[0] = Number($event.target.value)
+                                                UpdateMatrix()
+                                            "
                                             type="number" 
                                             value="0"
                                             min="-2"
@@ -65,7 +71,10 @@
                                             id="translate-y" 
                                             name="translate-y" 
                                             class="border" 
-                                            x-on:change="ComputeNewTranslation(i, 1, Number($event.target.value))"
+                                            x-on:change="
+                                                transformation.data[1] = Number($event.target.value)
+                                                UpdateMatrix()
+                                            "
                                             type="number" 
                                             value="0"
                                             min="-2"
@@ -80,7 +89,10 @@
                                             id="translate-z" 
                                             name="translate-z" 
                                             class="border" 
-                                            x-on:change="ComputeNewTranslation(i, 2, Number($event.target.value))"
+                                            x-on:change="
+                                                transformation.data[2] = Number($event.target.value)
+                                                UpdateMatrix()
+                                            "
                                             type="number" 
                                             value="0"
                                             min="-2"
@@ -99,7 +111,10 @@
                                             id="scale-x" 
                                             name="scale-x" 
                                             class="border" 
-                                            x-on:change="ComputeNewScale(i, 0, Number($event.target.value))"
+                                            x-on:change="
+                                                transformation.data[0] = Number($event.target.value)
+                                                UpdateMatrix()
+                                            "
                                             type="number" 
                                             value="1"
                                             min="-2"
@@ -114,7 +129,10 @@
                                             id="scale-y" 
                                             name="scale-y" 
                                             class="border"
-                                            x-on:change="ComputeNewScale(i, 1, Number($event.target.value))"
+                                            x-on:change="
+                                                transformation.data[1] = Number($event.target.value)
+                                                UpdateMatrix()
+                                            "
                                             type="number" 
                                             value="1"
                                             min="-2"
@@ -129,7 +147,10 @@
                                             id="scale-z" 
                                             name="scale-z" 
                                             class="border"
-                                            x-on:change="ComputeNewScale(i, 2, Number($event.target.value))"
+                                            x-on:change="
+                                                transformation.data[2] = Number($event.target.value)
+                                                UpdateMatrix()
+                                            "
                                             type="number" 
                                             value="1"
                                             min="-2"
@@ -139,10 +160,65 @@
                                     </div>
                                 </div>
                             </template>
+
+                            <template x-if="transformation.type === 'rotation'">
+                                <div class="flex gap-4">
+                                    <div>
+                                        <label for="rotate-x">Rotate X</label>
+                                        <input 
+                                            id="rotate-x" 
+                                            name="rotate-x" 
+                                            class="border" 
+                                            x-on:change="
+                                                transformation.data[0] = Number($event.target.value)
+                                                UpdateMatrix()
+                                            "
+                                            type="number" 
+                                            value="0"
+                                            min="-180"
+                                            max="180"
+                                        >
+                                    </div>
+        
+                                    <div>
+                                        <label for="rotate-y">Rotate Y</label>
+                                        <input 
+                                            id="rotate-y" 
+                                            name="rotate-y" 
+                                            class="border"
+                                            x-on:change="
+                                                transformation.data[1] = Number($event.target.value)
+                                                UpdateMatrix()
+                                            "
+                                            type="number" 
+                                            value="0"
+                                            min="-180"
+                                            max="180"
+                                        >
+                                    </div>
+        
+                                    <div>
+                                        <label for="rotate-z">Rotate Z</label>
+                                        <input 
+                                            id="rotate-z" 
+                                            name="rotate-z" 
+                                            class="border"
+                                            x-on:change="
+                                                transformation.data[2] = Number($event.target.value)
+                                                UpdateMatrix()
+                                            "
+                                            type="number" 
+                                            value="0"
+                                            min="-180"
+                                            max="180"
+                                        >
+                                    </div>
+                                </div>
+                            </template>
                         </div>
                     </template>
 
-                    <div id="latex-matrix"></div>
+                    <div x-text="latex" id="latex-matrix"></div>
                 </div>
             </div>
         </section>
