@@ -1,8 +1,12 @@
+import MatrixProjectionTab from './MatrixProjectionTab.js'
 import MatrixModelTab from './MatrixModelTab.js'
+import MatrixViewTab from './MatrixViewTab.js'
 import geometries from './geometries.js'
 
 document.addEventListener('alpine:init', () => {
+    Alpine.data('MatrixProjectionTab', MatrixProjectionTab)
     Alpine.data('MatrixModelTab', MatrixModelTab)
+    Alpine.data('MatrixViewTab', MatrixViewTab)
     Alpine.data('InteractApp', Main)
 })
 
@@ -10,6 +14,8 @@ function Main() {
     return {
         // Overwritten by child component MatrixModelTab
         matrixModel: glMatrix.mat4.create(),
+
+        selectedTab: 1,
 
         init() {           
             const regl = createREGL(this.$refs.canvas);
