@@ -15,6 +15,12 @@ function Main() {
         // Overwritten by child component MatrixModelTab
         matrixModel: glMatrix.mat4.create(),
 
+        // Overwritten by child component MatrixProjectionTab
+        matrixProjection: glMatrix.mat4.create(),
+
+        // Overwritten by child component MatrixViewTab
+        matrixView: glMatrix.mat4.create(),
+
         selectedTab: 1,
 
         init() {           
@@ -77,11 +83,23 @@ function Main() {
 
                 // console.dir(this.matrixModel)
                 drawBox({                    
-                    modelview: glMatrix.mat4.mul([], glMatrix.mat4.create(), this.matrixModel),
-                    projection: glMatrix.mat4.create(),
+                    modelview: glMatrix.mat4.mul([], this.matrixView, this.matrixModel),
+                    projection: this.matrixProjection,
                 });
             })
-        }
-
+        },
+        
+        matrixToLatex(m) {
+            let fmt = (x) => x.toFixed(4) == x ? x : x.toFixed(4);
+    
+            return `
+            \\begin{bmatrix}
+                ${fmt(m[0])} & ${fmt(m[4])} & ${fmt(m[8])}& ${fmt(m[12])} \\\\
+                ${fmt(m[1])} & ${fmt(m[5])} & ${fmt(m[9])}& ${fmt(m[13])} \\\\
+                ${fmt(m[2])} & ${fmt(m[6])} & ${fmt(m[10])}& ${fmt(m[14])} \\\\
+                ${fmt(m[3])} & ${fmt(m[7])} & ${fmt(m[11])}& ${fmt(m[15])} 
+            \\end{bmatrix}
+            `
+        },
     }
 }

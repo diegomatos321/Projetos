@@ -55,27 +55,41 @@
                         </button>
                     </div>
 
-                    <div x-show="selectedTab === 0" x-data="" class="border-y p-4 space-y-4">
+                    <div x-show="selectedTab === 0" x-data="MatrixProjectionTab" class="border-y p-4 space-y-4">
                         <div class="flex gap-2">
-                            <select name="projectionMode" id="projectionMode">
+                            <select 
+                                name="projection" 
+                                id="projection" 
+                                class="border px-2"
+                                x-bind:value="projection"
+                                x-on:change="
+                                    projection = $event.target.value
+                                    UpdateMatrix()
+                                "
+                            >
                                 <option value="perspective" selected>Perspective</option>
                                 <option value="ortho">Ortho</option>
                             </select>
-                            <button>Reset</button>
+                            <button class="border rounded px-4 py-2 shadow hover:bg-gray-200" x-on:click="Reset">Reset</button>
                         </div>
 
                         <div class="flex gap-4">
                             <div>
-                                <label for="fov">FOV</label>
+                                <label for="fovy">Fovy</label>
                                 <input 
-                                    id="fov" 
-                                    name="fov" 
+                                    id="fovy" 
+                                    name="fovy" 
                                     class="border" 
                                     type="number" 
                                     value="45"
                                     min="0"
                                     max="180"
                                     step="1"
+                                    x-bind:value="fovy"
+                                    x-on:change="
+                                        fovy = Number($event.target.value)
+                                        UpdateMatrix()
+                                    "
                                 >
                             </div>
 
@@ -90,6 +104,11 @@
                                     min="0"
                                     max="10"
                                     step="0.1"
+                                    x-bind:value="aspect"
+                                    x-on:change="
+                                        aspect = Number($event.target.value)
+                                        UpdateMatrix()
+                                    "
                                 >
                             </div>
 
@@ -104,6 +123,11 @@
                                     min="0"
                                     max="10"
                                     step="0.1"
+                                    x-bind:value="near"
+                                    x-on:change="
+                                        near = Number($event.target.value)
+                                        UpdateMatrix()
+                                    "
                                 >
                             </div>
 
@@ -118,9 +142,17 @@
                                     min="-5"
                                     max="10"
                                     step="0.1"
+                                    x-bind:value="fovy"
+                                    x-on:change="
+                                        far = Number($event.target.value)
+                                        UpdateMatrix()
+                                    "
                                 >
                             </div>
                         </div>
+
+                        <div x-text="latex"></div>
+
                     </div>
 
                     <div x-show="selectedTab === 1" x-data="MatrixModelTab" class="border-y p-4 space-y-4">    
@@ -309,10 +341,188 @@
                             </div>
                         </template>
     
-                        <div x-text="latex" id="latex-matrix"></div>
+                        <div x-text="latex"></div>
                     </div>
     
-                    <div x-show="selectedTab === 2" x-data="" class="border-y p-4 space-y-4">    </div>
+                    <div x-show="selectedTab === 2" x-data="MatrixViewTab" class="border-y p-4 space-y-4">
+                        <button class="px-4 py-2 border rounded hover:bg-gray-200" x-on:click="Reset">Reset</button>
+
+                        <div class="flex gap-4">
+                            <p>LookAt Eye</p>
+
+                            <div>
+                                <label for="eye-x">x:</label>
+                                <input 
+                                    type="number" 
+                                    id="eye-x" 
+                                    value="0" 
+                                    min="-5" 
+                                    max="5" 
+                                    class="px-2 border" 
+                                    step="0.1"
+                                    x-bind:value="eye[0]"
+                                    x-on:change="
+                                        eye[0] = Number($event.target.value)
+                                        UpdateMatrix()
+                                    "
+                                >
+                            </div>
+
+                            <div>
+                                <label for="eye-y">y:</label>
+                                <input 
+                                type="number" 
+                                id="eye-y" 
+                                value="0" 
+                                min="-5" 
+                                max="5" 
+                                class="px-2 border" 
+                                step="0.1"
+                                x-bind:value="eye[1]"
+                                x-on:change="
+                                    eye[1] = Number($event.target.value)
+                                    UpdateMatrix()
+                                "
+                            >
+                            </div>
+
+                            <div>
+                                <label for="eye-z">z:</label>
+                                <input 
+                                type="number" 
+                                id="eye-z" 
+                                value="5" 
+                                min="-5" 
+                                max="5" 
+                                class="px-2 border" 
+                                step="0.1"
+                                x-bind:value="eye[2]"
+                                x-on:change="
+                                    eye[2] = Number($event.target.value)
+                                    UpdateMatrix()
+                                "
+                            >
+                            </div>
+                        </div>
+
+                        <div class="flex gap-4">
+                            <p>LookAt Center</p>
+
+                            <div>
+                                <label for="center-x">x:</label>
+                                <input 
+                                type="number" 
+                                id="center-x" 
+                                value="0" 
+                                min="-5" 
+                                max="5" 
+                                class="px-2 border" 
+                                step="0.1"
+                                x-bind:value="center[0]"
+                                x-on:change="
+                                    center[0] = Number($event.target.value)
+                                    UpdateMatrix()
+                                "
+                            >
+                            </div>
+
+                            <div>
+                                <label for="center-y">y:</label>
+                                <input 
+                                type="number" 
+                                id="center-y" 
+                                value="0" 
+                                min="-5" 
+                                max="5" 
+                                class="px-2 border" 
+                                step="0.1"
+                                x-bind:value="center[1]"
+                                x-on:change="
+                                    center[1] = Number($event.target.value)
+                                    UpdateMatrix()
+                                "
+                            >
+                            </div>
+
+                            <div>
+                                <label for="center-z">z:</label>
+                                <input 
+                                type="number" 
+                                id="center-z" 
+                                value="0" 
+                                min="-5" 
+                                max="5" 
+                                class="px-2 border" 
+                                step="0.1"
+                                x-bind:value="center[2]"
+                                x-on:change="
+                                    center[2] = Number($event.target.value)
+                                    UpdateMatrix()
+                                "
+                            >
+                            </div>
+                        </div>
+
+                        <div class="flex gap-4">
+                            <p>LookAt up</p>
+
+                            <div>
+                                <label for="up-x">x:</label>
+                                <input 
+                                type="number" 
+                                id="up-x" 
+                                value="0" 
+                                min="-5" 
+                                max="5" 
+                                class="px-2 border" 
+                                step="0.1"
+                                x-bind:value="up[0]"
+                                x-on:change="
+                                    up[0] = Number($event.target.value)
+                                    UpdateMatrix()
+                                "
+                                >
+                            </div>
+
+                            <div>
+                                <label for="up-y">y:</label>
+                                <input 
+                                type="number" 
+                                id="up-y" 
+                                value="1" 
+                                min="-5" 
+                                max="5" 
+                                class="px-2 border" 
+                                step="0.1"
+                                x-bind:value="up[1]"
+                                x-on:change="
+                                    up[1] = Number($event.target.value)
+                                    UpdateMatrix()
+                                "
+                                >
+                            </div>
+
+                            <div>
+                                <label for="up-z">z:</label>
+                                <input 
+                                type="number" 
+                                id="up-z" 
+                                value="0" 
+                                min="-5" 
+                                max="5" 
+                                class="px-2 border" 
+                                step="0.1"
+                                x-bind:value="up[2]"
+                                x-on:change="
+                                    up[2] = Number($event.target.value)
+                                    UpdateMatrix()
+                                "
+                                >
+                            </div>
+                        </div>
+                        
+                        <div x-text="latex"></div>
+                    </div>
                 </div>
             </div>
         </section>
