@@ -74,6 +74,7 @@ export default () => ({
         }
 
         const result = this.orderedTransformations
+            .toReversed() // reverse the transformations to show the correct order
             .map((transformation) => {
                 switch (transformation.type) {
                     case 'translation':
