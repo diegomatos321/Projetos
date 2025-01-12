@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotlight demo</title>
+
+    <script src="./libs/tailwindcss-3.4.5.js"></script>
+    <script src="./libs/gl-matrix/dist/gl-matrix-min.js"></script>
+    <script src="./libs/regl.min.js"></script>
+</head>
+<body>
+    <main>
+        <section x-data="App" class="container mx-auto space-y-4">
+            <div>
+                <h1 class="text-4xl"><strong>Spotlight Demo</strong></h1>
+                <p>Exercício spotlight, notebook alterado do professor Claudio Esperança: <a class="text-blue-600 underline" href="https://observablehq.com/@esperanc/phong-illumination-model" target="_blank">https://observablehq.com/@esperanc/phong-illumination-model</a></p>
+            </div>
+            
+            <div>
+                <p>This is a simple WebGL demo showing how to compute the Phong illumination model for single spotlight.</p>
+
+                <canvas x-ref="canvas" id="canvas" width="400" height="400"></canvas>
+            </div>
+
+            <div>
+                <div class="flex">
+                    <button 
+                        x-on:click="selectedTab=0" 
+                        class="px-4 py-2 rounded-t-lg hover:bg-gray-200"
+                        x-bind:class="{ 'bg-gray-200 border-x border-t border-black': selectedTab === 0 }"
+                    >
+                        Light
+                    </button>
+                    <button 
+                        x-on:click="selectedTab=1" 
+                        class="px-4 py-2 rounded-t-lg hover:bg-gray-200"
+                        x-bind:class="{ 'bg-gray-200 border-x border-t border-black': selectedTab === 1 }"
+                    >
+                        Object
+                    </button>
+                </div>
+
+                <div x-show="selectedTab === 0" class="border-y p-4 space-y-4">
+                    <div class="flex gap-4">
+                        <p>Direction</p>
+
+                        <div>
+                            <label for="lightDirX">x</label>
+                            <input id="lightDirX" class="border" type="number" min="-10" max="10" step="0.1" x-model="lightDir[0]">
+                        </div>
+
+                        <div>
+                            <label for="lightDirY">y</label>
+                            <input id="lightDirY" class="border" type="number" min="-10" max="10" step="0.1" x-model="lightDir[1]">
+                        </div>
+
+                        <div>
+                            <label for="lightDirZ">z</label>
+                            <input id="lightDirZ" class="border" type="number" min="-10" max="10" step="0.1" x-model="lightDir[2]">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="lightColor">Color</label>
+                        <input type="color" id="lightColor" x-model="lightColor" x-ref="lightColor">
+                        <span x-text="$refs.lightColor.value"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div x-show="selectedTab === 1" class="border-y p-4 space-y-4">
+                <div class="flex gap-4">
+                    <p><strong>Mesh</strong></p>
+                    <select name="mesh" id="mesh" class="border">
+                        <option value="bunny">Bunny</option>
+                        <option value="sphere">Sphere</option>
+                        <option value="teapot">Teapot</option>
+                    </select>
+                </div>
+
+                <div class="flex gap-4">
+                    <p><strong>Position</strong></p>
+
+                    <div>
+                        <label for="positionX">x</label>
+                        <input id="positionX" name="positionX" class="border" type="number">
+                    </div>
+
+                    <div>
+                        <label for="positionY">y</label>
+                        <input id="positionY" name="positionY" class="border" type="number">
+                    </div>
+
+                    <div>
+                        <label for="positionZ">z</label>
+                        <input id="positionZ" name="positionZ" class="border" type="number">
+                    </div>
+                </div>
+
+                <div class="flex gap-4">
+                    <p><strong>Rotation</strong></p>
+
+                    <div>
+                        <label for="rotationX">x</label>
+                        <input id="rotationX" name="rotationX" class="border" type="number">
+                    </div>
+
+                    <div>
+                        <label for="rotationY">y</label>
+                        <input id="rotationY" name="rotationY" class="border" type="number">
+                    </div>
+
+                    <div>
+                        <label for="rotationZ">z</label>
+                        <input id="rotationZ" name="rotationZ" class="border" type="number">
+                    </div>
+                </div>
+
+                <div class="flex gap-4">
+                    <p><strong>Scale</strong></p>
+
+                    <div>
+                        <label for="scaleX">x</label>
+                        <input id="scaleX" name="scaleX" class="border" type="number">
+                    </div>
+
+                    <div>
+                        <label for="scaleY">y</label>
+                        <input id="scaleY" name="scaleY" class="border" type="number">
+                    </div>
+
+                    <div>
+                        <label for="scaleZ">z</label>
+                        <input id="scaleZ" name="scaleZ" class="border" type="number">
+                    </div>
+                </div>
+
+                <div class="flex gap-4">
+                    <p><strong>Coefficients</strong></p>
+
+                    <div>
+                        <label for="emission">Emission</label>
+                        <input id="emission" name="emission" class="border" type="number">
+                    </div>
+
+                    <div>
+                        <label for="ambient">Ambient</label>
+                        <input id="ambient" name="ambient" class="border" type="number">
+                    </div>
+
+                    <div>
+                        <label for="diffuse">Diffuse</label>
+                        <input id="diffuse" name="diffuse" class="border" type="number">
+                    </div>
+
+                    <div>
+                        <label for="specular">Specular</label>
+                        <input id="specular" name="specular" class="border" type="number">
+                    </div>
+
+                    <div>
+                        <label for="shininess">Shininess</label>
+                        <input id="shininess" name="shininess" class="border" type="number">
+                    </div>
+                </div>
+
+                <div class="flex gap-4">
+                    <p><strong>Color</strong></p>
+                    <input id="objectColor" type="color" x-ref="objectColor">
+                    <span x-text="$refs.objectColor.value"></span>
+                </div>
+            </div>
+        </div>
+        </section>
+    </main>
+
+    <script src="index.js" type="module"></script>
+
+    <!-- A library to help me manipulate the DOM -->
+    <script defer src="./libs/alpinejs.min.js"></script>
+</body>
+</html>
