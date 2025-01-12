@@ -1,9 +1,20 @@
 export default () => ({
     projection: 'perspective',
+    
+    // Perspective attributes
     fovy: 40,
     aspect: 1,
     near: 0.1,
     far: 10,
+
+    // Ortho attributes
+    left: -1,
+    right: 1,
+    bottom: -1,
+    top: 1,
+    nearOrtho: 0.1,
+    farOrtho: 10,
+
     latex: '',
 
     init() {
@@ -11,9 +22,15 @@ export default () => ({
     },
 
     UpdateMatrix() {
-        // Attribute from parent Component
-        this.matrixProjection = glMatrix.mat4.perspective([], this.fovy * Math.PI / 180, this.aspect, this.near, this.far)
-        this.toLatex()
+        if (this.projection === 'perspective') {
+            // Attribute from parent Component
+            this.matrixProjection = glMatrix.mat4.perspective([], this.fovy * Math.PI / 180, this.aspect, this.near, this.far)
+            this.toLatex()
+        } else if (this.projection === 'ortho') {
+            // Attribute from parent Component
+            this.matrixProjection = glMatrix.mat4.ortho([], this.left, this.right, this.bottom, this.top, this.nearOrtho, this.farOrtho)
+            this.toLatex()
+        }
     },
 
     toLatex() {
