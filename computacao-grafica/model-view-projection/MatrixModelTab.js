@@ -40,19 +40,19 @@ export default () => ({
             switch (b.type) {
                 case 'translation':
                     const translationMatrix = glMatrix.mat4.fromTranslation([], b.data)
-                    result = glMatrix.mat4.mul([], a, translationMatrix)
+                    result = glMatrix.mat4.mul([], translationMatrix, a)
                     break;
 
                 case 'scaling':
                     const scalingMatrix = glMatrix.mat4.fromScaling([], b.data)
-                    result = glMatrix.mat4.mul([], a, scalingMatrix)
+                    result = glMatrix.mat4.mul([], scalingMatrix, a)
                     break;
 
                 case 'rotation':
                     let rotation = glMatrix.mat4.fromZRotation([], b.data[2] * this.deg)
                     rotation = glMatrix.mat4.rotateY([], rotation, b.data[1] * this.deg)
                     rotation = glMatrix.mat4.rotateX([], rotation, b.data[0] * this.deg)
-                    result = glMatrix.mat4.mul([], a, rotation)
+                    result = glMatrix.mat4.mul([], rotation, a)
                     break;
 
                 default:
