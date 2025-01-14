@@ -4,11 +4,25 @@ document.addEventListener('alpine:init', () => {
 
 function Main()
 {
-    console.log('Foi')
     return {
         selectedTab: 0,
-        lightDir: [1, 1, 1],
-
+        light: {
+            dir: [1, 1, 1],
+            color: '#000000'
+        },
+        object: {
+            mesh: 'bunny',
+            position: [1, 0, 0],
+            rotation: [0, 0, 0],
+            scale: [1, 1, 1],
+            color: '#000000',
+            emission: 0,
+            ambient: 0,
+            diffuse: 0,
+            specular: 0,
+            shininess: 0
+        },
+        
         init() {
             const regl = createREGL(this.$refs.canvas);
 
@@ -20,10 +34,10 @@ function Main()
                 })
 
                 // console.dir(this.matrixModel)
-                drawBox({                    
+                /* drawBox({                    
                     modelview: glMatrix.mat4.mul([], this.matrixView, this.matrixModel),
                     projection: this.matrixProjection,
-                });
+                }); */
             })
         }
     }

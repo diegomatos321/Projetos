@@ -47,24 +47,24 @@
 
                         <div>
                             <label for="lightDirX">x</label>
-                            <input id="lightDirX" class="border" type="number" min="-10" max="10" step="0.1" x-model="lightDir[0]">
+                            <input id="lightDirX" class="border" type="number" min="-10" max="10" step="0.1" x-model="light.dir[0]">
                         </div>
 
                         <div>
                             <label for="lightDirY">y</label>
-                            <input id="lightDirY" class="border" type="number" min="-10" max="10" step="0.1" x-model="lightDir[1]">
+                            <input id="lightDirY" class="border" type="number" min="-10" max="10" step="0.1" x-model="light.dir[1]">
                         </div>
 
                         <div>
                             <label for="lightDirZ">z</label>
-                            <input id="lightDirZ" class="border" type="number" min="-10" max="10" step="0.1" x-model="lightDir[2]">
+                            <input id="lightDirZ" class="border" type="number" min="-10" max="10" step="0.1" x-model="light.dir[2]">
                         </div>
                     </div>
 
                     <div>
                         <label for="lightColor">Color</label>
-                        <input type="color" id="lightColor" x-model="lightColor" x-ref="lightColor">
-                        <span x-text="$refs.lightColor.value"></span>
+                        <input type="color" id="lightColor" x-model="light.color">
+                        <span x-text="light.color"></span>
                     </div>
                 </div>
             </div>
@@ -72,7 +72,7 @@
             <div x-show="selectedTab === 1" class="border-y p-4 space-y-4">
                 <div class="flex gap-4">
                     <p><strong>Mesh</strong></p>
-                    <select name="mesh" id="mesh" class="border">
+                    <select name="mesh" id="mesh" class="border" x-modal="object.mesh">
                         <option value="bunny">Bunny</option>
                         <option value="sphere">Sphere</option>
                         <option value="teapot">Teapot</option>
@@ -84,17 +84,17 @@
 
                     <div>
                         <label for="positionX">x</label>
-                        <input id="positionX" name="positionX" class="border" type="number">
+                        <input id="positionX" name="positionX" class="border" x-modal="object.position[0]" type="number">
                     </div>
 
                     <div>
                         <label for="positionY">y</label>
-                        <input id="positionY" name="positionY" class="border" type="number">
+                        <input id="positionY" name="positionY" class="border" x-modal="object.position[1]" type="number">
                     </div>
 
                     <div>
                         <label for="positionZ">z</label>
-                        <input id="positionZ" name="positionZ" class="border" type="number">
+                        <input id="positionZ" name="positionZ" class="border" x-modal="object.position[2]" type="number">
                     </div>
                 </div>
 
@@ -103,17 +103,17 @@
 
                     <div>
                         <label for="rotationX">x</label>
-                        <input id="rotationX" name="rotationX" class="border" type="number">
+                        <input id="rotationX" name="rotationX" class="border" x-modal="object.rotation[0]" type="number">
                     </div>
 
                     <div>
                         <label for="rotationY">y</label>
-                        <input id="rotationY" name="rotationY" class="border" type="number">
+                        <input id="rotationY" name="rotationY" class="border" x-modal="object.rotation[1]" type="number">
                     </div>
 
                     <div>
                         <label for="rotationZ">z</label>
-                        <input id="rotationZ" name="rotationZ" class="border" type="number">
+                        <input id="rotationZ" name="rotationZ" class="border" x-modal="object.rotation[2]" type="number">
                     </div>
                 </div>
 
@@ -122,17 +122,17 @@
 
                     <div>
                         <label for="scaleX">x</label>
-                        <input id="scaleX" name="scaleX" class="border" type="number">
+                        <input id="scaleX" name="scaleX" class="border" x-modal="object.scale[0]" type="number">
                     </div>
 
                     <div>
                         <label for="scaleY">y</label>
-                        <input id="scaleY" name="scaleY" class="border" type="number">
+                        <input id="scaleY" name="scaleY" class="border" x-modal="object.scale[1]" type="number">
                     </div>
 
                     <div>
                         <label for="scaleZ">z</label>
-                        <input id="scaleZ" name="scaleZ" class="border" type="number">
+                        <input id="scaleZ" name="scaleZ" class="border" x-modal="object.scale[2]" type="number">
                     </div>
                 </div>
 
@@ -141,34 +141,34 @@
 
                     <div>
                         <label for="emission">Emission</label>
-                        <input id="emission" name="emission" class="border" type="number">
+                        <input id="emission" name="emission" class="border" x-modal="object.emission" type="number">
                     </div>
 
                     <div>
                         <label for="ambient">Ambient</label>
-                        <input id="ambient" name="ambient" class="border" type="number">
+                        <input id="ambient" name="ambient" class="border" x-modal="object.ambient" type="number">
                     </div>
 
                     <div>
                         <label for="diffuse">Diffuse</label>
-                        <input id="diffuse" name="diffuse" class="border" type="number">
+                        <input id="diffuse" name="diffuse" class="border" x-modal="object.diffuse" type="number">
                     </div>
 
                     <div>
                         <label for="specular">Specular</label>
-                        <input id="specular" name="specular" class="border" type="number">
+                        <input id="specular" name="specular" class="border" x-modal="object.specular" type="number">
                     </div>
 
                     <div>
                         <label for="shininess">Shininess</label>
-                        <input id="shininess" name="shininess" class="border" type="number">
+                        <input id="shininess" name="shininess" class="border" x-modal="object.shininess" type="number">
                     </div>
                 </div>
 
                 <div class="flex gap-4">
                     <p><strong>Color</strong></p>
-                    <input id="objectColor" type="color" x-ref="objectColor">
-                    <span x-text="$refs.objectColor.value"></span>
+                    <input id="objectColor" type="color" x-modal="object.color">
+                    <span x-text="object.color"></span>
                 </div>
             </div>
         </div>
