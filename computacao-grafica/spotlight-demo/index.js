@@ -50,46 +50,18 @@ function Main() {
                     depth: 1
                 })
 
-                if (this.object.mesh === 'bunny') {
-                    this.drawBunnyMesh({
-                        objColor: this.colorToVec3(this.object.color),
-                        lightColor: this.colorToVec3(this.light.color),
-                        lightDir: glMatrix.vec3.normalize([], glMatrix.vec3.transformMat3([], this.light.dir, glMatrix.mat3.fromMat4([], this.matrixView))),
-                        ambient: this.object.ambient,
-                        emission: this.object.emission,
-                        diffuse: this.object.diffuse,
-                        specular: this.object.specular,
-                        shininess: this.object.shininess,
-                        modelview: glMatrix.mat4.mul([], this.matrixView, this.matrixModel),
-                        projection: this.matrixProjection
-                    });
-                } else if (this.object.mesh === 'teapot') {
-                    this.drawTeapotMesh({
-                        objColor: this.colorToVec3(this.object.color),
-                        lightColor: this.colorToVec3(this.light.color),
-                        lightDir: glMatrix.vec3.normalize([], glMatrix.vec3.transformMat3([], this.light.dir, glMatrix.mat3.fromMat4([], this.matrixView))),
-                        ambient: this.object.ambient,
-                        emission: this.object.emission,
-                        diffuse: this.object.diffuse,
-                        specular: this.object.specular,
-                        shininess: this.object.shininess,
-                        modelview: glMatrix.mat4.mul([], this.matrixView, this.matrixModel),
-                        projection: this.matrixProjection
-                    });
-                } else if (this.object.mesh === 'sphere') {
-                    this.drawSphereMesh({
-                        objColor: this.colorToVec3(this.object.color),
-                        lightColor: this.colorToVec3(this.light.color),
-                        lightDir: glMatrix.vec3.normalize([], glMatrix.vec3.transformMat3([], this.light.dir, glMatrix.mat3.fromMat4([], this.matrixView))),
-                        ambient: this.object.ambient,
-                        emission: this.object.emission,
-                        diffuse: this.object.diffuse,
-                        specular: this.object.specular,
-                        shininess: this.object.shininess,
-                        modelview: glMatrix.mat4.mul([], this.matrixView, this.matrixModel),
-                        projection: this.matrixProjection
-                    });
-                }
+                this.meshes[this.object.mesh]({
+                    objColor: this.colorToVec3(this.object.color),
+                    lightColor: this.colorToVec3(this.light.color),
+                    lightDir: glMatrix.vec3.normalize([], glMatrix.vec3.transformMat3([], this.light.dir, glMatrix.mat3.fromMat4([], this.matrixView))),
+                    ambient: this.object.ambient,
+                    emission: this.object.emission,
+                    diffuse: this.object.diffuse,
+                    specular: this.object.specular,
+                    shininess: this.object.shininess,
+                    modelview: glMatrix.mat4.mul([], this.matrixView, this.matrixModel),
+                    projection: this.matrixProjection
+                })
             })
         },
 
@@ -98,13 +70,11 @@ function Main() {
             let bunnyText = await bunnyResponse.text()
             let bunnyObj = this.parseObj(bunnyText)
             bunnyObj.pos = bunnyObj.pos.map(([x, y, z]) => [x + 0.4, y - 1, z])
-            this.meshes.bunny = bunnyObj
 
             let teapotResponse = await fetch('./assets/obj/teapot@1.obj')
             let teapotText = await teapotResponse.text()
             let teapotObj = this.parseObj(teapotText)
             teapotObj.pos = teapotObj.pos.map(([x, y, z]) => [x / 10, y / 10, z / 10])
-            this.meshes.teapot = teapotObj
 
             let sphereGeometry = function (radius = 1, slices = 20, stacks = 12) {
                 let pos = [];
@@ -139,17 +109,17 @@ function Main() {
 
                 return { pos: pos, normal: normal, faces: faceElements, edges: edgeElements }
             }
-            this.meshes.sphere = sphereGeometry()
+            let sphereObj = sphereGeometry()
 
-            this.drawBunnyMesh = this.regl({
+            this.meshes.bunny = this.regl({
                 frag: this.fragmentShader(),
                 vert: this.vertexShader(),
 
                 // These are the vertex attributes that will be passed
                 // on to the vertex shader
                 attributes: {
-                    position: this.meshes.bunny.pos,
-                    normal: this.meshes.bunny.normal
+                    position: bunnyObj.pos,
+                    normal: bunnyObj.normal
                 },
 
                 // These are the uniforms, i.e., global shader variables that are set
@@ -182,18 +152,18 @@ function Main() {
                 //
 
                 // Number of triangles
-                elements: this.meshes.bunny.faces
+                elements: bunnyObj.faces
             })
 
-            this.drawTeapotMesh = this.regl({
+            this.meshes.teapot = this.regl({
                 frag: this.fragmentShader(),
                 vert: this.vertexShader(),
 
                 // These are the vertex attributes that will be passed
                 // on to the vertex shader
                 attributes: {
-                    position: this.meshes.teapot.pos,
-                    normal: this.meshes.teapot.normal
+                    position: teapotObj.pos,
+                    normal: teapotObj.normal
                 },
 
                 // These are the uniforms, i.e., global shader variables that are set
@@ -226,18 +196,18 @@ function Main() {
                 //
 
                 // Number of triangles
-                elements: this.meshes.teapot.faces
+                elements: teapotObj.faces
             })
 
-            this.drawSphereMesh = this.regl({
+            this.meshes.sphere = this.regl({
                 frag: this.fragmentShader(),
                 vert: this.vertexShader(),
 
                 // These are the vertex attributes that will be passed
                 // on to the vertex shader
                 attributes: {
-                    position: this.meshes.sphere.pos,
-                    normal: this.meshes.sphere.normal
+                    position: sphereObj.pos,
+                    normal: sphereObj.normal
                 },
 
                 // These are the uniforms, i.e., global shader variables that are set
@@ -270,7 +240,7 @@ function Main() {
                 //
 
                 // Number of triangles
-                elements: this.meshes.sphere.faces
+                elements: sphereObj.faces
             })
         },
 
