@@ -42,23 +42,49 @@
                 </div>
 
                 <div x-show="selectedTab === 0" class="border-y p-4 space-y-4">
+                    <div>
+                        <p>Position</p>
+
+                        <div class="flex gap-4">
+                            <div>
+                                <label for="lightPosX">x</label>
+                                <input id="lightPosX" type="number" class="border" min="-10" max="10" step="0.1" x-model="light.position[0]">
+                            </div class="flex gap-4">
+    
+                            <div>
+                                <label for="lightPosY">y</label>
+                                <input id="lightPosY" type="number" class="border" min="-10" max="10" step="0.1" x-model="light.position[1]">
+                            </div>
+    
+                            <div>
+                                <label for="lightPosZ">z</label>
+                                <input id="lightPosZ" type="number" class="border" min="-10" max="10" step="0.1" x-model="light.position[2]">
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="flex gap-4">
                         <p>Direction</p>
 
                         <div>
                             <label for="lightDirX">x</label>
-                            <input id="lightDirX" class="border" type="number" min="-10" max="10" step="0.1" x-model="light.dir[0]">
+                            <input id="lightDirX" class="border" type="number" min="-10" max="10" step="0.1" x-model="light.direction[0]">
                         </div>
 
                         <div>
                             <label for="lightDirY">y</label>
-                            <input id="lightDirY" class="border" type="number" min="-10" max="10" step="0.1" x-model="light.dir[1]">
+                            <input id="lightDirY" class="border" type="number" min="-10" max="10" step="0.1" x-model="light.direction[1]">
                         </div>
 
                         <div>
                             <label for="lightDirZ">z</label>
-                            <input id="lightDirZ" class="border" type="number" min="-10" max="10" step="0.1" x-model="light.dir[2]">
+                            <input id="lightDirZ" class="border" type="number" min="-10" max="10" step="0.1" x-model="light.direction[2]">
                         </div>
+                    </div>
+
+                    <div>
+                        <label for="lightAngle">Angle Cut Off</label>
+                        <input type="number" id="lightAngle" class="border" x-model="light.angleCutOff" min="0" max="180" step="1">
                     </div>
 
                     <div>

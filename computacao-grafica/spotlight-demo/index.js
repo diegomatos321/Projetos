@@ -7,8 +7,10 @@ function Main() {
         selectedTab: 0,
         light: {
             dir: [1, 1, 1],
+            position: [0, 0, 5],
+            direction: [0, 0, -1],
+            angleCutOff: 30,
             color: '#ffffff',
-            type: 'spotlight',
         },
         object: {
             mesh: 'bunny',
@@ -51,35 +53,21 @@ function Main() {
                     depth: 1
                 })
 
-                if (this.light.type === 'global') {
-                    this.meshes[this.object.mesh]({
-                        objColor: this.colorToVec3(this.object.color),
-                        lightColor: this.colorToVec3(this.light.color),
-                        lightDir: glMatrix.vec3.normalize([], glMatrix.vec3.transformMat3([], this.light.dir, glMatrix.mat3.fromMat4([], this.matrixView))),
-                        ambient: this.object.ambient,
-                        emission: this.object.emission,
-                        diffuse: this.object.diffuse,
-                        specular: this.object.specular,
-                        shininess: this.object.shininess,
-                        modelview: glMatrix.mat4.mul([], this.matrixView, this.matrixModel),
-                        projection: this.matrixProjection
-                    })
-                } else if (this.light.type === 'spotlight') {
-                    this.meshes[this.object.mesh]({
-                        // objColor: this.colorToVec3(this.object.color),
-                        lightColor: this.colorToVec3(this.light.color),
-                        // lightDir: glMatrix.vec3.normalize([], glMatrix.vec3.transformMat3([], this.light.dir, glMatrix.mat3.fromMat4([], this.matrixView))),
-                        // ambient: this.object.ambient,
-                        // emission: this.object.emission,
-                        // diffuse: this.object.diffuse,
-                        // specular: this.object.specular,
-                        // shininess: this.object.shininess,
-                        spotlightPositionOC: glMatrix.vec3.fromValues(0,0,5),
-                        spotlightDirection: glMatrix.vec3.fromValues(0,0,-1),
-                        modelview: glMatrix.mat4.mul([], this.matrixView, this.matrixModel),
-                        projection: this.matrixProjection
-                    })
-                }
+                this.meshes[this.object.mesh]({
+                    objColor: this.colorToVec3(this.object.color),
+                    lightColor: this.colorToVec3(this.light.color),
+                    lightDir: glMatrix.vec3.normalize([], glMatrix.vec3.transformMat3([], this.light.dir, glMatrix.mat3.fromMat4([], this.matrixView))),
+                    ambient: this.object.ambient,
+                    emission: this.object.emission,
+                    diffuse: this.object.diffuse,
+                    specular: this.object.specular,
+                    shininess: this.object.shininess,
+                    spotlightPositionOC: glMatrix.vec3.fromValues(this.light.position[0], this.light.position[1], this.light.position[2]),
+                    spotlightDirection: glMatrix.vec3.fromValues(this.light.direction[0], this.light.direction[1], this.light.direction[2]),
+                    angleCutOff: this.light.angleCutOff,
+                    modelview: glMatrix.mat4.mul([], this.matrixView, this.matrixModel),
+                    projection: this.matrixProjection
+                })
             })
         },
 
@@ -155,6 +143,7 @@ function Main() {
                     projection: this.regl.prop("projection"),
                     spotlightPositionOC: this.regl.prop("spotlightPositionOC"),
                     spotlightDirection: this.regl.prop("spotlightDirection"),
+                    angleCutOff: this.regl.prop("angleCutOff"),
                 },
 
                 // The depth buffer
@@ -199,6 +188,7 @@ function Main() {
                     shininess: this.regl.prop("shininess"),
                     spotlightPositionOC: this.regl.prop("spotlightPositionOC"),
                     spotlightDirection: this.regl.prop("spotlightDirection"),
+                    angleCutOff: this.regl.prop("angleCutOff"),
                 },
 
                 // The depth buffer
@@ -243,6 +233,7 @@ function Main() {
                     shininess: this.regl.prop("shininess"),
                     spotlightPositionOC: this.regl.prop("spotlightPositionOC"),
                     spotlightDirection: this.regl.prop("spotlightDirection"),
+                    angleCutOff: this.regl.prop("angleCutOff"),
                 },
 
                 // The depth buffer
@@ -275,8 +266,7 @@ function Main() {
                 uniform vec3 spotlightPositionOC;
 
                 varying vec3 vtxNormal;
-                varying vec3 lightDir;
-                varying float spotlightEnergy;
+                varying vec3 spotlightDir;
                 
                 void main () {
                     vec4 worldpos = modelview*vec4(position, 1.0);
@@ -286,7 +276,7 @@ function Main() {
                     // Tranforma posição do spotlight
                     vec3 spotlightPosition = (modelview*vec4(spotlightPositionOC, 1.0)).xyz;
 
-                    lightDir = spotlightPosition - worldpos.xyz;
+                    spotlightDir = spotlightPosition - worldpos.xyz;
                 }
             `
 
@@ -308,26 +298,42 @@ function Main() {
         fragmentShader() {
             return `
                 precision mediump float;
-                varying vec3 vtxNormal;
-                varying vec3 lightDir;
-                varying float spotlightEnergy;
                 
-                // uniform vec4 color;
+                varying vec3 vtxNormal;
+                
+                uniform vec3 lightDir;
+                uniform vec4 color;
                 uniform vec3 lightColor;
-                // uniform vec3 objColor;
+                uniform vec3 objColor;
                 uniform vec3 spotlightDirection;
+                uniform float angleCutOff;
+                uniform float ambient;
+                uniform float emission;
+                uniform float diffuse;
+                uniform float specular;
+                uniform float shininess;
 
                 void main() {
-                    float angle = dot(spotlightDirection, normalize(-lightDir));
+                    float angle = dot(spotlightDir, normalize(-lightDir));
                     angle = max(0.0, angle);
-                    float angleCutoff = radians(10.0);
+                    float test = radians(angleCutOff);
                     
-                    if (angle > cos(angleCutoff)) {
-                        float intensity = (angleCutoff - acos(angle)) / angleCutoff;
-                        gl_FragColor = vec4(intensity * lightColor, 1.0);
-                    } else {
+                    if (angle < cos(angleCutOff)) {
                         gl_FragColor = vec4(0, 0, 0, 1); 
+                        return;
                     }
+
+                    vec3 lightColor = lightColor * pow(angle, 0.0);
+                    
+                    vec3 normal = normalize(vtxNormal);
+                    float diffuseComp = max(0.0,diffuse * dot(normal,lightDir));
+                    vec3 ref = 2.0*dot(lightDir,normal)*normal - lightDir;
+                    float specularComp = specular*pow(max(0.0,dot(ref,vec3(0.0,0.0,1.0))),shininess);
+
+                    gl_FragColor = vec4(
+                        emission*objColor + (ambient+diffuseComp)*lightColor*objColor + specularComp*lightColor, 
+                        1.0
+                    );
                 }
             `
 
