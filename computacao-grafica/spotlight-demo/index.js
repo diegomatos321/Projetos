@@ -6,7 +6,6 @@ function Main() {
     return {
         selectedTab: 0,
         light: {
-            dir: [1, 1, 1],
             position: [0, 0, 5],
             direction: [0, 0, -1],
             angleCutOff: 30,
@@ -54,19 +53,21 @@ function Main() {
                 })
 
                 this.meshes[this.object.mesh]({
-                    objColor: this.colorToVec3(this.object.color),
+                    modelview: glMatrix.mat4.mul([], this.matrixView, this.matrixModel),
+                    projection: this.matrixProjection,
+
                     lightColor: this.colorToVec3(this.light.color),
-                    lightDir: glMatrix.vec3.normalize([], glMatrix.vec3.transformMat3([], this.light.dir, glMatrix.mat3.fromMat4([], this.matrixView))),
+                    lightDirection: glMatrix.vec3.normalize([], glMatrix.vec3.transformMat3([], this.light.direction, glMatrix.mat3.fromMat4([], this.matrixView))),
+                    objColor: this.colorToVec3(this.object.color),
+                    
                     ambient: this.object.ambient,
                     emission: this.object.emission,
                     diffuse: this.object.diffuse,
                     specular: this.object.specular,
                     shininess: this.object.shininess,
-                    spotlightPositionOC: glMatrix.vec3.fromValues(this.light.position[0], this.light.position[1], this.light.position[2]),
-                    spotlightDirection: glMatrix.vec3.fromValues(this.light.direction[0], this.light.direction[1], this.light.direction[2]),
-                    angleCutOff: this.light.angleCutOff,
-                    modelview: glMatrix.mat4.mul([], this.matrixView, this.matrixModel),
-                    projection: this.matrixProjection
+
+                    spotlightPosition: glMatrix.vec3.fromValues(this.light.position[0], this.light.position[1], this.light.position[2]),
+                    angleCutOff: Math.cos(this.light.angleCutOff * deg),
                 })
             })
         },
@@ -131,18 +132,20 @@ function Main() {
                 // These are the uniforms, i.e., global shader variables that are set
                 // from inside the host (CPU) program
                 uniforms: {
-                    objColor: this.regl.prop("objColor"),
+                    modelview: this.regl.prop("modelview"),
+                    projection: this.regl.prop("projection"),
+
                     lightColor: this.regl.prop("lightColor"),
-                    lightDir: this.regl.prop("lightDir"),
+                    lightDirection: this.regl.prop("lightDirection"),
+                    objColor: this.regl.prop("objColor"),
+
                     ambient: this.regl.prop("ambient"),
                     emission: this.regl.prop("emission"),
                     diffuse: this.regl.prop("diffuse"),
                     specular: this.regl.prop("specular"),
                     shininess: this.regl.prop("shininess"),
-                    modelview: this.regl.prop("modelview"),
-                    projection: this.regl.prop("projection"),
-                    spotlightPositionOC: this.regl.prop("spotlightPositionOC"),
-                    spotlightDirection: this.regl.prop("spotlightDirection"),
+                    
+                    spotlightPosition: this.regl.prop("spotlightPosition"),
                     angleCutOff: this.regl.prop("angleCutOff"),
                 },
 
@@ -180,14 +183,13 @@ function Main() {
                 uniforms: {
                     objColor: this.regl.prop("objColor"),
                     lightColor: this.regl.prop("lightColor"),
-                    lightDir: this.regl.prop("lightDir"),
+                    lightDirection: this.regl.prop("lightDirection"),
                     ambient: this.regl.prop("ambient"),
                     emission: this.regl.prop("emission"),
                     diffuse: this.regl.prop("diffuse"),
                     specular: this.regl.prop("specular"),
                     shininess: this.regl.prop("shininess"),
                     spotlightPositionOC: this.regl.prop("spotlightPositionOC"),
-                    spotlightDirection: this.regl.prop("spotlightDirection"),
                     angleCutOff: this.regl.prop("angleCutOff"),
                 },
 
@@ -225,14 +227,13 @@ function Main() {
                 uniforms: {
                     objColor: this.regl.prop("objColor"),
                     lightColor: this.regl.prop("lightColor"),
-                    lightDir: this.regl.prop("lightDir"),
+                    lightDirection: this.regl.prop("lightDirection"),
                     ambient: this.regl.prop("ambient"),
                     emission: this.regl.prop("emission"),
                     diffuse: this.regl.prop("diffuse"),
                     specular: this.regl.prop("specular"),
                     shininess: this.regl.prop("shininess"),
                     spotlightPositionOC: this.regl.prop("spotlightPositionOC"),
-                    spotlightDirection: this.regl.prop("spotlightDirection"),
                     angleCutOff: this.regl.prop("angleCutOff"),
                 },
 
@@ -259,38 +260,23 @@ function Main() {
             return `
                 attribute vec3 position;
                 attribute vec3 normal;
-                
+
                 uniform mat4 modelview;
                 uniform mat4 projection;
-                
-                uniform vec3 spotlightPositionOC;
+
+                uniform vec3 spotlightPosition;
 
                 varying vec3 vtxNormal;
-                varying vec3 spotlightDir;
-                
-                void main () {
-                    vec4 worldpos = modelview*vec4(position, 1.0);
-                    gl_Position = projection*worldpos;
-                    vtxNormal = (modelview*vec4(normal,0.0)).xyz;
+                varying vec3 spotlightDirection;
 
-                    // Tranforma posição do spotlight
-                    vec3 spotlightPosition = (modelview*vec4(spotlightPositionOC, 1.0)).xyz;
+                void main() {
+                    // Transform position to world space
+                    vec4 worldPosition = modelview * vec4(position, 1.0);
+                    gl_Position = projection * worldPosition;
+                    vtxNormal = (modelview * vec4(normal, 0.0)).xyz;
 
-                    spotlightDir = spotlightPosition - worldpos.xyz;
-                }
-            `
-
-            return `
-                attribute vec3 position;
-                attribute vec3 normal;
-                varying vec3 vtxNormal;
-                uniform mat4 modelview;
-                uniform mat4 projection;
-                
-                void main () {
-                    vec4 worldpos = modelview*vec4(position, 1.0);
-                    gl_Position = projection*worldpos;
-                    vtxNormal = (modelview*vec4(normal,0.0)).xyz;
+                    // Calculate the vector from the vertex to the spotlight
+                    spotlightDirection = normalize(spotlightPosition - worldPosition.xyz);
                 }
             `
         },
@@ -298,14 +284,14 @@ function Main() {
         fragmentShader() {
             return `
                 precision mediump float;
-                
+
                 varying vec3 vtxNormal;
-                
-                uniform vec3 lightDir;
-                uniform vec4 color;
+                varying vec3 spotlightDirection;
+
+                uniform vec3 lightDirection;
                 uniform vec3 lightColor;
                 uniform vec3 objColor;
-                uniform vec3 spotlightDirection;
+                
                 uniform float angleCutOff;
                 uniform float ambient;
                 uniform float emission;
@@ -314,53 +300,25 @@ function Main() {
                 uniform float shininess;
 
                 void main() {
-                    float angle = dot(spotlightDir, normalize(-lightDir));
-                    angle = max(0.0, angle);
-                    float test = radians(angleCutOff);
-                    
-                    if (angle < cos(angleCutOff)) {
-                        gl_FragColor = vec4(0, 0, 0, 1); 
+                    float spotFactor = dot(spotlightDirection, -lightDirection);
+
+                    if (spotFactor < angleCutOff) {
+                        gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
                         return;
                     }
 
-                    vec3 lightColor = lightColor * pow(angle, 0.0);
-                    
                     vec3 normal = normalize(vtxNormal);
-                    float diffuseComp = max(0.0,diffuse * dot(normal,lightDir));
-                    vec3 ref = 2.0*dot(lightDir,normal)*normal - lightDir;
-                    float specularComp = specular*pow(max(0.0,dot(ref,vec3(0.0,0.0,1.0))),shininess);
+                    float diffuseFactor = max(dot(normal, spotlightDirection), 0.0) * diffuse;
 
-                    gl_FragColor = vec4(
-                        emission*objColor + (ambient+diffuseComp)*lightColor*objColor + specularComp*lightColor, 
-                        1.0
-                    );
-                }
-            `
+                    vec3 ref = 2.0*dot(spotlightDirection,normal)*normal - spotlightDirection;
+                    float specularFactor = specular*pow(max(0.0,dot(ref,vec3(0.0,0.0,1.0))),shininess);
 
-            // Phong shading model
-            return `
-                precision mediump float;
-                uniform vec4 color;
-                varying vec3 vtxNormal;
-                uniform vec3 lightDir;
-                uniform vec3 lightColor;
-                uniform vec3 objColor;
-                uniform float ambient;
-                uniform float emission;
-                uniform float diffuse;
-                uniform float specular;
-                uniform float shininess;
-                
-                void main () {
-                    vec3 normal = normalize(vtxNormal);
-                    float diffuseComp = max(0.0,diffuse * dot(normal,lightDir));
-                    vec3 ref = 2.0*dot(lightDir,normal)*normal - lightDir;
-                    float specularComp = specular*pow(max(0.0,dot(ref,vec3(0.0,0.0,1.0))),shininess);
-                    gl_FragColor = vec4(
-                        emission*objColor + (ambient+diffuseComp)*lightColor*objColor + specularComp*lightColor, 
-                        1.0
-                    );
+                    vec3 resultColor = emission*objColor + (ambient+diffuseFactor)*lightColor*objColor + specularFactor*lightColor;
+
+                    float falloff = smoothstep(angleCutOff, 1.0, spotFactor);
+                    gl_FragColor = vec4(falloff * resultColor, 1.0);
                 }
+
             `
         },
 
