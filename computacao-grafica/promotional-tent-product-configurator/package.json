@@ -1,7 +1,7 @@
 {
-  "name": "promotional-tent-configurator",
+  "name": "promotional-tent-product-configurator",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -9,13 +9,15 @@
     "preview": "vite preview"
   },
   "devDependencies": {
-    "@tailwindcss/vite": "^4.0.12",
+    "@tailwindcss/vite": "^4.0.13",
+    "@types/alpinejs": "^3.13.11",
     "@types/three": "^0.174.0",
-    "tailwindcss": "^4.0.12",
+    "tailwindcss": "^4.0.13",
     "typescript": "~5.7.2",
     "vite": "^6.2.0"
   },
   "dependencies": {
+    "alpinejs": "^3.14.8",
     "three": "^0.174.0"
   }
 }

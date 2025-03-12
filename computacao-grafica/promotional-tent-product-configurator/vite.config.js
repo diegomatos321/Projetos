@@ -18,6 +18,7 @@ export default defineConfig({
         },
       },
     },
+    copyPublicDir: false,
   },
   plugins: [
     tailwindcss(),

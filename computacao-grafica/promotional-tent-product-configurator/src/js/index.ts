@@ -1,23 +1,25 @@
-import "../css/index.css"
-
-import * as THREE from "three";
-import WebGL from 'three/addons/capabilities/WebGL.js';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
+import '../css/index.css'
+import Alpine from 'alpinejs'
+import ProductConfigurator from './configurator'
 
 // let selectedObjectName = "";
 
-window.addEventListener("DOMContentLoaded", () => {
+Alpine.data('ProductConfigurator', ProductConfigurator)
+
+Alpine.start()
+
+/* window.addEventListener("alpine:init", () => {
     if (WebGL.isWebGL2Available()) {
         Start();
     } else {
-
         const warning = WebGL.getWebGL2ErrorMessage();
         document.getElementById('container')?.appendChild(warning);
     }
-})
+}) */
 
-function Start() {
+
+
+/* function Start() {
     const container = document.getElementById("configurator") as HTMLDivElement;
 
     const scene = new THREE.Scene();
@@ -40,14 +42,6 @@ function Start() {
 
     const gltfLoader = new GLTFLoader();
     gltfLoader.load("/assets/models/demo-tent/scene.gltf", (gltf) => {
-        /* let tentMesh = gltf.scene.getObjectByName("Tent_M_Tent_0");
-        if (tentMesh === undefined) {
-            return
-        }
-
-        if (tentMesh instanceof THREE.Mesh) {
-            tentMesh.material.color.set(0x00ff00);
-        } */
         scene.add(gltf.scene);
     });
 
@@ -64,7 +58,7 @@ function Start() {
         const intersects = raycaster.intersectObjects(scene.children, true);
         if (intersects.length > 0) {
             const clickedObject = intersects[0].object;
-            // selectedObjectName = clickedObject.name;
+            selectedObjectName = clickedObject.name;
         }
     })
 
@@ -72,4 +66,4 @@ function Start() {
         renderer.render(scene, camera);
     }
     renderer.setAnimationLoop(animate);
-}
+} */
