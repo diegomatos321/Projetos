@@ -4,7 +4,7 @@
         // if (file_exists(__DIR__ . '/vite-dev')) {
             return "http://localhost:5173/src" . $path;
         // }
-        // return "/public/js/" . basename($path);
+        // return '/dist/' . $path;
     }
 ?>
 
@@ -19,11 +19,30 @@
 </head>
 <body>
     <main>
-        <section x-data="ProductConfigurator">
-            <h1 class="text-3xl font-bold underline text-red-600">3D Promotional Tent Configurator</h1>
+        <section x-data="ProductConfigurator" class="container mx-auto p-4 space-y-4">
+            <h1 class="text-3xl font-bold text-center">3D Promotional Tent Configurator</h1>
             <div x-ref="container"></div>
-            <div style="width: 600px; height: 600px;" id="configurator"></div>
-            <div x-text="selectedObjectName"></div>
+            <div style="min-height: 100vh;" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div style="max-width: 600px; max-height: 600px;" x-ref="configurator"></div>
+                <div class="w-full">
+                    <h2 class="text-xl font-bold">Personalize your product</h2>
+
+                    <div class="flex flex-col gap-4">
+                        <div class="flex flex-col gap-2">
+                            <label for="size">Tent Size</label>
+                            <select x-model="selectedSize" @change="ChangeSize" id="size" class="p-2 border border-gray-300 rounded">
+                                <option value="5x5">5x5</option>
+                                <option value="10x10">10x10</option>
+                                <option value="15x10">15x10</option>
+                                <option value="20x10">20x10</option>
+                            </select>
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <label for="color"><span x-text="selectedObjectName"></span> Color</label>
+                            <input type="color" name="color" id="color" x-model="selectedColor" @change="UpdateProduct" class="border border-gray-300 rounded">
+                        </div>
+                </div>
+            </div>
         </section>
     </main>
 
