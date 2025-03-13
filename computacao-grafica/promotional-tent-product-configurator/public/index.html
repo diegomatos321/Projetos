@@ -1,21 +1,10 @@
-<?php
-    // Helper function to load Vite assets dynamically
-    function vite_asset($path) {
-        // if (file_exists(__DIR__ . '/vite-dev')) {
-            return "http://localhost:5173/src" . $path;
-        // }
-        // return '/dist/' . $path;
-    }
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>3D Promotional Tent Configurator</title>
-    <!-- <link rel="stylesheet" href="<?= vite_asset("/css/index.css") ?>"> -->
-    <!-- <script defer src="/node_modules/alpinejs/dist/cdn.min.js"></script> -->
+    <link rel="stylesheet" href="./dist/css/index.css">
 </head>
 <body>
     <main>
@@ -46,7 +35,7 @@
         </section>
     </main>
 
-    <script type="module" src="<?= vite_asset("/js/index.ts") ?>"></script>
-    <!-- <script type="module" src="/dist/js/index.js"></script> -->
+    <!-- <script type="module" src="http://localhost:5173/src"></script> -->
+    <script type="module" src="./dist/js/index.js"></script>
 </body>
 </html>
