@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>3D Promotional Tent Configurator</title>
-    <link rel="stylesheet" href="./dist/css/index.css">
+    <!-- <link rel="stylesheet" href="./dist/css/index.css"> -->
 </head>
 <body>
     <main>
@@ -28,14 +28,14 @@
                         </div>
                         <div class="flex flex-col gap-2">
                             <label for="color"><span x-text="selectedObjectName"></span> Color</label>
-                            <input type="color" name="color" id="color" x-model="selectedColor" @change="UpdateProduct" class="border border-gray-300 rounded">
+                            <input type="color" name="color" id="color" x-model="selectedColor" x-on:input="UpdateProduct" class="border border-gray-300 rounded">
                         </div>
                 </div>
             </div>
         </section>
     </main>
 
-    <!-- <script type="module" src="http://localhost:5173/src"></script> -->
-    <script type="module" src="./dist/js/index.js"></script>
+    <script type="module" src="http://localhost:5173/src/js/index.ts"></script>
+    <!-- <script type="module" src="./dist/js/index.js"></script> -->
 </body>
 </html>

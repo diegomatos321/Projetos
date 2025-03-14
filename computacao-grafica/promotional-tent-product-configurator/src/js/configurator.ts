@@ -45,7 +45,14 @@ export default defineComponent(() => ({
         new OrbitControls(this.camera, renderer.domElement);
     
         const gltfLoader = Alpine.raw(new GLTFLoader());
-        gltfLoader.load("./assets/models/demo-tent/scene.gltf", (gltf) => this.scene.add(Alpine.raw(gltf.scene)));
+        gltfLoader.load("./assets/models/demo-tent/scene.gltf", (gltf) => {
+            gltf.scene.traverse((child) => {
+                if (child instanceof THREE.Mesh) {
+                    child.scale.set(5, 5, 5);
+                }
+            });
+            this.scene.add(Alpine.raw(gltf.scene))
+        });
     
         renderer.domElement.addEventListener("pointerup", this.HandlePointerDown.bind(this));
     
@@ -65,7 +72,6 @@ export default defineComponent(() => ({
         const intersects = raycaster.intersectObjects(Alpine.raw(this.scene.children), true);
         if (intersects.length > 0) {
             const clickedObject = intersects[0].object;
-            console.dir(clickedObject.name)
             this.selectedObjectName = clickedObject.name;
         }
     },
@@ -79,10 +85,7 @@ export default defineComponent(() => ({
 
     ChangeSize(){
         const [width, length] = this.selectedSize.split('x').map(Number);
-        this.scene.traverse((child) => {
-            if (child instanceof THREE.Mesh) {
-                child.scale.set(width, 5, length);
-            }
-        })
+        this.scene.getObjectByName("Tent_M_Tent_0")?.scale.set(width, 5, length);
+        this.scene.getObjectByName("Tent_M_Tent_0_1")?.scale.set(width, 5, length);
     }
 }))
