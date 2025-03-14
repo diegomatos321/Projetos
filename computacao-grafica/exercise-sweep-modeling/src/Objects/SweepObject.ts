@@ -6,6 +6,7 @@ export default class SweepObject
     public finish = [new THREE.Vector3(-1, -1, 1), new THREE.Vector3(1, -1, 1), new THREE.Vector3(1, 1, 1), new THREE.Vector3(-1, 1, 1)]
     public sweep = [new THREE.Vector3(-2, 0, 2), new THREE.Vector3(-2, 0, -2), new THREE.Vector3(2, 0, -2), new THREE.Vector3(2, 0, 2)]
     
+    public sweepPoints: number = 20
     public crossSectionPoints: number = 20
     public isClosed: boolean = false
     public tension: number = 0.5
@@ -23,11 +24,32 @@ export default class SweepObject
         this.crossSectionPoints = crossSectionPoints
         this.tension = tension
 
-        let sweepSurface = [
-            new THREE.CatmullRomCurve3(this.start, this.isClosed, 'catmullrom', this.tension).getPoints(this.crossSectionPoints),
-            new THREE.CatmullRomCurve3(this.finish, this.isClosed, 'catmullrom', this.tension).getPoints(this.crossSectionPoints),
-        ]
+        // let sweepSurface = [
+        //     new THREE.CatmullRomCurve3(this.start, this.isClosed, 'catmullrom', this.tension).getPoints(this.crossSectionPoints),
+        //     new THREE.CatmullRomCurve3(this.finish, this.isClosed, 'catmullrom', this.tension).getPoints(this.crossSectionPoints),
+        // ]
+        // const test = new THREE.CatmullRomCurve3(this.sweep, this.isClosed, 'catmullrom', this.tension).computeFrenetFrames(this.sweepPoints)
+        // console.dir(test)
+        // const startCurve = new THREE.CatmullRomCurve3(this.start, this.isClosed, 'catmullrom', this.tension)
+        // const finalCurve = new THREE.CatmullRomCurve3(this.finish, this.isClosed, 'catmullrom', this.tension)
 
+        const pathCurve = new THREE.CatmullRomCurve3(this.sweep, this.isClosed, 'catmullrom', this.tension)
+        const pathPoints = pathCurve.getPoints(this.sweepPoints)
+        const pathFrames = pathCurve.computeFrenetFrames(this.sweepPoints)
+
+        const sweepSurface: THREE.Vector3[][] = []
+        for (let i = 0; i < this.sweepPoints; i++) {
+            const path = pathPoints[i];
+            const normal = pathFrames.normals[i]
+            const binormal = pathFrames.binormals[i]
+            const tangent = pathFrames.tangents[i]
+            
+            const transformedStart = this.start.map((point) => {
+                return point.add(path)
+            })
+            sweepSurface.push(new THREE.CatmullRomCurve3(transformedStart, this.isClosed, 'catmullrom', this.tension).getPoints(this.crossSectionPoints))
+        }
+        
         const geometry = this.SurfaceGeometry(sweepSurface)
         const material = new THREE.MeshStandardMaterial({ color: 0xff0000, side: THREE.DoubleSide })
         this.mesh = new THREE.Mesh(geometry, material);
