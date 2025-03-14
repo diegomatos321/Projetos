@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pendulo Não Linear</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <div class="container mx-auto p-4 space-y-4">
+        <div>
+            <h1 class="text-4xl"><strong>Pendulo Harmônico Simples</strong></h1>
+            <p>Simulação foi inspirado nas aulas de Engenharia e Modelagem Matemática do curso de nivelamente LAMCE/COPPE/UFRJ.</p>
+        </div>
+
+        <div class="mb-4">
+            <form id="form" action="">
+                <fieldset class="border border-solid border-gray-300 p-3">
+                    <legend class="text-sm">Inserir valores iniciais</legend>
+
+                    <div class="grid grid-cols-1 gap-4 mb-4 md:grid-cols-3">
+                        <div>
+                            <label for="theta0" style="display: block;">Ângulo inicial (em graus)</label>
+                            <input id="theta0" type="number" step="0.1" class="w-full border border-solid border-gray-300 rounded px-4" />
+                        </div>
+
+                        <div>
+                            <label for="comprimento_corda" style="display: block;">Comprimento da Corda</label>
+                            <div class="flex gap-2">
+                                <input id="comprimento_corda" type="range" min="1" max="640" class="w-full border border-solid border-gray-300 rounded px-4" />
+                                <input style="max-width: 50px;" type="text" readonly />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="gravidade" style="display: block;">Gravidade</label>
+                            <input id="gravidade" type="number" step="0.1" class="w-full border border-solid border-gray-300 rounded px-4" />
+                        </div>
+                    </div>
+
+                    <button id="toogleBtn" class="rounded bg-green-600 text-white px-4 py-2 w-100 hover:bg-green-400">Iniciar</button>
+                </fieldset>
+            </form>
+        </div>
+
+        <div style="width: 100%; max-width: 640px; margin: auto;">
+            <canvas id="canvas" style="width: 100%;" width="640" height="640">
+                Para visualizar este projete use um navegador moderno e ative o Javascript.
+            </canvas>
+        </div>
+    </div>
+    
+
+    <script type="module" src="./dist/js/index.js"></script>
+</body>
+</html>

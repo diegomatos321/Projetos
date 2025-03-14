@@ -45,7 +45,7 @@ export default defineComponent(() => ({
         new OrbitControls(this.camera, renderer.domElement);
     
         const gltfLoader = Alpine.raw(new GLTFLoader());
-        gltfLoader.load("/assets/models/demo-tent/scene.gltf", (gltf) => this.scene.add(Alpine.raw(gltf.scene)));
+        gltfLoader.load("./assets/models/demo-tent/scene.gltf", (gltf) => this.scene.add(Alpine.raw(gltf.scene)));
     
         renderer.domElement.addEventListener("pointerup", this.HandlePointerDown.bind(this));
     

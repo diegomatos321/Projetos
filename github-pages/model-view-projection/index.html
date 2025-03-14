@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model, View and Projection Demo</title>
+
+    <script src="./libs/tailwindcss-3.4.5.js"></script>
+    <script src="./libs/gl-matrix/dist/gl-matrix-min.js"></script>
+    <script src="./libs/regl.min.js"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+    <main>
+        <section class="container mx-auto">
+            <div x-data="InteractApp" class="space-y-4">
+                <div>
+                    <h1 class="text-4xl"><strong>Model, View and Projection Demo</strong></h1>
+                    <p>Recriando resultados do notebook do professor Cláudio Esperança: <a
+                            class="text-blue-600 underline"
+                            href="https://observablehq.com/@esperanc/model-view-and-projection-demo"
+                            target="_blank">https://observablehq.com/@esperanc/model-view-and-projection-demo</a></p>
+                </div>
+                
+                <div>
+                    <p>A simple WebGL demo for helping understand how to set up a viewing frustum.</p>
+
+                    <canvas x-ref="canvas" id="canvas" width="400" height="400"></canvas>
+                </div>
+
+                <div>
+                    <div class="flex">
+                        <button 
+                            x-on:click="selectedTab=0" 
+                            class="px-4 py-2 rounded-t-lg hover:bg-gray-200"
+                            x-bind:class="{ 'bg-gray-200 border-x border-t border-black': selectedTab === 0 }"
+                        >
+                            Projection
+                        </button>
+                        <button 
+                            x-on:click="selectedTab=1" 
+                            class="px-4 py-2 rounded-t-lg hover:bg-gray-200"
+                            x-bind:class="{ 'bg-gray-200 border-x border-t border-black': selectedTab === 1 }"
+                        >
+                            Model
+                        </button>
+                        <button 
+                            x-on:click="selectedTab=2" 
+                            class="px-4 py-2 rounded-t-lg hover:bg-gray-200"
+                            x-bind:class="{ 'bg-gray-200 border-x border-t border-black': selectedTab === 2 }"
+                        >
+                            View
+                        </button>
+                    </div>
+
+                    <div x-show="selectedTab === 0" x-data="MatrixProjectionTab" class="border-y p-4 space-y-4">
+                        <div class="flex gap-2">
+                            <select 
+                                name="projection" 
+                                id="projection" 
+                                class="border px-2"
+                                x-bind:value="projection"
+                                x-on:change="
+                                    projection = $event.target.value
+                                    UpdateMatrix()
+                                "
+                            >
+                                <option value="perspective" selected>Perspective</option>
+                                <option value="ortho">Ortho</option>
+                            </select>
+                            <button class="border rounded px-4 py-2 shadow hover:bg-gray-200" x-on:click="Reset">Reset</button>
+                        </div>
+
+                        <template x-if="projection === 'perspective'">
+                            <div class="flex gap-4">
+                                <div>
+                                    <label for="fovy">Fovy</label>
+                                    <input 
+                                        id="fovy" 
+                                        name="fovy" 
+                                        class="border" 
+                                        type="number" 
+                                        value="45"
+                                        min="0"
+                                        max="180"
+                                        step="1"
+                                        x-bind:value="fovy"
+                                        x-on:input="
+                                            fovy = Number($event.target.value)
+                                            UpdateMatrix()
+                                        "
+                                    >
+                                </div>
+    
+                                <div>
+                                    <label for="aspect">Aspect</label>
+                                    <input 
+                                        id="aspect" 
+                                        name="aspect" 
+                                        class="border" 
+                                        type="number" 
+                                        value="1"
+                                        min="0"
+                                        max="10"
+                                        step="0.1"
+                                        x-bind:value="aspect"
+                                        x-on:input="
+                                            aspect = Number($event.target.value)
+                                            UpdateMatrix()
+                                        "
+                                    >
+                                </div>
+    
+                                <div>
+                                    <label for="near">Near</label>
+                                    <input 
+                                        id="near" 
+                                        name="near" 
+                                        class="border" 
+                                        type="number" 
+                                        value="0.1"
+                                        min="0"
+                                        max="10"
+                                        step="0.1"
+                                        x-bind:value="near"
+                                        x-on:input="
+                                            near = Number($event.target.value)
+                                            UpdateMatrix()
+                                        "
+                                    >
+                                </div>
+    
+                                <div>
+                                    <label for="far">Far</label>
+                                    <input 
+                                        id="far" 
+                                        name="far" 
+                                        class="border" 
+                                        type="number" 
+                                        value="10"
+                                        min="-5"
+                                        max="10"
+                                        step="0.1"
+                                        x-bind:value="fovy"
+                                        x-on:input="
+                                            far = Number($event.target.value)
+                                            UpdateMatrix()
+                                        "
+                                    >
+                                </div>
+                            </div>
+                        </template>
+
+                        <template x-if="projection === 'ortho'">
+                            <div>
+                                <div class="flex gap-4">
+                                    <div>
+                                        <label for="left">Left</label>
+                                        <input 
+                                            id="left" 
+                                            name="left" 
+                                            class="border" 
+                                            type="number" 
+                                            value="-1"
+                                            min="-5"
+                                            max="5"
+                                            step="0.1"
+                                            x-bind:value="left"
+                                            x-on:input="
+                                                left = Number($event.target.value)
+                                                UpdateMatrix()
+                                            "
+                                        >
+                                    </div>
+        
+                                    <div>
+                                        <label for="right">Right</label>
+                                        <input 
+                                            id="right" 
+                                            name="right" 
+                                            class="border" 
+                                            type="number" 
+                                            value="1"
+                                            min="-5"
+                                            max="5"
+                                            step="0.1"
+                                            x-bind:value="right"
+                                            x-on:input="
+                                                right = Number($event.target.value)
+                                                UpdateMatrix()
+                                            "
+                                        >
+                                    </div>
+                                </div>
+    
+                                <div class="flex gap-4">
+                                    <div>
+                                        <label for="bottom">Bottom</label>
+                                        <input 
+                                            id="bottom" 
+                                            name="bottom" 
+                                            class="border" 
+                                            type="number" 
+                                            value="-1"
+                                            min="-5"
+                                            max="5"
+                                            step="0.1"
+                                            x-bind:value="bottom"
+                                            x-on:input="
+                                                bottom = Number($event.target.value)
+                                                UpdateMatrix()
+                                            "
+                                        >
+                                    </div>
+        
+                                    <div>
+                                        <label for="top">Top</label>
+                                        <input 
+                                            id="top" 
+                                            name="top" 
+                                            class="border" 
+                                            type="number" 
+                                            value="1"
+                                            min="-5"
+                                            max="5"
+                                            step="0.1"
+                                            x-bind:value="top"
+                                            x-on:input="
+                                                top = Number($event.target.value)
+                                                UpdateMatrix()
+                                            "
+                                        >
+                                    </div>
+                                </div>    
+
+                                <div class="flex gap-4">
+                                    <div>
+                                        <label for="near">Near</label>
+                                        <input 
+                                            id="nearOrtho" 
+                                            name="nearOrtho" 
+                                            class="border" 
+                                            type="number" 
+                                            value="0.1"
+                                            min="0"
+                                            max="10"
+                                            step="0.1"
+                                            x-bind:value="nearOrtho"
+                                            x-on:input="
+                                                nearOrtho = Number($event.target.value)
+                                                UpdateMatrix()  
+                                            "
+                                        >
+                                    </div>
+
+                                    <div>
+                                        <label for="near">Far</label>
+                                        <input 
+                                            id="farOrtho" 
+                                            name="farOrtho" 
+                                            class="border" 
+                                            type="number" 
+                                            value="0.1"
+                                            min="0"
+                                            max="10"
+                                            step="0.1"
+                                            x-bind:value="farOrtho"
+                                            x-on:input="
+                                                farOrtho = Number($event.target.value)
+                                                UpdateMatrix()  
+                                            "
+                                        >
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+
+                        <div x-text="latex"></div>
+
+                    </div>
+
+                    <div x-show="selectedTab === 1" x-data="MatrixModelTab" class="border-y p-4 space-y-4">    
+                        <div class="flex gap-2">
+                            <button x-on:click="OnAddTranslate" class="shadow px-4 py-2 hover:bg-gray-200">+Translate</button>
+                            <button x-on:click="OnAddScale" class="shadow px-4 py-2 hover:bg-gray-200">+Scale</button>
+                            <button x-on:click="OnAddRotate" class="shadow px-4 py-2 hover:bg-gray-200">+Rotate</button>
+                            <button x-on:click="
+                                orderedTransformations = []
+                                UpdateMatrix()
+                            " class="shadow px-4 py-2 hover:bg-gray-200">Reset</button>
+                        </div>
+    
+                        <template x-for="(transformation, i) in orderedTransformations">
+                            <div>
+                                <template x-if="transformation.type === 'translation'">
+                                    <div class="flex gap-4">
+                                        <div>
+                                            <label for="translate-x">Translate X</label>
+                                            <input 
+                                                id="translate-x" 
+                                                name="translate-x" 
+                                                class="border" 
+                                                x-on:input="
+                                                    transformation.data[0] = Number($event.target.value)
+                                                    UpdateMatrix()
+                                                "
+                                                type="number" 
+                                                value="0"
+                                                min="-2"
+                                                max="2"
+                                                step="0.1"
+                                            >
+                                        </div>
+            
+                                        <div>
+                                            <label for="translate-y">Translate Y</label>
+                                            <input 
+                                                id="translate-y" 
+                                                name="translate-y" 
+                                                class="border" 
+                                                x-on:input="
+                                                    transformation.data[1] = Number($event.target.value)
+                                                    UpdateMatrix()
+                                                "
+                                                type="number" 
+                                                value="0"
+                                                min="-2"
+                                                max="2"
+                                                step="0.1"
+                                            >
+                                        </div>
+            
+                                        <div>
+                                            <label for="translate-z">Translate Z</label>
+                                            <input 
+                                                id="translate-z" 
+                                                name="translate-z" 
+                                                class="border" 
+                                                x-on:input="
+                                                    transformation.data[2] = Number($event.target.value)
+                                                    UpdateMatrix()
+                                                "
+                                                type="number" 
+                                                value="0"
+                                                min="-2"
+                                                max="2"
+                                                step="0.1"
+                                            >
+                                        </div>
+                                    </div>
+                                </template>
+                                
+                                <template x-if="transformation.type === 'scaling'">
+                                    <div class="flex gap-4">
+                                        <div>
+                                            <label for="scale-x">Scale X</label>
+                                            <input 
+                                                id="scale-x" 
+                                                name="scale-x" 
+                                                class="border" 
+                                                x-on:input="
+                                                    transformation.data[0] = Number($event.target.value)
+                                                    UpdateMatrix()
+                                                "
+                                                type="number" 
+                                                value="1"
+                                                min="-2"
+                                                max="2"
+                                                step="0.1"
+                                            >
+                                        </div>
+            
+                                        <div>
+                                            <label for="scale-y">Scale Y</label>
+                                            <input 
+                                                id="scale-y" 
+                                                name="scale-y" 
+                                                class="border"
+                                                x-on:input="
+                                                    transformation.data[1] = Number($event.target.value)
+                                                    UpdateMatrix()
+                                                "
+                                                type="number" 
+                                                value="1"
+                                                min="-2"
+                                                max="2"
+                                                step="0.1"
+                                            >
+                                        </div>
+            
+                                        <div>
+                                            <label for="scale-z">Scale Z</label>
+                                            <input 
+                                                id="scale-z" 
+                                                name="scale-z" 
+                                                class="border"
+                                                x-on:input="
+                                                    transformation.data[2] = Number($event.target.value)
+                                                    UpdateMatrix()
+                                                "
+                                                type="number" 
+                                                value="1"
+                                                min="-2"
+                                                max="2"
+                                                step="0.1"
+                                            >
+                                        </div>
+                                    </div>
+                                </template>
+    
+                                <template x-if="transformation.type === 'rotation'">
+                                    <div class="flex gap-4">
+                                        <div>
+                                            <label for="rotate-x">Rotate X</label>
+                                            <input 
+                                                id="rotate-x" 
+                                                name="rotate-x" 
+                                                class="border" 
+                                                x-on:input="
+                                                    transformation.data[0] = Number($event.target.value)
+                                                    UpdateMatrix()
+                                                "
+                                                type="number" 
+                                                value="0"
+                                                min="-180"
+                                                max="180"
+                                            >
+                                        </div>
+            
+                                        <div>
+                                            <label for="rotate-y">Rotate Y</label>
+                                            <input 
+                                                id="rotate-y" 
+                                                name="rotate-y" 
+                                                class="border"
+                                                x-on:input="
+                                                    transformation.data[1] = Number($event.target.value)
+                                                    UpdateMatrix()
+                                                "
+                                                type="number" 
+                                                value="0"
+                                                min="-180"
+                                                max="180"
+                                            >
+                                        </div>
+            
+                                        <div>
+                                            <label for="rotate-z">Rotate Z</label>
+                                            <input 
+                                                id="rotate-z" 
+                                                name="rotate-z" 
+                                                class="border"
+                                                x-on:input="
+                                                    transformation.data[2] = Number($event.target.value)
+                                                    UpdateMatrix()
+                                                "
+                                                type="number" 
+                                                value="0"
+                                                min="-180"
+                                                max="180"
+                                            >
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
+    
+                        <div x-text="latex"></div>
+                    </div>
+    
+                    <div x-show="selectedTab === 2" x-data="MatrixViewTab" class="border-y p-4 space-y-4">
+                        <button class="px-4 py-2 border rounded hover:bg-gray-200" x-on:click="Reset">Reset</button>
+
+                        <div class="flex gap-4">
+                            <p>LookAt Eye</p>
+
+                            <div>
+                                <label for="eye-x">x:</label>
+                                <input 
+                                    type="number" 
+                                    id="eye-x" 
+                                    value="0" 
+                                    min="-5" 
+                                    max="5" 
+                                    class="px-2 border" 
+                                    step="0.1"
+                                    x-bind:value="eye[0]"
+                                    x-on:input="
+                                        eye[0] = Number($event.target.value)
+                                        UpdateMatrix()
+                                    "
+                                >
+                            </div>
+
+                            <div>
+                                <label for="eye-y">y:</label>
+                                <input 
+                                type="number" 
+                                id="eye-y" 
+                                value="0" 
+                                min="-5" 
+                                max="5" 
+                                class="px-2 border" 
+                                step="0.1"
+                                x-bind:value="eye[1]"
+                                x-on:input="
+                                    eye[1] = Number($event.target.value)
+                                    UpdateMatrix()
+                                "
+                            >
+                            </div>
+
+                            <div>
+                                <label for="eye-z">z:</label>
+                                <input 
+                                type="number" 
+                                id="eye-z" 
+                                value="5" 
+                                min="-5" 
+                                max="5" 
+                                class="px-2 border" 
+                                step="0.1"
+                                x-bind:value="eye[2]"
+                                x-on:input="
+                                    eye[2] = Number($event.target.value)
+                                    UpdateMatrix()
+                                "
+                            >
+                            </div>
+                        </div>
+
+                        <div class="flex gap-4">
+                            <p>LookAt Center</p>
+
+                            <div>
+                                <label for="center-x">x:</label>
+                                <input 
+                                type="number" 
+                                id="center-x" 
+                                value="0" 
+                                min="-5" 
+                                max="5" 
+                                class="px-2 border" 
+                                step="0.1"
+                                x-bind:value="center[0]"
+                                x-on:input="
+                                    center[0] = Number($event.target.value)
+                                    UpdateMatrix()
+                                "
+                            >
+                            </div>
+
+                            <div>
+                                <label for="center-y">y:</label>
+                                <input 
+                                type="number" 
+                                id="center-y" 
+                                value="0" 
+                                min="-5" 
+                                max="5" 
+                                class="px-2 border" 
+                                step="0.1"
+                                x-bind:value="center[1]"
+                                x-on:input="
+                                    center[1] = Number($event.target.value)
+                                    UpdateMatrix()
+                                "
+                            >
+                            </div>
+
+                            <div>
+                                <label for="center-z">z:</label>
+                                <input 
+                                type="number" 
+                                id="center-z" 
+                                value="0" 
+                                min="-5" 
+                                max="5" 
+                                class="px-2 border" 
+                                step="0.1"
+                                x-bind:value="center[2]"
+                                x-on:input="
+                                    center[2] = Number($event.target.value)
+                                    UpdateMatrix()
+                                "
+                            >
+                            </div>
+                        </div>
+
+                        <div class="flex gap-4">
+                            <p>LookAt up</p>
+
+                            <div>
+                                <label for="up-x">x:</label>
+                                <input 
+                                type="number" 
+                                id="up-x" 
+                                value="0" 
+                                min="-5" 
+                                max="5" 
+                                class="px-2 border" 
+                                step="0.1"
+                                x-bind:value="up[0]"
+                                x-on:input="
+                                    up[0] = Number($event.target.value)
+                                    UpdateMatrix()
+                                "
+                                >
+                            </div>
+
+                            <div>
+                                <label for="up-y">y:</label>
+                                <input 
+                                type="number" 
+                                id="up-y" 
+                                value="1" 
+                                min="-5" 
+                                max="5" 
+                                class="px-2 border" 
+                                step="0.1"
+                                x-bind:value="up[1]"
+                                x-on:input="
+                                    up[1] = Number($event.target.value)
+                                    UpdateMatrix()
+                                "
+                                >
+                            </div>
+
+                            <div>
+                                <label for="up-z">z:</label>
+                                <input 
+                                type="number" 
+                                id="up-z" 
+                                value="0" 
+                                min="-5" 
+                                max="5" 
+                                class="px-2 border" 
+                                step="0.1"
+                                x-bind:value="up[2]"
+                                x-on:input="
+                                    up[2] = Number($event.target.value)
+                                    UpdateMatrix()
+                                "
+                                >
+                            </div>
+                        </div>
+                        
+                        <div x-text="latex"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <p>Código fonte: <a class="underline text-blue-600" href="https://github.com/diegomatos321/Projetos/tree/main/computacao-grafica/model-view-projection" target="_blank">https://github.com/diegomatos321/Projetos/tree/main/computacao-grafica/model-view-projection</a></p>
+            </div>
+        </section>
+    </main>
+
+    <script src="./index.js" type="module"></script>
+
+    <!-- A library to help me manipulate the DOM -->
+    <script defer src="./libs/alpinejs.min.js"></script>
+</body>
+
+</html>
