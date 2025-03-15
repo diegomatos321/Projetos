@@ -16,7 +16,6 @@ export default defineComponent(() => ({
 
     scene: new THREE.Scene(),
     camera: new THREE.PerspectiveCamera(75, 800 / 600, 0.1, 1000),
-    // renderer: new THREE.WebGLRenderer({ antialias: true }),
     
     sweepObject: null as SweepObject | null,
 
@@ -45,7 +44,13 @@ export default defineComponent(() => ({
 
         new OrbitControls(this.camera, renderer.domElement);
         
-        this.sweepObject = new SweepObject(this.scene, this.crossSectionPoints, this.isClosed, this.catmullRomTension);
+        this.sweepObject = new SweepObject(this.scene);
+        this.sweepObject.sweepPoints = this.sweepPoints;
+        this.sweepObject.crossSectionPoints = this.crossSectionPoints;
+        this.sweepObject.isClosed = this.isClosed;
+        this.sweepObject.tension = this.catmullRomTension;
+        this.sweepObject.mesh.material.wireframe = this.showWireframe;
+        this.sweepObject.UpdateGeometry();
 
         this.camera.position.z = 5;
 
@@ -59,6 +64,7 @@ export default defineComponent(() => ({
             return;
         }
 
+        this.sweepObject.sweepPoints = this.sweepPoints;
         this.sweepObject.crossSectionPoints = this.crossSectionPoints;
         this.sweepObject.mesh.material.wireframe = this.showWireframe;
 
