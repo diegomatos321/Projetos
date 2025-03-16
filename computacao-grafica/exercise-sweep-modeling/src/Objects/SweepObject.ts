@@ -2,16 +2,18 @@ import * as THREE from 'three';
 
 export default class SweepObject
 {
-    public start = [new THREE.Vector3(-1, -1, -1), new THREE.Vector3(1, -1, -1), new THREE.Vector3(1, 1, -1), new THREE.Vector3(-1, 1, -1)]
-    public finish = [new THREE.Vector3(-1, -1, 1), new THREE.Vector3(1, -1, 1), new THREE.Vector3(1, 1, 1), new THREE.Vector3(-1, 2, 1)]
-    public sweep = [new THREE.Vector3(-2, 0, 2), new THREE.Vector3(-2, 0, -2), new THREE.Vector3(2, 0, -2), new THREE.Vector3(2, 0, 2)]
+    public start: THREE.Vector3[] = []
+    public finish: THREE.Vector3[] = []
+    public sweep: THREE.Vector3[] = []
     
     public sweepPoints: number = 20
     public crossSectionPoints: number = 20
     public isClosed: boolean = false
     public tension: number = 0.5
+    public twist: number = 0
 
     public mesh: THREE.Mesh
+    public frenetFrames: THREE.Group
     
     private scene: THREE.Scene
 
@@ -19,21 +21,25 @@ export default class SweepObject
     {
         this.scene = scene;
 
-        const sweepSurface = this.ComputeSweepSurface();
-        const geometry = this.SurfaceGeometry(sweepSurface)
         const material = new THREE.MeshStandardMaterial({ color: 0xff0000, side: THREE.DoubleSide })
-        this.mesh = new THREE.Mesh(geometry, material);
+        this.mesh = new THREE.Mesh(new THREE.BufferGeometry(), material);
+
+        this.frenetFrames = new THREE.Group()
         
-        this.scene.add(this.mesh)
+        this.scene.add(this.mesh, this.frenetFrames)
     }
 
     UpdateGeometry()
     {
         this.mesh.geometry.dispose()
+        this.frenetFrames.clear()
 
-        const sweepSurface = this.ComputeSweepSurface();
-
+        const [sweepSurface, frames] = this.ComputeSweepSurface();
         this.mesh.geometry = this.SurfaceGeometry(sweepSurface)
+        
+        this.FrenetFramesArrowHelpers(frames).forEach((frame, i) => {
+            frame.forEach(arrow => this.frenetFrames.add(arrow))
+        })
     }
 
     ComputeSweepSurface()
@@ -43,7 +49,10 @@ export default class SweepObject
         const pathFrames = pathCurve.computeFrenetFrames(this.sweepPoints)
 
         const sweepSurface: THREE.Vector3[][] = []
+        const frenetFrames: THREE.Vector3[][] = []
         for (let i = 0; i < this.sweepPoints; i++) {
+            const t = i / this.sweepPoints
+
             const path = pathPoints[i];
             const normal = pathFrames.normals[i]
             const binormal = pathFrames.binormals[i]
@@ -51,16 +60,25 @@ export default class SweepObject
 
             const newBase = new THREE.Matrix4().makeBasis(binormal, normal, tangent);
             newBase.setPosition(path)
+
+            const smoothRotation = new THREE.Matrix4().makeRotationZ((Math.PI * this.twist) / 180 * t)
+            newBase.multiply(smoothRotation)
             
             const transformedStart = this.start.map((point, j) => {
-                const t = i / this.sweepPoints
                 const finalPoint = point.clone().lerp(this.finish[j], t)
                 return finalPoint.applyMatrix4(newBase)
             })
+
+            const transformedNormal = new THREE.Vector3();
+            const transformedBinormal = new THREE.Vector3();
+            const transformedTangent = new THREE.Vector3();
+            newBase.extractBasis(transformedBinormal, transformedNormal, transformedTangent);
+            frenetFrames.push([path, transformedTangent, transformedNormal, transformedBinormal])
+
             sweepSurface.push(new THREE.CatmullRomCurve3(transformedStart, this.isClosed, 'catmullrom', this.tension).getPoints(this.crossSectionPoints))
         }
 
-        return sweepSurface
+        return [sweepSurface, frenetFrames]
     }
 
     SurfaceGeometry(polylines: THREE.Vector3[][]): THREE.BufferGeometry {
@@ -105,4 +123,18 @@ export default class SweepObject
         return geometry
     }
 
+    FrenetFramesArrowHelpers(frames: THREE.Vector3[][])
+    {
+        const result: THREE.ArrowHelper[][] = []
+        frames.forEach((frame, i) => { 
+            const [position, tangent, normal, binormal] = frame
+            result.push([
+                new THREE.ArrowHelper(tangent, position, 0.5, 0xff0000),
+                new THREE.ArrowHelper(normal, position, 0.5, 0x00ff00),
+                new THREE.ArrowHelper(binormal, position, 0.5, 0x0000ff)
+            ])
+        })
+
+        return result
+    }
 }

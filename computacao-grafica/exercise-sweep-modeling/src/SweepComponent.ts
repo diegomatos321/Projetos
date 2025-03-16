@@ -16,6 +16,10 @@ export default defineComponent(() => ({
 
     scene: new THREE.Scene(),
     camera: new THREE.PerspectiveCamera(75, 800 / 600, 0.1, 1000),
+
+    start: [new THREE.Vector3(-1, -1, -1), new THREE.Vector3(1, -1, -1), new THREE.Vector3(1, 1, -1), new THREE.Vector3(-1, 1, -1)],
+    finish: [new THREE.Vector3(-1, -1, 1), new THREE.Vector3(1, -1, 1), new THREE.Vector3(1, 1, 1), new THREE.Vector3(-1, 2, 1)],
+    sweep: [new THREE.Vector3(-2, 0, 2), new THREE.Vector3(-2, 0, -2), new THREE.Vector3(2, 0, -2), new THREE.Vector3(2, 0, 2)],
     
     sweepObject: null as SweepObject | null,
 
@@ -45,10 +49,15 @@ export default defineComponent(() => ({
         new OrbitControls(this.camera, renderer.domElement);
         
         this.sweepObject = new SweepObject(this.scene);
+        this.sweepObject.start = this.start;
+        this.sweepObject.finish = this.finish;
+        this.sweepObject.sweep = this.sweep;
         this.sweepObject.sweepPoints = this.sweepPoints;
         this.sweepObject.crossSectionPoints = this.crossSectionPoints;
         this.sweepObject.isClosed = this.isClosed;
         this.sweepObject.tension = this.catmullRomTension;
+        this.sweepObject.twist = this.twist;
+        this.sweepObject.frenetFrames.visible = this.showFrenet;
         this.sweepObject.mesh.material.wireframe = this.showWireframe;
         this.sweepObject.UpdateGeometry();
 
@@ -60,16 +69,35 @@ export default defineComponent(() => ({
 
     UpdateObject()
     {
+        console.log("Update object");
         if (this.sweepObject === null) {
             return;
         }
 
         this.sweepObject.sweepPoints = this.sweepPoints;
         this.sweepObject.crossSectionPoints = this.crossSectionPoints;
-        this.sweepObject.mesh.material.wireframe = this.showWireframe;
+        this.sweepObject.tension = this.catmullRomTension;
+        this.sweepObject.twist = this.twist;
 
         this.sweepObject.isClosed = this.isClosed;
-        this.sweepObject.tension = this.catmullRomTension;
         this.sweepObject.UpdateGeometry();
+    },
+
+    HandleWireframeChange()
+    {
+        if (this.sweepObject === null)
+            return
+        
+        if (this.sweepObject.mesh.material instanceof THREE.MeshStandardMaterial) {
+            this.sweepObject.mesh.material.wireframe = this.showWireframe;            
+        }
+    },
+
+    HandleFrenetChange()
+    {
+        if (this.sweepObject === null)
+            return
+
+        this.sweepObject.frenetFrames.visible = this.showFrenet;
     }
 }))

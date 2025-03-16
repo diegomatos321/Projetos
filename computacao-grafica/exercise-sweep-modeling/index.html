@@ -9,7 +9,7 @@
   </head>
   <body>
     <main>
-      <section x-data="SweepComponent" class="container mx-auto space-y-4">
+      <section x-data="SweepComponent" x-on:pointchange="UpdateObject" class="container mx-auto space-y-4 p-4">
         <div >
           <h1 class="text-4xl font-bold text-center">Sweep Modeling 3D</h1>
           <p class="text-center">Replicando resultados do professor claudio esperança <a href="https://observablehq.com/@esperanc/sweep-modeling-incomplete" class="text-blue-600 underline">https://observablehq.com/@esperanc/sweep-modeling-incomplete</a></p>
@@ -20,22 +20,22 @@
         <div class="flex w-full justify-between">
           <div class="flex flex-col">
             <label for="sweepPoints">Sweep Points</label>
-            <input type="number" id="sweepPoints" x-model="sweepPoints" @change="UpdateObject" class="border border-gray-300 rounded-md p-1" min="2" max="200" step="1" value="20">
+            <input type="number" id="sweepPoints" x-model="sweepPoints" @input="UpdateObject" class="border border-gray-300 rounded-md p-1" min="2" max="200" step="1" value="20">
           </div>
 
           <div class="flex flex-col">
             <label for="crossSectionPoints">Cross-Section Points</label>
-            <input type="number" id="crossSectionPoints" x-model="crossSectionPoints" @change="UpdateObject" class="border border-gray-300 rounded-md p-1" min="2" max="200" step="1" value="20">
+            <input type="number" id="crossSectionPoints" x-model="crossSectionPoints" @input="UpdateObject" class="border border-gray-300 rounded-md p-1" min="2" max="200" step="1" value="20">
           </div>
 
           <div class="flex flex-col">
             <label for="catmullRomTension">Catmull-Rom Tension</label>
-            <input type="number" id="catmullRomTension" x-model="catmullRomTension" @change="UpdateObject" class="border border-gray-300 rounded-md p-1" min="0.01" max="1" step="0.01" value="0.5">
+            <input type="number" id="catmullRomTension" x-model="catmullRomTension" @input="UpdateObject" class="border border-gray-300 rounded-md p-1" min="0.01" max="1" step="0.01" value="0.5">
           </div>
 
           <div class="flex flex-col">
             <label for="twist">Twist</label>
-            <input type="number" id="twist" x-model="twist" @change="UpdateObject" class="border border-gray-300 rounded-md p-1" min="-360" max="360" step="1" value="0">
+            <input type="number" id="twist" x-model="twist" @input="UpdateObject" class="border border-gray-300 rounded-md p-1" min="-360" max="360" step="1" value="0">
           </div>
 
           <div class="flex gap-2 items-center">
@@ -45,17 +45,34 @@
 
           <div class="flex gap-2 items-center">
             <label for="wireframe">Wireframe</label>
-            <input type="checkbox" id="wireframe" x-model="showWireframe" @change="UpdateObject" class="border border-gray-300 rounded-md p-1">
+            <input type="checkbox" id="wireframe" x-model="showWireframe" @change="HandleWireframeChange" class="border border-gray-300 rounded-md p-1">
           </div>
 
           <div class="flex gap-2 items-center">
             <label for="texture">Texture</label>
-            <input type="checkbox" id="texture" x-model="showTexture" @change="UpdateObject" class="border border-gray-300 rounded-md p-1">
+            <input type="checkbox" id="texture" x-model="showTexture" @change="HandleTextureChange" class="border border-gray-300 rounded-md p-1">
           </div>
 
           <div class="flex gap-2 items-center">
             <label for="frenet">Frenet</label>
-            <input type="checkbox" id="frenet" x-model="showFrenet" @change="UpdateObject" class="border border-gray-300 rounded-md p-1">
+            <input type="checkbox" id="frenet" x-model="showFrenet" @change="HandleFrenetChange" class="border border-gray-300 rounded-md p-1">
+          </div>
+        </div>
+
+        <div class="flex flex-wrap justify-between gap-4">
+          <div x-data="EditPolyComponent(start)">
+            <h2>Start</h2>
+            <canvas x-ref="canvas" width="300" height="300" class="border"></canvas>
+          </div>
+  
+          <div x-data="EditPolyComponent(finish)">
+            <h2>Finish</h2>
+            <canvas x-ref="canvas" width="300" height="300" class="border"></canvas>
+          </div>
+  
+          <div x-data="EditPolyComponent(sweep)">
+            <h2>Sweep</h2>
+            <canvas x-ref="canvas" width="300" height="300" class="border"></canvas>
           </div>
         </div>
       </section>
