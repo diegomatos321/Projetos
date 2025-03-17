@@ -39,11 +39,6 @@
           </div>
 
           <div class="flex gap-2 items-center">
-            <label for="closed">Closed</label>
-            <input type="checkbox" id="closed" x-model="isClosed" @change="UpdateObject" class="border border-gray-300 rounded-md p-1">
-          </div>
-
-          <div class="flex gap-2 items-center">
             <label for="wireframe">Wireframe</label>
             <input type="checkbox" id="wireframe" x-model="showWireframe" @change="HandleWireframeChange" class="border border-gray-300 rounded-md p-1">
           </div>
@@ -60,18 +55,40 @@
         </div>
 
         <div class="flex flex-wrap justify-between gap-4">
-          <div x-data="EditPolyComponent(start)">
-            <h2>Start</h2>
+          <div x-data="EditPolyComponent(start, 'crossSectionPoints')">
+            <div class="flex justify-between gap-2">
+              <h2 class="text-2xl font-bold">Start</h2>
+            
+              <div class="flex gap-2 items-center">
+                <label for="isStartClosed">Closed</label>
+                <input type="checkbox" id="isStartClosed" x-model="isClosed" @change="isStartClosed = isClosed; UpdateObject()" class="border border-gray-300 rounded-md p-1">
+              </div>
+            </div>
+  
             <canvas x-ref="canvas" width="300" height="300" class="border"></canvas>
           </div>
   
-          <div x-data="EditPolyComponent(finish)">
-            <h2>Finish</h2>
+          <div x-data="EditPolyComponent(finish, 'crossSectionPoints')">
+            <div class="flex justify-between gap-2">
+              <h2 class="text-2xl font-bold">Finish</h2>
+              
+              <div class="flex gap-2 items-center">
+                <label for="isFinishClosed">Closed</label>
+                <input type="checkbox" id="isFinishClosed" x-model="isClosed" @change="isFinishClosed = isClosed; UpdateObject()" class="border border-gray-300 rounded-md p-1">
+              </div>
+            </div>
             <canvas x-ref="canvas" width="300" height="300" class="border"></canvas>
           </div>
   
-          <div x-data="EditPolyComponent(sweep)">
-            <h2>Sweep</h2>
+          <div x-data="EditPolyComponent(sweep, 'sweepPoints', ['x', 'z'])">
+            <div class="flex justify-between gap-2">
+              <h2>Sweep</h2>
+
+              <div class="flex gap-2 items-center">
+                <label for="isSweepClosed">Closed</label>
+                <input type="checkbox" id="isSweepClosed" x-model="isClosed" @change="isSweepClosed = isClosed; UpdateObject()" class="border border-gray-300 rounded-md p-1">
+              </div>
+            </div>
             <canvas x-ref="canvas" width="300" height="300" class="border"></canvas>
           </div>
         </div>

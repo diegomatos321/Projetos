@@ -9,16 +9,19 @@ export default defineComponent(() => ({
     crossSectionPoints: 20,
     catmullRomTension: 0.5,
     twist: 0,
-    isClosed: false,
     showWireframe: false,
     showTexture: false,
     showFrenet: false,
+    
+    isStartClosed: false,
+    isFinishClosed: false,
+    isSweepClosed: false,
 
     scene: new THREE.Scene(),
     camera: new THREE.PerspectiveCamera(75, 800 / 600, 0.1, 1000),
 
     start: [new THREE.Vector3(-1, -1, -1), new THREE.Vector3(1, -1, -1), new THREE.Vector3(1, 1, -1), new THREE.Vector3(-1, 1, -1)],
-    finish: [new THREE.Vector3(-1, -1, 1), new THREE.Vector3(1, -1, 1), new THREE.Vector3(1, 1, 1), new THREE.Vector3(-1, 2, 1)],
+    finish: [new THREE.Vector3(-1, -1, 1), new THREE.Vector3(1, -1, 1), new THREE.Vector3(1, 1, 1), new THREE.Vector3(-1, 1, 1)],
     sweep: [new THREE.Vector3(-2, 0, 2), new THREE.Vector3(-2, 0, -2), new THREE.Vector3(2, 0, -2), new THREE.Vector3(2, 0, 2)],
     
     sweepObject: null as SweepObject | null,
@@ -54,7 +57,9 @@ export default defineComponent(() => ({
         this.sweepObject.sweep = this.sweep;
         this.sweepObject.sweepPoints = this.sweepPoints;
         this.sweepObject.crossSectionPoints = this.crossSectionPoints;
-        this.sweepObject.isClosed = this.isClosed;
+        this.sweepObject.isStartClosed = this.isStartClosed;
+        this.sweepObject.isFinishClosed = this.isFinishClosed;
+        this.sweepObject.isSweepClosed = this.isSweepClosed;
         this.sweepObject.tension = this.catmullRomTension;
         this.sweepObject.twist = this.twist;
         this.sweepObject.frenetFrames.visible = this.showFrenet;
@@ -69,7 +74,6 @@ export default defineComponent(() => ({
 
     UpdateObject()
     {
-        console.log("Update object");
         if (this.sweepObject === null) {
             return;
         }
@@ -79,7 +83,9 @@ export default defineComponent(() => ({
         this.sweepObject.tension = this.catmullRomTension;
         this.sweepObject.twist = this.twist;
 
-        this.sweepObject.isClosed = this.isClosed;
+        this.sweepObject.isStartClosed = this.isStartClosed;
+        this.sweepObject.isFinishClosed = this.isFinishClosed;
+        this.sweepObject.isSweepClosed = this.isSweepClosed;
         this.sweepObject.UpdateGeometry();
     },
 

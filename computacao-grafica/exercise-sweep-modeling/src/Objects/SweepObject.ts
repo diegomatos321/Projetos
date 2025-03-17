@@ -8,9 +8,12 @@ export default class SweepObject
     
     public sweepPoints: number = 20
     public crossSectionPoints: number = 20
-    public isClosed: boolean = false
     public tension: number = 0.5
     public twist: number = 0
+    
+    public isStartClosed: boolean = false
+    public isFinishClosed: boolean = false
+    public isSweepClosed: boolean = false
 
     public mesh: THREE.Mesh
     public frenetFrames: THREE.Group
@@ -44,7 +47,10 @@ export default class SweepObject
 
     ComputeSweepSurface()
     {
-        const pathCurve = new THREE.CatmullRomCurve3(this.sweep, this.isClosed, 'catmullrom', this.tension)
+        const startPoints = new THREE.CatmullRomCurve3(this.start, this.isStartClosed, 'catmullrom', this.tension).getPoints(this.crossSectionPoints)
+        const finalPoints = new THREE.CatmullRomCurve3(this.finish, this.isFinishClosed, 'catmullrom', this.tension).getPoints(this.crossSectionPoints)
+        const pathCurve = new THREE.CatmullRomCurve3(this.sweep, this.isSweepClosed, 'catmullrom', this.tension)
+
         const pathPoints = pathCurve.getPoints(this.sweepPoints)
         const pathFrames = pathCurve.computeFrenetFrames(this.sweepPoints)
 
@@ -64,8 +70,8 @@ export default class SweepObject
             const smoothRotation = new THREE.Matrix4().makeRotationZ((Math.PI * this.twist) / 180 * t)
             newBase.multiply(smoothRotation)
             
-            const transformedStart = this.start.map((point, j) => {
-                const finalPoint = point.clone().lerp(this.finish[j], t)
+            const transformedStart = startPoints.map((point, j) => {
+                const finalPoint = point.clone().lerp(finalPoints[j], t)
                 return finalPoint.applyMatrix4(newBase)
             })
 
@@ -75,7 +81,7 @@ export default class SweepObject
             newBase.extractBasis(transformedBinormal, transformedNormal, transformedTangent);
             frenetFrames.push([path, transformedTangent, transformedNormal, transformedBinormal])
 
-            sweepSurface.push(new THREE.CatmullRomCurve3(transformedStart, this.isClosed, 'catmullrom', this.tension).getPoints(this.crossSectionPoints))
+            sweepSurface.push(transformedStart)
         }
 
         return [sweepSurface, frenetFrames]

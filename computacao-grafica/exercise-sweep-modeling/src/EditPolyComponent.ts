@@ -1,24 +1,29 @@
 import { defineComponent } from './utils';
 import * as THREE from 'three';
 
-export default defineComponent((startPoints: THREE.Vector3[], axis = ['x', 'y']) => ({
+export default defineComponent((startPoints: THREE.Vector3[], type:string = '', axis = ['x', 'y']) => ({
     canvas: null as HTMLCanvasElement | null,
     ctx: null as CanvasRenderingContext2D | null,
     gridSize: 40,
     points: startPoints,
+    divisions: 20,
 
     axis,
-    center: {x: 0, y: 0, z: 0},
+    center: {x: 0, y: 0},
+    isClosed: false,
 
     isDragging: false,
     dragIndex: -1,
 
     init()
     {
+        this.divisions = this[type]
+        this.$watch(type, value => this.divisions = value)
+
         this.canvas = this.$refs.canvas as HTMLCanvasElement;
         this.ctx = this.canvas.getContext('2d') as CanvasRenderingContext2D;
 
-        this.center[axis[0]] = Math.floor(this.canvas.width / 2);
+        this.center.x = Math.floor(this.canvas.width / 2);
         this.center.y = Math.floor(this.canvas.height / 2)
         this.DrawGrid();
         this.PlotPoints();
@@ -31,7 +36,9 @@ export default defineComponent((startPoints: THREE.Vector3[], axis = ['x', 'y'])
             const y = (event.clientY - rect.top - this.center.y) / this.gridSize;
 
             const hit = this.points.findIndex((point: THREE.Vector3) => {
-                return Math.abs(point.x - x) < 5/this.gridSize && Math.abs(point.y - y) < 5/this.gridSize;
+                const pointX: number = point[axis[0] as keyof THREE.Vector3] as number
+                const pointY: number = point[axis[1] as keyof THREE.Vector3] as number
+                return Math.abs(pointX - x) < 5 / this.gridSize && Math.abs(pointY - y) < 5 / this.gridSize;
             });
             
             // console.log(hit);
@@ -53,8 +60,10 @@ export default defineComponent((startPoints: THREE.Vector3[], axis = ['x', 'y'])
                 const x = (event.clientX - rect.left - this.center.x) / this.gridSize;
                 const y = (event.clientY - rect.top - this.center.y) / this.gridSize;
 
-                this.points[this.dragIndex].x = x;
-                this.points[this.dragIndex].y = y;
+                //@ts-ignore
+                this.points[this.dragIndex][axis[0]] = x;
+                //@ts-ignore
+                this.points[this.dragIndex][axis[1]] = y;
 
                 this.$dispatch('pointchange');
             }
@@ -118,8 +127,8 @@ export default defineComponent((startPoints: THREE.Vector3[], axis = ['x', 'y'])
             this.ctx.stroke();
         }
 
-        this.ctx.fillText("x", this.canvas.width - 0.2 * this.gridSize, this.center.y - 0.2 * this.gridSize);
-        this.ctx.fillText("y", this.center.x + 0.2 * this.gridSize, 0.2 * this.gridSize);
+        this.ctx.fillText(axis[0], this.canvas.width - 0.2 * this.gridSize, this.center.y - 0.2 * this.gridSize);
+        this.ctx.fillText(axis[1], this.center.x + 0.2 * this.gridSize, 0.2 * this.gridSize);
     },
 
     PlotPoints()
@@ -127,11 +136,36 @@ export default defineComponent((startPoints: THREE.Vector3[], axis = ['x', 'y'])
         if (this.canvas === null || this.ctx === null) return;
 
         this.ctx.fillStyle = "black";
+        const pathCurve = new THREE.CatmullRomCurve3(this.points, this.isClosed, 'catmullrom', 0.5).getPoints(this.divisions)
+        
+        this.ctx.strokeStyle = '#FF0000';
+        this.ctx.lineWidth = 1;
+        for (let i = 0; i + 1 < pathCurve.length; i++) {
+            if (this.canvas === null || this.ctx === null) return;
+
+            const point: THREE.Vector3 = pathCurve[i];
+            const nextPoint: THREE.Vector3 = pathCurve[i + 1];
+            
+            const pointX: number = point[axis[0] as keyof THREE.Vector3] as number
+            const pointY: number = point[axis[1] as keyof THREE.Vector3] as number
+
+            const nextPointX: number = nextPoint[axis[0] as keyof THREE.Vector3] as number
+            const nextPointY: number = nextPoint[axis[1] as keyof THREE.Vector3] as number
+
+            this.ctx.beginPath();
+            this.ctx.moveTo(this.center.x + pointX * this.gridSize, this.center.y + pointY * this.gridSize);
+            this.ctx.lineTo(this.center.y + nextPointX * this.gridSize, this.center.y + nextPointY * this.gridSize);
+            this.ctx.stroke();
+        }
+
         this.points.forEach((point: THREE.Vector3) => {
             if (this.canvas === null || this.ctx === null) return;
 
+            const pointX: number = point[axis[0] as keyof THREE.Vector3] as number
+            const pointY: number = point[axis[1] as keyof THREE.Vector3] as number
+
             this.ctx.beginPath();
-            this.ctx.arc(this.center.x + point.x * this.gridSize, this.center.y + point.y * this.gridSize, 5, 0, Math.PI * 2);
+            this.ctx.arc(this.center.x + pointX * this.gridSize, this.center.y + pointY * this.gridSize, 5, 0, Math.PI * 2);
             this.ctx.fill();
         });
     }
