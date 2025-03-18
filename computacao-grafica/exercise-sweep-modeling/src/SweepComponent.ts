@@ -63,6 +63,7 @@ export default defineComponent(() => ({
         this.sweepObject.tension = this.catmullRomTension;
         this.sweepObject.twist = this.twist;
         this.sweepObject.frenetFrames.visible = this.showFrenet;
+        //@ts-ignore
         this.sweepObject.mesh.material.wireframe = this.showWireframe;
         this.sweepObject.UpdateGeometry();
 
@@ -105,5 +106,13 @@ export default defineComponent(() => ({
             return
 
         this.sweepObject.frenetFrames.visible = this.showFrenet;
+    },
+
+    HandleTextureChange()
+    {
+        if (this.sweepObject === null)
+            return
+
+        this.sweepObject.SetTexture(this.showTexture);
     }
 }))

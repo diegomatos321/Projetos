@@ -14,15 +14,24 @@ export default class SweepObject
     public isStartClosed: boolean = false
     public isFinishClosed: boolean = false
     public isSweepClosed: boolean = false
-
+    
     public mesh: THREE.Mesh
     public frenetFrames: THREE.Group
     
     private scene: THREE.Scene
+    private isTextured: boolean = false
+    private texture: THREE.Texture
 
     constructor(scene: THREE.Scene)
     {
         this.scene = scene;
+
+        this.texture = new THREE.TextureLoader().load('./checkboard-texture.png');
+        this.texture.anisotropy = 4;
+        this.texture.minFilter = THREE.LinearFilter
+        this.texture.needsUpdate = true;
+        this.texture.wrapS = THREE.RepeatWrapping;
+        this.texture.wrapT = THREE.RepeatWrapping;
 
         const material = new THREE.MeshStandardMaterial({ color: 0xff0000, side: THREE.DoubleSide })
         this.mesh = new THREE.Mesh(new THREE.BufferGeometry(), material);
@@ -56,7 +65,7 @@ export default class SweepObject
 
         const sweepSurface: THREE.Vector3[][] = []
         const frenetFrames: THREE.Vector3[][] = []
-        for (let i = 0; i < this.sweepPoints; i++) {
+        for (let i = 0; i <= this.sweepPoints; i++) {
             const t = i / this.sweepPoints
 
             const path = pathPoints[i];
@@ -67,7 +76,7 @@ export default class SweepObject
             const newBase = new THREE.Matrix4().makeBasis(binormal, normal, tangent);
             newBase.setPosition(path)
 
-            const smoothRotation = new THREE.Matrix4().makeRotationZ((Math.PI * this.twist) / 180 * t)
+            const smoothRotation = new THREE.Matrix4().makeRotationZ(-(Math.PI * (this.twist * t)) / 180)
             newBase.multiply(smoothRotation)
             
             const transformedStart = startPoints.map((point, j) => {
@@ -142,5 +151,25 @@ export default class SweepObject
         })
 
         return result
+    }
+
+    SetTexture(newState: boolean)
+    {
+        console.dir(newState)
+        this.isTextured = newState;
+
+        if (this.isTextured) {
+            // @ts-ignore
+            this.mesh.material.map = this.texture;
+
+            // @ts-ignore
+            this.mesh.material.needsUpdate = true;
+        } else {
+            // @ts-ignore
+            this.mesh.material.map = null;
+
+            // @ts-ignore
+            this.mesh.material.needsUpdate = true;
+        }
     }
 }

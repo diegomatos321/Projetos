@@ -17,6 +17,7 @@ export default defineComponent((startPoints: THREE.Vector3[], type:string = '', 
 
     init()
     {
+        // @ts-ignore
         this.divisions = this[type]
         this.$watch(type, value => this.divisions = value)
 
@@ -28,51 +29,11 @@ export default defineComponent((startPoints: THREE.Vector3[], type:string = '', 
         this.DrawGrid();
         this.PlotPoints();
 
-        this.canvas.addEventListener('pointerdown', (event) => {
-            if (this.canvas === null || this.ctx === null) return;
+        this.canvas.addEventListener('pointerdown', this.HandlePointerDown.bind(this));
 
-            const rect = this.canvas.getBoundingClientRect();
-            const x = (event.clientX - rect.left - this.center.x) / this.gridSize;
-            const y = (event.clientY - rect.top - this.center.y) / this.gridSize;
+        this.canvas.addEventListener('pointermove', this.HandlePointerMove.bind(this));
 
-            const hit = this.points.findIndex((point: THREE.Vector3) => {
-                const pointX: number = point[axis[0] as keyof THREE.Vector3] as number
-                const pointY: number = point[axis[1] as keyof THREE.Vector3] as number
-                return Math.abs(pointX - x) < 5 / this.gridSize && Math.abs(pointY - y) < 5 / this.gridSize;
-            });
-            
-            // console.log(hit);
-            if (hit !== -1)
-            {
-                console.log("Start dragging");
-                this.isDragging = true;
-                this.dragIndex = hit;
-                return;
-            }
-        });
-
-        this.canvas.addEventListener('pointermove', (event) => {
-            if (this.canvas === null || this.ctx === null) return;
-
-            if (this.isDragging)
-            {
-                const rect = this.canvas.getBoundingClientRect();
-                const x = (event.clientX - rect.left - this.center.x) / this.gridSize;
-                const y = (event.clientY - rect.top - this.center.y) / this.gridSize;
-
-                //@ts-ignore
-                this.points[this.dragIndex][axis[0]] = x;
-                //@ts-ignore
-                this.points[this.dragIndex][axis[1]] = y;
-
-                this.$dispatch('pointchange');
-            }
-        })
-
-        this.canvas.addEventListener('pointerup', (event) => {
-            this.isDragging = false;
-            this.dragIndex = -1;
-        })
+        this.canvas.addEventListener('pointerup', this.HandlePointerUp.bind(this));
 
         window.requestAnimationFrame(this.Update.bind(this));
     },
@@ -136,7 +97,9 @@ export default defineComponent((startPoints: THREE.Vector3[], type:string = '', 
         if (this.canvas === null || this.ctx === null) return;
 
         this.ctx.fillStyle = "black";
-        const pathCurve = new THREE.CatmullRomCurve3(this.points, this.isClosed, 'catmullrom', 0.5).getPoints(this.divisions)
+
+        // @ts-ignore
+        const pathCurve = new THREE.CatmullRomCurve3(this.points, this.isClosed, 'catmullrom', this.catmullRomTension).getPoints(this.divisions)
         
         this.ctx.strokeStyle = '#FF0000';
         this.ctx.lineWidth = 1;
@@ -168,5 +131,54 @@ export default defineComponent((startPoints: THREE.Vector3[], type:string = '', 
             this.ctx.arc(this.center.x + pointX * this.gridSize, this.center.y + pointY * this.gridSize, 5, 0, Math.PI * 2);
             this.ctx.fill();
         });
+    },
+
+    HandlePointerDown(event: PointerEvent)
+    {
+        if (this.canvas === null || this.ctx === null) return;
+
+        const rect = this.canvas.getBoundingClientRect();
+        const x = (event.clientX - rect.left - this.center.x) / this.gridSize;
+        const y = (event.clientY - rect.top - this.center.y) / this.gridSize;
+
+        const hit = this.points.findIndex((point: THREE.Vector3) => {
+            const pointX: number = point[axis[0] as keyof THREE.Vector3] as number
+            const pointY: number = point[axis[1] as keyof THREE.Vector3] as number
+            return Math.abs(pointX - x) < 5 / this.gridSize && Math.abs(pointY - y) < 5 / this.gridSize;
+        });
+        
+        // console.log(hit);
+        if (hit !== -1)
+        {
+            console.log("Start dragging");
+            this.isDragging = true;
+            this.dragIndex = hit;
+            return;
+        }
+    },
+
+    HandlePointerMove(event: PointerEvent)
+    {
+        if (this.canvas === null || this.ctx === null) return;
+
+        if (this.isDragging)
+        {
+            const rect = this.canvas.getBoundingClientRect();
+            const x = (event.clientX - rect.left - this.center.x) / this.gridSize;
+            const y = (event.clientY - rect.top - this.center.y) / this.gridSize;
+
+            //@ts-ignore
+            this.points[this.dragIndex][axis[0]] = x;
+            //@ts-ignore
+            this.points[this.dragIndex][axis[1]] = y;
+
+            this.$dispatch('pointchange');
+        }
+    },
+
+    HandlePointerUp(event: PointerEvent)
+    {
+        this.isDragging = false;
+        this.dragIndex = -1;
     }
 }))
