@@ -4,23 +4,27 @@ export enum Direction {
     Front,
     Backward,
     Right,
-    Left
+    Left,
+    Up,
+    Down
 }
 
 export default class Cell
 {
-    public position: THREE.Vector2 = new THREE.Vector2(0, 0)
+    public position: THREE.Vector3 = new THREE.Vector3(0, 0, 0)
     public neighbours: Map<Direction, Cell> = new Map<Direction, Cell>()
     public visited: boolean = false
     public walls: Map<Direction, boolean> = new Map<Direction, boolean>([
         [Direction.Front, true],
         [Direction.Backward, true],
         [Direction.Left, true],
-        [Direction.Right, true]
+        [Direction.Right, true],
+        [Direction.Up, true],
+        [Direction.Down, true],
     ])
 
-    constructor(x: number, y: number) {
-        this.position = new THREE.Vector2(x, y)
+    constructor(x: number, y: number, z: number) {
+        this.position = new THREE.Vector3(x, y, z)
     }
 
     public AddNeighbour(direction: Direction, cell: Cell) {

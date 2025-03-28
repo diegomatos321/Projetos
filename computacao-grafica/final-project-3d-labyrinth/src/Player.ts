@@ -18,7 +18,7 @@ export default class Player extends THREE.Object3D
 
     public Update()
     {
-        this.camera.position.set(this.position.x, .5, this.position.z);
+        this.camera.position.set(this.position.x, this.position.y + .5, this.position.z);
         this.camera.rotation.set(this.rotation.x, this.rotation.y, this.rotation.z);
     }
 
@@ -29,6 +29,7 @@ export default class Player extends THREE.Object3D
         }
         
         this.isAnimating = true;
+        console.dir(event.key)
         switch (event.key) {
             case 'w':
                 // this.camera.translateZ(-1);
@@ -43,8 +44,15 @@ export default class Player extends THREE.Object3D
             case 'd':
                 await this.SmoothRotation(-Math.PI / 2);
                 break;
+            case ' ':
+                this.position.y += 1
+                break;
+            case 'Shift':
+                this.position.y -= 1
+                break;
         }
 
+        console.dir(this.position)
         this.isAnimating = false;
     }
 
@@ -80,6 +88,9 @@ export default class Player extends THREE.Object3D
     }
 
     private async SmoothRotation(angle: number): Promise<void> {
+        // this.rotateY(angle)
+        // return
+
         const duration = 250; // Rotation duration in ms
         let startTime: number | null = null;
         
