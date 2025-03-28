@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>3D Promotional Tent Configurator</title>
     <!-- <link rel="stylesheet" href="./dist/css/index.css"> -->
+    <script type="module" src="http://localhost:5173/src/css/index.css"></script>
 </head>
+
 <body>
     <main>
         <section x-data="ProductConfigurator" class="container mx-auto p-4 space-y-4">
@@ -19,7 +22,8 @@
                     <div class="flex flex-col gap-4">
                         <div class="flex flex-col gap-2">
                             <label for="size">Tent Size</label>
-                            <select x-model="selectedSize" @change="ChangeSize" id="size" class="p-2 border border-gray-300 rounded">
+                            <select x-model="selectedSize" @change="ChangeSize" id="size"
+                                class="p-2 border border-gray-300 rounded">
                                 <option value="5x5">5x5</option>
                                 <option value="10x10">10x10</option>
                                 <option value="15x10">15x10</option>
@@ -28,14 +32,20 @@
                         </div>
                         <div class="flex flex-col gap-2">
                             <label for="color"><span x-text="selectedObjectName"></span> Color</label>
-                            <input type="color" name="color" id="color" x-model="selectedColor" x-on:input="UpdateProduct" class="border border-gray-300 rounded">
+                            <input type="color" name="color" id="color" x-model="selectedColor"
+                                x-on:input="UpdateProduct" class="border border-gray-300 rounded">
                         </div>
+
+                        <div>
+                            <button x-on:click="ExportTexture" class="border px-4 py-2">Test</button>
+                        </div>
+                    </div>
                 </div>
-            </div>
         </section>
     </main>
 
     <script type="module" src="http://localhost:5173/src/js/index.ts"></script>
     <!-- <script type="module" src="./dist/js/index.js"></script> -->
 </body>
+
 </html>
