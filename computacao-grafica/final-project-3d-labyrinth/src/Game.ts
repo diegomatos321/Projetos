@@ -41,8 +41,8 @@ export default class Game {
         this.maze.mazeGrid.forEach(this.RenderMaze.bind(this));
 
         const firstCell = this.maze.mazeGrid[0][0][0];
-        console.dir(firstCell.walls)
-        this.mainCamera.position.set(firstCell.position.x, firstCell.position.y + .5, firstCell.position.z);
+        this.player.position.set(firstCell.position.x, firstCell.position.z, firstCell.position.y);
+        
         const firstNeighbour = firstCell.neighbours.entries().next().value;
         if (firstNeighbour) {
             switch (firstNeighbour[0]) {
@@ -50,20 +50,28 @@ export default class Game {
                     break;
                 case Direction.Backward:
                     // this.player.rotateY(-Math.PI);
-                    this.mainCamera.rotateY(-Math.PI);
+                    this.player.rotateY(-Math.PI);
                     break;
                 case Direction.Left:
                     // this.player.rotateY(Math.PI / 2 );
-                    this.mainCamera.rotateY(Math.PI / 2);
+                    this.player.rotateY(Math.PI / 2);
                     break;
                 case Direction.Right:
                     // this.player.rotateY(-Math.PI / 2);
-                    this.mainCamera.rotateY(-Math.PI / 2);
+                    this.player.rotateY(-Math.PI / 2);
                     break;
                 default:
                     break;
             }
         }
+
+        const exit = this.maze.mazeGrid[this.maze.floors - 1][this.maze.rows - 1][this.maze.cols - 1];
+        const exitImage = new THREE.TextureLoader().load('./assets/exit.png');
+        const exitMaterial = new THREE.SpriteMaterial({ map: exitImage });
+        const sprite = new THREE.Sprite(exitMaterial);
+        sprite.position.set(exit.position.x, exit.position.z + .5, exit.position.y);
+        sprite.scale.set(0.5, 0.5, 0.5);
+        this.scene.add(sprite);
 
         this.renderer.setAnimationLoop(this.Update.bind(this));
     }
@@ -120,11 +128,12 @@ export default class Game {
                             wallMesh.rotateX(Math.PI / 2);
                             break;
                         case Direction.Down:
-                            if (cell.walls.get(Direction.Up) === false) {
-                                wallMesh.material.color = new THREE.Color(0xffffff)
-                            } else {
+                            if (cell.walls.get(Direction.Up) === true) {
                                 wallMesh.material.color = new THREE.Color(0x00ff00)
+                            } else {
+                                wallMesh.material.color = new THREE.Color(0xffffff)
                             }
+
                             wallMesh.position.set(0, 0, 0);
                             wallMesh.rotateX(-Math.PI / 2);
 
@@ -132,6 +141,25 @@ export default class Game {
                         }
                     group.add(wallMesh);
                 })
+
+                if (cell.walls.get(Direction.Up) === false) {
+                    const arrowImage = new THREE.TextureLoader().load('./assets/arrow.png');
+                    const arrowMaterial = new THREE.SpriteMaterial({ map: arrowImage });
+                    const sprite = new THREE.Sprite(arrowMaterial);
+                    sprite.position.set(.2, .5, 0);
+                    sprite.scale.set(0.5, 0.5, 0.5);
+                    group.add(sprite);
+                }
+
+                if (cell.walls.get(Direction.Down) === false) {
+                    const arrowImage = new THREE.TextureLoader().load('./assets/arrow.png');
+                    const arrowMaterial = new THREE.SpriteMaterial({ map: arrowImage });
+                    const sprite = new THREE.Sprite(arrowMaterial);
+                    sprite.position.set(-.2, .5, 0);
+                    sprite.scale.set(0.5, 0.5, 0.5);
+                    sprite.material.rotation = Math.PI;
+                    group.add(sprite);
+                }
 
                 this.scene.add(group);
                 this.entities.push(group);

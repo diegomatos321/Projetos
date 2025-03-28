@@ -32,11 +32,10 @@ export default class Player extends THREE.Object3D
         console.dir(event.key)
         switch (event.key) {
             case 'w':
-                // this.camera.translateZ(-1);
                 await this.SmoothMovement(-1);
                 break;
             case 's':
-                this.SmoothMovement(1);
+                await this.SmoothMovement(1);
                 break;
             case 'a':
                 await this.SmoothRotation(Math.PI / 2);
@@ -45,10 +44,17 @@ export default class Player extends THREE.Object3D
                 await this.SmoothRotation(-Math.PI / 2);
                 break;
             case ' ':
-                this.position.y += 1
+                await this.SmoothRotation(Math.PI / 2, new THREE.Vector3(1, 0, 0));
+                await this.SmoothMovement(-1);
+                await this.SmoothRotation(-Math.PI / 2, new THREE.Vector3(1, 0, 0));
+                // this.position.y += 1
                 break;
             case 'Shift':
-                this.position.y -= 1
+                await this.SmoothRotation(-Math.PI / 2, new THREE.Vector3(1, 0, 0));
+                await this.SmoothMovement(-1);
+                await this.SmoothRotation(Math.PI / 2, new THREE.Vector3(1, 0, 0));
+
+                // this.position.y -= 1
                 break;
         }
 
@@ -87,7 +93,7 @@ export default class Player extends THREE.Object3D
         })    
     }
 
-    private async SmoothRotation(angle: number): Promise<void> {
+    private async SmoothRotation(angle: number, axis: THREE.Vector3 = new THREE.Vector3(0, 1, 0)): Promise<void> {
         // this.rotateY(angle)
         // return
 
@@ -99,7 +105,7 @@ export default class Player extends THREE.Object3D
         
         // Compute the target rotation
         const rotationQuaternion  = new THREE.Quaternion();
-        rotationQuaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), angle);
+        rotationQuaternion.setFromAxisAngle(axis, angle);
         
         // Multiply to get the correct final target rotation
         const targetQuaternion = startQuaternion.clone().multiply(rotationQuaternion);
