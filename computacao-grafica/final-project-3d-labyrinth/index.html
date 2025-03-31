@@ -1,16 +1,30 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="./vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Final Project - 3D Labyrinth</title>
-    <style>
-      body { margin: 0; }
-    </style>
-  </head>
-  <body>
-    <div id="container"></div>
-    <script type="module" src="./src/main.ts"></script>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="./vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Final Project - 3D Labyrinth</title>
+  <style>
+    body {
+      margin: 0;
+    }
+  </style>
+
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+
+<body>
+  <div id="container" style="background: transparent;" class="relative">
+    <div id="menu" style="display: none;" class="absolute w-screen h-screen flex items-center justify-end">
+      <div style="text-shadow: 1px 1px 1px red; margin-right: 72px;" class="text-white">
+        <div id="menu-title" class="text-5xl font-bold text-center">3D Labyrinth</div>
+        <button id="start-button" tyle="text-shadow: 1px 1px 1px red;" class="w-full text-white py-2 px-4 font-bold text-xl text-right mt-4 hover:text-red-500 hover:cursor-pointer">Start Game</button>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="./src/main.ts"></script>
+</body>
+
 </html>

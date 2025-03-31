@@ -1,4 +1,5 @@
-import Cell, { Direction } from "./Cell"
+import * as THREE from "three"
+import Cell, { Direction } from "./Entities/Cell"
 
 export default class Maze
 {
@@ -60,6 +61,98 @@ export default class Maze
     public Generate(): void {
         const initialCell = this.RandomCell()
         this.RecursiveBacktracker(initialCell);
+    }
+
+    public RenderMaze(scene: THREE.Scene) {
+        this.mazeGrid.forEach((floor) => {
+            floor.forEach(row => {
+                row.forEach(cell => {
+                    const group = new THREE.Group();
+                    group.position.set(cell.position.x, cell.position.z, cell.position.y);
+    
+                    cell.walls.forEach((value, key) => {
+                        if (value === false) {
+                            return
+                        }
+    
+                        const wallGeometry = new THREE.PlaneGeometry();
+                        const wallMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+                        const wallMesh = new THREE.Mesh(wallGeometry, wallMaterial);
+    
+                        switch (key) {
+                            case Direction.Front:
+                                wallMesh.position.set(0, 0.5, 0.5);
+                                wallMesh.material.color = new THREE.Color(0xffc0cb)
+                                wallMesh.rotateY(-Math.PI);
+    
+                                break;
+                            case Direction.Backward:
+                                wallMesh.position.set(0, 0.5, -0.5);
+                                // wallMesh.rotateY(-Math.PI);
+                                break;
+                            case Direction.Left:
+                                wallMesh.position.set(-0.5, .5, 0);
+                                wallMesh.material.color = new THREE.Color(0x0000ff)
+                                wallMesh.rotateY(Math.PI / 2);
+    
+                                break;
+                            case Direction.Right:
+                                wallMesh.position.set(0.5, 0.5, 0);
+                                wallMesh.material.color = new THREE.Color(0xffff00)
+                                wallMesh.rotateY(-Math.PI / 2);
+    
+                                break;
+                            case Direction.Up:
+                                wallMesh.position.set(0, 1, 0);
+                                wallMesh.rotateX(Math.PI / 2);
+                                break;
+                            case Direction.Down:
+                                if (cell.walls.get(Direction.Up) === true) {
+                                    wallMesh.material.color = new THREE.Color(0x00ff00)
+                                } else {
+                                    wallMesh.material.color = new THREE.Color(0xffffff)
+                                }
+    
+                                wallMesh.position.set(0, 0, 0);
+                                wallMesh.rotateX(-Math.PI / 2);
+    
+                                break;
+                            }
+                        group.add(wallMesh);
+                    })
+    
+                    if (cell.walls.get(Direction.Up) === false) {
+                        const arrowImage = new THREE.TextureLoader().load('./assets/arrow.png');
+                        const arrowMaterial = new THREE.SpriteMaterial({ map: arrowImage });
+                        const sprite = new THREE.Sprite(arrowMaterial);
+                        sprite.position.set(.2, .5, 0);
+                        sprite.scale.set(0.5, 0.5, 0.5);
+                        group.add(sprite);
+                    }
+    
+                    if (cell.walls.get(Direction.Down) === false) {
+                        const arrowImage = new THREE.TextureLoader().load('./assets/arrow.png');
+                        const arrowMaterial = new THREE.SpriteMaterial({ map: arrowImage });
+                        const sprite = new THREE.Sprite(arrowMaterial);
+                        sprite.position.set(-.2, .5, 0);
+                        sprite.scale.set(0.5, 0.5, 0.5);
+                        sprite.material.rotation = Math.PI;
+                        group.add(sprite);
+                    }
+    
+                    scene.add(group);
+                    // this.entities.push(group);
+                })
+            })
+        })
+
+        const exit = this.mazeGrid[this.floors - 1][this.rows - 1][this.cols - 1];
+        const exitImage = new THREE.TextureLoader().load('./assets/exit.png');
+        const exitMaterial = new THREE.SpriteMaterial({ map: exitImage });
+        const sprite = new THREE.Sprite(exitMaterial);
+        sprite.position.set(exit.position.x, exit.position.z + .5, exit.position.y);
+        sprite.scale.set(0.5, 0.5, 0.5);
+        scene.add(sprite);
     }
 
     private RecursiveBacktracker(cell: Cell): void {

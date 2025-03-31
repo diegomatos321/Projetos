@@ -6,12 +6,12 @@ export default class Player extends THREE.Object3D
 
     private scene: THREE.Scene;
 
-    constructor(scene: THREE.Scene)
+    constructor(scene: THREE.Scene, camera: THREE.PerspectiveCamera)
     {
         super();
         
         this.scene = scene;
-        this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        this.camera = camera;
 
         window.document.addEventListener('keydown', this.OnKeyDown.bind(this));
     }
@@ -29,7 +29,6 @@ export default class Player extends THREE.Object3D
         }
         
         this.isAnimating = true;
-        console.dir(event.key)
         switch (event.key) {
             case 'w':
                 await this.SmoothMovement(-1);
@@ -58,7 +57,6 @@ export default class Player extends THREE.Object3D
                 break;
         }
 
-        console.dir(this.position)
         this.isAnimating = false;
     }
 
