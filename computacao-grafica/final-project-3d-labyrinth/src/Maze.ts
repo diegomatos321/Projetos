@@ -147,6 +147,7 @@ export default class Maze
         })
 
         const exit = this.mazeGrid[this.floors - 1][this.rows - 1][this.cols - 1];
+        console.log(exit.position.x, exit.position.z, exit.position.y)
         const exitImage = new THREE.TextureLoader().load('./assets/exit.png');
         const exitMaterial = new THREE.SpriteMaterial({ map: exitImage });
         const sprite = new THREE.Sprite(exitMaterial);

@@ -64,10 +64,11 @@ export default class MazeLevelScene implements IScene{
     }
 
     public Update() {
-        this.entities.forEach(entity => {
-            if (entity instanceof Player) {
-                entity.Update();
-            }
-        })
+        const exit = this.maze.mazeGrid[this.maze.floors - 1][this.maze.rows - 1][this.maze.cols - 1];
+        if (this.player.position.x === exit.position.x && this.player.position.y === exit.position.z && this.player.position.z === exit.position.y) {
+            console.log('Level finished!');
+            window.dispatchEvent(new CustomEvent('ChangeScene', { detail: 'LevelFinished' }));         
+        }
+        this.player.Update();
     }
 }
