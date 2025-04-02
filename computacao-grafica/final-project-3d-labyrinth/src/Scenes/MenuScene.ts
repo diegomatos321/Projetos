@@ -1,4 +1,6 @@
 import * as THREE from "three";
+import { RGBELoader } from "three/addons/loaders/RGBELoader.js";
+
 import IScene from "../Interfaces/IScene";
 import Maze from "../Maze";
 
@@ -17,13 +19,6 @@ export default class MenuScene implements IScene
         this.mainCamera.position.set(12, 7, 12);
         this.mainCamera.lookAt(5, 0, 5);
 
-        let lightDir = new THREE.DirectionalLight(0xffffff, 1);
-        lightDir.position.set(1, 1, 1);
-        this.scene.add(lightDir)
-
-        let lightAmb = new THREE.AmbientLight(0x303030);
-        this.scene.add(lightAmb)
-
         this.maze = new Maze(10, 10, 3);
     }
 
@@ -37,6 +32,11 @@ export default class MenuScene implements IScene
                 window.dispatchEvent(new CustomEvent('ChangeScene', { detail: 'MazeLevelScene' }));
             })
         }
+
+        new RGBELoader().load('/assets/table_mountain_1_2k.hdr', (texture) => {
+            texture.mapping = THREE.EquirectangularReflectionMapping;
+            this.scene.background = texture
+        });
 
         this.maze.Generate();
         this.maze.RenderMaze(this.scene);

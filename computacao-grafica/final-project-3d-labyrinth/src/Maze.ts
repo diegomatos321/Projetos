@@ -71,13 +71,14 @@ export default class Maze
                     group.position.set(cell.position.x, cell.position.z, cell.position.y);
     
                     cell.walls.forEach((value, key) => {
-                        if (value === false) {
+                        if (value === false || (cell.position.z === this.floors - 1 && key === Direction.Up)) {
                             return
                         }
     
                         const wallGeometry = new THREE.PlaneGeometry();
                         const wallMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
                         const wallMesh = new THREE.Mesh(wallGeometry, wallMaterial);
+                        wallMesh.name = 'wall';
     
                         switch (key) {
                             case Direction.Front:

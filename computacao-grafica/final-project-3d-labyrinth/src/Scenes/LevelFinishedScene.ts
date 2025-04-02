@@ -1,6 +1,8 @@
 import * as THREE from "three";
+import { RGBELoader } from "three/addons/loaders/RGBELoader.js";
 import { FontLoader } from "three/addons/loaders/FontLoader.js";
 import { TextGeometry } from "three/addons/geometries/TextGeometry.js";
+
 import IScene from "../Interfaces/IScene";
 
 export default class LevelFinishedScene implements IScene
@@ -14,16 +16,14 @@ export default class LevelFinishedScene implements IScene
         this.scene = new THREE.Scene();
         this.mainCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         this.mainCamera.position.set(50, 0, 200);
-
-        let lightDir = new THREE.DirectionalLight(0xffffff, 1);
-        lightDir.position.set(1, 1, 1);
-        this.scene.add(lightDir)
-
-        let lightAmb = new THREE.AmbientLight(0x303030);
-        this.scene.add(lightAmb)
     }
 
     Start(): void {
+        new RGBELoader().load('/assets/table_mountain_1_2k.hdr', (texture) => {
+            texture.mapping = THREE.EquirectangularReflectionMapping;
+            this.scene.background = texture
+        });
+
         const fontLoader = new FontLoader();
         fontLoader.load("/assets/helvetiker_regular.typeface.json", (font) => {
             const geometry = new TextGeometry("Maze completed!", {

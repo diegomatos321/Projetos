@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { RGBELoader } from "three/addons/loaders/RGBELoader.js";
 
 import Maze from '../Maze';
 import { Direction } from '../Entities/Cell';
@@ -20,20 +21,18 @@ export default class MazeLevelScene implements IScene{
 
         this.mainCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
-        let lightDir = new THREE.DirectionalLight(0xffffff, 1);
-        lightDir.position.set(1, 1, 1);
-        this.scene.add(lightDir)
-
-        let lightAmb = new THREE.AmbientLight(0x303030);
-        this.scene.add(lightAmb)
-
         this.maze = new Maze(10, 10, 3);
-        this.player = new Player(this.scene, this.mainCamera);
+        this.player = new Player(this.scene, this.mainCamera, this.maze);
         // this.player.add(this.mainCamera)
         this.entities.push(this.player);
     }
 
     public Start() {
+        new RGBELoader().load('/assets/table_mountain_1_2k.hdr', (texture) => {
+            texture.mapping = THREE.EquirectangularReflectionMapping;
+            this.scene.background = texture
+        });
+
         this.maze.Generate();
         this.maze.RenderMaze(this.scene);
 
