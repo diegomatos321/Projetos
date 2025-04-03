@@ -45,15 +45,12 @@ export default class MazeLevelScene implements IScene{
                 case Direction.Front:
                     break;
                 case Direction.Backward:
-                    // this.player.rotateY(-Math.PI);
                     this.player.rotateY(-Math.PI);
                     break;
                 case Direction.Left:
-                    // this.player.rotateY(Math.PI / 2 );
                     this.player.rotateY(Math.PI / 2);
                     break;
                 case Direction.Right:
-                    // this.player.rotateY(-Math.PI / 2);
                     this.player.rotateY(-Math.PI / 2);
                     break;
                 default:
@@ -64,7 +61,9 @@ export default class MazeLevelScene implements IScene{
 
     public Update() {
         const exit = this.maze.mazeGrid[this.maze.floors - 1][this.maze.rows - 1][this.maze.cols - 1];
-        if (this.player.position.x === exit.position.x && this.player.position.y === exit.position.z && this.player.position.z === exit.position.y) {
+        const distanceToExit = this.player.position.distanceTo(new THREE.Vector3(exit.position.x, exit.position.z, exit.position.y))
+
+        if (distanceToExit < 0.1) {
             console.log('Level finished!');
             window.dispatchEvent(new CustomEvent('ChangeScene', { detail: 'LevelFinished' }));         
         }

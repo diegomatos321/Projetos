@@ -7,6 +7,8 @@ export default class Player extends THREE.Object3D
 
     private scene: THREE.Scene;
     private maze: Maze;
+    
+    private isAnimating: boolean = false;
 
     constructor(scene: THREE.Scene, camera: THREE.PerspectiveCamera, maze: Maze)
     {
@@ -16,7 +18,8 @@ export default class Player extends THREE.Object3D
         this.camera = camera;
         this.maze = maze;
 
-        window.document.addEventListener('keydown', this.OnKeyDown.bind(this));
+        window.document.addEventListener('keydown', (e) => this.HandlePlayerMovement(e.code));
+        window.document.addEventListener('pointerdown', this.OnPointerDown.bind(this));
     }
 
     public Update()
@@ -25,15 +28,40 @@ export default class Player extends THREE.Object3D
         this.camera.rotation.set(this.rotation.x, this.rotation.y, this.rotation.z);
     }
 
-    isAnimating = false;
-    private async OnKeyDown(event: KeyboardEvent): Promise<void> {
+    private OnPointerDown(event: PointerEvent): void
+    {
+        if (event.button !== 0) return;
+
+        const posX = (event.clientX / window.innerWidth) * 2 - 1;
+        const posY = -(event.clientY / window.innerHeight) * 2 + 1;
+
+        if (posX < -0.5) {
+            this.HandlePlayerMovement('KeyA');
+        } else if (posX > 0.5) {
+            this.HandlePlayerMovement('KeyD');
+        }
+        
+        if (posY < -0.5) {
+            this.HandlePlayerMovement('ShiftLeft');
+        } else if (posY > 0.5) {
+            this.HandlePlayerMovement('Space');
+        }
+
+        if (posX >= -0.5 && posX <= 0.5 && posY >= -0.5 && posY <= 0.5) {
+            this.HandlePlayerMovement('KeyW');
+        }
+    }
+
+    private async HandlePlayerMovement(command: string): Promise<void>
+    {
         if (this.isAnimating) {
             return;
         }
-        
+
         this.isAnimating = true;
-        switch (event.key) {
-            case 'w':
+        switch (command) {
+            case 'KeyW':
+            case 'ArrowUp':
                 {
                     const forward = new THREE.Vector3();
                     this.getWorldDirection(forward); 
@@ -48,7 +76,8 @@ export default class Player extends THREE.Object3D
                     }
                 }
                 break;
-            case 's':
+            case 'KeyS':
+            case 'ArrowDown':
                 {
                     const forward = new THREE.Vector3();
                     this.getWorldDirection(forward); 
@@ -61,13 +90,15 @@ export default class Player extends THREE.Object3D
                     }
                 }
                 break;
-            case 'a':
+            case 'KeyA':
+            case 'ArrowLeft':
                 await this.SmoothRotation(Math.PI / 2);
                 break;
-            case 'd':
+            case 'KeyD':
+            case 'ArrowRight':
                 await this.SmoothRotation(-Math.PI / 2);
                 break;
-            case ' ':
+            case 'Space':
                 if (this.position.y >= this.maze.floors - 1) {
                     break;
                 }
@@ -85,7 +116,8 @@ export default class Player extends THREE.Object3D
                 }
 
                 break;
-            case 'Shift':
+            case 'ShiftLeft':
+            case 'ShiftRight':
                 if (this.position.y <= 0) {
                     break;
                 }
