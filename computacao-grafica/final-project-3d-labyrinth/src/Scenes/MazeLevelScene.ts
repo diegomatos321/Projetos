@@ -11,19 +11,13 @@ export default class MazeLevelScene implements IScene{
     public scene: THREE.Scene = new THREE.Scene();
     public mainCamera: THREE.PerspectiveCamera;
 
-    private entities: THREE.Object3D[] = [];
-
     private maze!: Maze;
-    private player: Player;
+    private player!: Player;
 
     constructor() {
         this.scene = new THREE.Scene();
 
         this.mainCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-
-        this.player = new Player(this.scene, this.mainCamera, this.maze);
-        // this.player.add(this.mainCamera)
-        this.entities.push(this.player);
     }
 
     Start(args: any) {
@@ -53,6 +47,8 @@ export default class MazeLevelScene implements IScene{
         } else {
             this.maze = new Maze(10, 10, 3);
         }
+
+        this.player = new Player(this.scene, this.mainCamera, this.maze);
 
         this.maze.Generate();
         this.maze.RenderMaze(this.scene);

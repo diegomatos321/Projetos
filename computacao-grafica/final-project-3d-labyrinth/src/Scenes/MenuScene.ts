@@ -11,7 +11,7 @@ export default class MenuScene implements IScene
     public mainCamera: THREE.PerspectiveCamera;
 
     private maze: Maze;
-    private modeclickCallback
+    private modeclickCallback!: (event: Event) => void
 
     constructor()
     {
@@ -59,7 +59,7 @@ export default class MenuScene implements IScene
         }
     }
 
-    private OnModeClick(event: MouseEvent): void {
+    private OnModeClick(event: Event): void {
         const target = event.target as HTMLElement;
         const mode = target.id;
         this.HandleModeSelect(mode);

@@ -44,7 +44,7 @@ export default class LevelFinishedScene implements IScene
         });
     }
 
-    Update(dt: number): void {
-        
-    }
+    Update(dt: number): void { }
+
+    Stop() {}
 }
