@@ -19,13 +19,13 @@ export default class LevelFinishedScene implements IScene
     }
 
     Start(): void {
-        new RGBELoader().load('/assets/table_mountain_1_2k.hdr', (texture) => {
+        new RGBELoader().load('./assets/table_mountain_1_2k.hdr', (texture) => {
             texture.mapping = THREE.EquirectangularReflectionMapping;
             this.scene.background = texture
         });
 
         const fontLoader = new FontLoader();
-        fontLoader.load("/assets/helvetiker_regular.typeface.json", (font) => {
+        fontLoader.load("./assets/helvetiker_regular.typeface.json", (font) => {
             const geometry = new TextGeometry("Maze completed!", {
                 font: font,
                 size: 16,

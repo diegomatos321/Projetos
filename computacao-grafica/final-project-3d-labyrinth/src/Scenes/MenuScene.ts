@@ -11,6 +11,7 @@ export default class MenuScene implements IScene
     public mainCamera: THREE.PerspectiveCamera;
 
     private maze: Maze;
+    private modeclickCallback
 
     constructor()
     {
@@ -27,13 +28,13 @@ export default class MenuScene implements IScene
         if (menuHud) {
             menuHud.style.display = 'flex';
 
-            menuHud.querySelector('#start-button')?.addEventListener('click', () => {
-                menuHud.style.display = 'none';
-                window.dispatchEvent(new CustomEvent('ChangeScene', { detail: 'MazeLevelScene' }));
-            })
+            this.modeclickCallback = this.OnModeClick.bind(this);
+            menuHud.querySelector('#easy')?.addEventListener('click', this.modeclickCallback);
+            menuHud.querySelector('#medium')?.addEventListener('click', this.modeclickCallback);
+            menuHud.querySelector('#hard')?.addEventListener('click',  this.modeclickCallback);
         }
 
-        new RGBELoader().load('/assets/table_mountain_1_2k.hdr', (texture) => {
+        new RGBELoader().load('./assets/table_mountain_1_2k.hdr', (texture) => {
             texture.mapping = THREE.EquirectangularReflectionMapping;
             this.scene.background = texture
         });
@@ -46,5 +47,29 @@ export default class MenuScene implements IScene
         this.mainCamera.position.x = 5+ 12*Math.cos(-dt/1000 * 0.4)
         this.mainCamera.position.z = 5+ 12*Math.sin(-dt/1000 * 0.4)
         this.mainCamera.lookAt(5, 0, 5);
+    }
+
+    Stop(): void {
+        const menuHud = document.getElementById('menu')
+        if (menuHud) {
+            menuHud.style.display = 'none';
+            menuHud.querySelector('#easy')?.removeEventListener('click', this.modeclickCallback);
+            menuHud.querySelector('#medium')?.removeEventListener('click', this.modeclickCallback);
+            menuHud.querySelector('#hard')?.removeEventListener('click',  this.modeclickCallback);
+        }
+    }
+
+    private OnModeClick(event: MouseEvent): void {
+        const target = event.target as HTMLElement;
+        const mode = target.id;
+        this.HandleModeSelect(mode);
+    }
+
+    private HandleModeSelect(mode: string) {
+        const menuHud = document.getElementById('menu')
+        if (menuHud) {
+            menuHud.style.display = 'none';
+            window.dispatchEvent(new CustomEvent('ChangeScene', { detail: { sceneKey: 'MazeLevelScene', args: { mode } } }));
+        }
     }
 }

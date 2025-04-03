@@ -33,20 +33,8 @@ export default class Game
         this.currentScene.Start();
 
         this.renderer.setAnimationLoop(this.Update.bind(this));
-        window.addEventListener('ChangeScene', (event: CustomEvent) => {
-            const newSceneKey = event.detail;
-            const newScene = this.sceneList.find(scene => scene.key === newSceneKey);
-            if (newScene) {
-                // this.scene.remove(this.currentScene.scene);
-                // this.renderer.setAnimationLoop(null);
-                this.currentScene = newScene;
-                this.scene = this.currentScene.scene;
-                this.camera = this.currentScene.mainCamera;
-
-                this.currentScene.Start();
-                this.renderer.setAnimationLoop(this.Update.bind(this));
-            }
-        })
+        // @ts-ignore
+        window.addEventListener('ChangeScene', (event: CustomEvent) => this.HandleChangeScene(event.detail.sceneKey, event.detail.args));
     }
 
     public Update(dt: number)
@@ -54,5 +42,21 @@ export default class Game
         this.currentScene.Update(dt);
 
         this.renderer.render(this.scene, this.camera);
+    }
+
+    private HandleChangeScene(sceneKey: string, args?: any){
+        const newScene = this.sceneList.find(scene => scene.key === sceneKey);
+        if (newScene) {
+            this.currentScene.Stop();
+            this.scene.clear();
+            this.renderer.clear();
+            // this.renderer.dispose();
+            
+            this.currentScene = newScene;
+            this.scene = this.currentScene.scene;
+            this.camera = this.currentScene.mainCamera;
+
+            this.currentScene.Start(args);
+        }
     }
 }

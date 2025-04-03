@@ -10,6 +10,9 @@ export default class Player extends THREE.Object3D
     
     private isAnimating: boolean = false;
 
+    private keydownCallback: (event: KeyboardEvent) => void
+    private pointerdownCallback: (event: PointerEvent) => void
+
     constructor(scene: THREE.Scene, camera: THREE.PerspectiveCamera, maze: Maze)
     {
         super();
@@ -18,14 +21,26 @@ export default class Player extends THREE.Object3D
         this.camera = camera;
         this.maze = maze;
 
-        window.document.addEventListener('keydown', (e) => this.HandlePlayerMovement(e.code));
-        window.document.addEventListener('pointerdown', this.OnPointerDown.bind(this));
+        this.keydownCallback = this.OnKeyDown.bind(this);
+        this.pointerdownCallback = this.OnPointerDown.bind(this);
+        window.document.addEventListener('keydown', this.keydownCallback);
+        window.document.addEventListener('pointerdown', this.pointerdownCallback);
     }
 
-    public Update()
+    Update()
     {
         this.camera.position.set(this.position.x, this.position.y + .5, this.position.z);
         this.camera.rotation.set(this.rotation.x, this.rotation.y, this.rotation.z);
+    }
+
+    Dispose() {
+        window.document.removeEventListener('keydown', this.keydownCallback);
+        window.document.removeEventListener('pointerdown', this.pointerdownCallback);
+    }
+
+    private OnKeyDown(event: KeyboardEvent): void
+    {
+        this.HandlePlayerMovement(event.code);
     }
 
     private OnPointerDown(event: PointerEvent): void
