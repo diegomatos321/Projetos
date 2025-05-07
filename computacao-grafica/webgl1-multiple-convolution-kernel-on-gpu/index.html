@@ -9,29 +9,8 @@
     <main>
         <h1>Applying multiple Convolution Kernels on GPU</h1>
         <div>
-            <label for="kernel">Select kernel</label>
-            <select name="kernel" id="kernel">
-                <option value="normal" selected>normal</option>
-                <option value="gaussianBlur">gaussianBlur</option>
-                <option value="gaussianBlur2">gaussianBlur2</option>
-                <option value="gaussianBlur3">gaussianBlur3</option>
-                <option value="unsharpen">unsharpen</option>
-                <option value="sharpness">sharpness</option>
-                <option value="sharpness">sharpness</option>
-                <option value="edgeDetect">edgeDetect</option>
-                <option value="edgeDetect2">edgeDetect2</option>
-                <option value="edgeDetect3">edgeDetect3</option>
-                <option value="edgeDetect4">edgeDetect4</option>
-                <option value="edgeDetect5">edgeDetect5</option>
-                <option value="edgeDetect6">edgeDetect6</option>
-                <option value="sobelHorizontal">sobelHorizontal</option>
-                <option value="sobelVertical">sobelVertical</option>
-                <option value="previtHorizontal">previtHorizontal</option>
-                <option value="previtVertical">previtVertical</option>
-                <option value="boxBlur">boxBlur</option>
-                <option value="triangleBlur">triangleBlur</option>
-                <option value="emboss">emboss</option>
-            </select>
+            <p>Kernels</p>
+            <div id="kernels"></div>
         </div>
 
         <canvas id="canvas"></canvas>
@@ -47,6 +26,7 @@
         attribute vec2 a_texCoord;
 
         uniform vec2 u_resolution;
+        uniform float u_flipY;
 
         varying vec2 v_texCoord;
 
@@ -61,7 +41,7 @@
             // convert from 0->2 to -1->+1 (clipspace)
             vec2 clipSpace = zeroToTwo - 1.0;
 
-            gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);
+            gl_Position = vec4(clipSpace * vec2(1, u_flipY), 0, 1);
 
             // pass the texCoord to the fragment shader
             // The GPU will interpolate this value between points.

@@ -100,6 +100,14 @@ const kernels = {
         0, 1, 2
     ]
 };
+
+const effectsToApply = [
+    "edgeDetect",
+    "emboss",
+    "gaussianBlur",
+    "unsharpen"
+];
+
 let initialSelection = 'normal';
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -109,11 +117,63 @@ window.addEventListener('DOMContentLoaded', () => {
 async function main() {
     const image = await LoadImage('leaves.jpg')
 
-    const kernelSelectEl = document.getElementById('kernel')
-    kernelSelectEl.addEventListener('change', (e) => {
-        initialSelection = e.target.value
-        draw()
+    const list = document.getElementById('kernels');
+
+    list.addEventListener('click', function (event) {
+        const target = event.target;
+        if (target.tagName === 'BUTTON') {
+            const li = target.parentElement;
+            const isUp = target.classList.contains('up');
+            moveItem(li, isUp);
+        }
+    });
+
+    function moveItem(item, moveUp) {
+        const sibling = moveUp ? item.previousElementSibling : item.nextElementSibling;
+        if (sibling) {
+            list.insertBefore(item, moveUp ? sibling : sibling.nextSibling);
+
+            if(moveUp) {
+                const elIndex = Number(item.dataset.index)
+                const tmp = effectsToApply[elIndex-1]
+                effectsToApply[elIndex-1] = effectsToApply[elIndex]
+                effectsToApply[elIndex] = tmp
+                draw()
+            } else {
+                const elIndex = Number(item.dataset.index)
+                const tmp = effectsToApply[elIndex+1]
+                effectsToApply[elIndex+1] = effectsToApply[elIndex]
+                effectsToApply[elIndex] = tmp
+                draw()
+            }
+        }
+    }
+
+    effectsToApply.forEach((kernel, index) => {
+        const wrapper = document.createElement('div')
+        wrapper.dataset.index = index
+        wrapper.style.display = 'flex'
+        const label = document.createElement('p')
+        label.style.margin = 0
+        label.textContent = kernel
+        wrapper.appendChild(label)
+
+        const btnWrapper = document.createElement('div')
+        const upButton = document.createElement('button');
+        upButton.textContent = 'Up';
+        upButton.classList.add('up');
+
+        const downButton = document.createElement('button');
+        downButton.textContent = 'Down';
+        downButton.classList.add('down');
+        btnWrapper.appendChild(upButton)
+        btnWrapper.appendChild(downButton)
+
+        wrapper.appendChild(upButton);
+        wrapper.appendChild(downButton);
+        list.appendChild(wrapper)
     })
+
 
     /** @type {HTMLCanvasElement} */
     const canvas = document.getElementById('canvas')
@@ -130,6 +190,7 @@ async function main() {
     const textureSizeLocation = gl.getUniformLocation(program, 'u_textureSize')
     const kernelLocation = gl.getUniformLocation(program, "u_kernel[0]");
     const kernelWeightLocation = gl.getUniformLocation(program, "u_kernelWeight");
+    const flipYLocation = gl.getUniformLocation(program, "u_flipY");
 
     // Rectangle
     const positionBuffer = gl.createBuffer()
@@ -154,23 +215,28 @@ async function main() {
         1, 1
     ]), gl.STATIC_DRAW)
 
-    // Create a texture.
-    const texture = gl.createTexture()
-    gl.bindTexture(gl.TEXTURE_2D, texture)
-
-    // Set the parameters so we can render any size image.
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-
-    // Upload the image into the texture.
+    const originalImageTexture = CreateAndSetupTexture(gl)
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
 
-    draw()
-    function draw() {
-        gl.viewport(0, 0, gl.canvas.width, gl.canvas.height)
+    const textures = []
+    const framebuffers = []
+    for (let i = 0; i < 2; i++) {
+        const texture = CreateAndSetupTexture(gl)
+        textures.push(texture)
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, image.width, image.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
 
+        // Create a framebuffer
+        var fbo = gl.createFramebuffer();
+        framebuffers.push(fbo);
+        gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+
+        // Attach a texture to it.
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+    }
+
+    draw()
+
+    function draw() {
         gl.clearColor(0, 0, 0, 0)
         gl.clear(gl.COLOR_BUFFER_BIT)
 
@@ -204,11 +270,45 @@ async function main() {
         var offset = 0;        // start at the beginning of the buffer
         gl.vertexAttribPointer(texcoordLocation, size, type, normalize, stride, offset);
 
-        // set the resolution
-        gl.uniform2f(resolutionLocation, gl.canvas.width, gl.canvas.height);
         gl.uniform2f(textureSizeLocation, image.width, image.height);
-        gl.uniform1fv(kernelLocation, kernels[initialSelection]);
-        gl.uniform1f(kernelWeightLocation, computeKernelWeight(kernels[initialSelection]));
+
+        // start with the original image
+        gl.bindTexture(gl.TEXTURE_2D, originalImageTexture);
+
+        // don't y flip images while drawing to the textures
+        gl.uniform1f(flipYLocation, 1);
+
+        // loop through each effect we want to apply.
+        for (let i = 0; i < effectsToApply.length; ++i) {
+            // Setup to draw into one of the framebuffers.
+
+            const fbo = framebuffers[i % 2]
+            gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+            gl.uniform2f(resolutionLocation, image.width, image.height);
+            gl.viewport(0, 0, image.width, image.height);
+
+            gl.uniform1fv(kernelLocation, kernels[effectsToApply[i]]);
+            gl.uniform1f(kernelWeightLocation, computeKernelWeight(kernels[effectsToApply[i]]));
+
+            // Draw the rectangle.
+            var primitiveType = gl.TRIANGLES;
+            var offset = 0;
+            var count = 6;
+            gl.drawArrays(primitiveType, offset, count);
+
+            // for the next draw, use the texture we just rendered to.
+            gl.bindTexture(gl.TEXTURE_2D, textures[i % 2]);
+        }
+
+        // finally draw the result to the canvas.
+        gl.uniform1f(flipYLocation, -1);  // need to y flip for canvas
+
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+        gl.uniform2f(resolutionLocation, image.width, image.height);
+        gl.viewport(0, 0, image.width, image.height);
+
+        gl.uniform1fv(kernelLocation, kernels['normal']);
+        gl.uniform1f(kernelWeightLocation, computeKernelWeight(kernels['normal']));
 
         // Draw the rectangle.
         var primitiveType = gl.TRIANGLES;
@@ -310,4 +410,22 @@ function computeKernelWeight(kernel) {
         return prev + curr;
     });
     return weight <= 0 ? 1 : weight;
+}
+
+/**
+ * @param {WebGLRenderingContext} gl
+ * @returns {WebGLTexture}
+ */
+function CreateAndSetupTexture(gl) {
+    // Create a texture.
+    const texture = gl.createTexture()
+    gl.bindTexture(gl.TEXTURE_2D, texture)
+
+    // Set the parameters so we can render any size image.
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+
+    return texture
 }
