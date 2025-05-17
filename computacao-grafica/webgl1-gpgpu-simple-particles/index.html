@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simple particles running on gpu</title>
+</head>
+
+<body>
+    <main>
+
+    </main>
+
+    <script id="vertex-shader-2d" type="x-shader/x-vertex">
+        attribute float id;
+        uniform sampler2D positionTex;
+        uniform vec2 texDimensions;
+        uniform mat4 matrix;
+        
+        vec4 getValueFrom2DTextureAs1DArray(sampler2D tex, vec2 dimensions, float index) {
+            float y = floor(index / dimensions.x);
+            float x = mod(index, dimensions.x);
+            vec2 texcoord = (vec2(x, y) + 0.5) / dimensions;
+            return texture2D(tex, texcoord);
+        }
+        
+        void main() {
+            // pull the position from the texture
+            vec4 position = getValueFrom2DTextureAs1DArray(positionTex, texDimensions, id);
+            
+            // do the common matrix math
+            gl_Position = matrix * vec4(position.xy, 0, 1);
+            gl_PointSize = 10.0;
+        }
+    </script>
+    <script id="fragment-shader-2d" type="x-shader/x-fragment">
+        precision highp float;
+ 
+        uniform sampler2D positionTex;
+        uniform sampler2D velocityTex;
+        uniform vec2 texDimensions;
+        uniform vec2 canvasDimensions;
+        uniform float deltaTime;
+        
+        vec2 euclideanModulo(vec2 n, vec2 m) {
+            return mod(mod(n, m) + m, m);
+        }
+        
+        void main() {
+            // compute texcoord from gl_FragCoord;
+            vec2 texcoord = gl_FragCoord.xy / texDimensions;
+            
+            vec2 position = texture2D(positionTex, texcoord).xy;
+            vec2 velocity = texture2D(velocityTex, texcoord).xy;
+            vec2 newPosition = euclideanModulo(position + velocity * deltaTime, canvasDimensions);
+            
+            gl_FragColor = vec4(newPosition, 0, 1);
+        }
+    </script>
+    <script type="module" src="index.js"></script>
+</body>
+
+</html>
