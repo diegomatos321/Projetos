@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- <link rel="icon" type="image/svg+xml" href="/vite.svg" /> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Interactive texture from 3D Model</title>
+  </head>
+
+  <style>
+    /* #fabric-container{position: absolute; top: 0; right: 0;} */
+    #fabric-container{display: none;}
+  </style>
+
+  <body>
+    <main>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <div id="renderer" style="width: 512px; height: 512px;"></div>
+        <div>
+          <div>
+            <label for="model">Image:</label>
+            <input type="file" id="file">
+          </div>
+          <div>
+            <label for="Text"></label>
+            <input type="text" id="text" placeholder="Enter text" />
+            <button id="add-text">Add Text</button>
+          </div>
+
+          <button id="save">Save</button>
+        </div>
+      </div>
+
+      <div id="fabric-container">
+        <canvas id="fabricjs" style="width: 256px; height: 256px;" width="1024" width="1024"></canvas>
+      </div>
+    </main>
+    
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
