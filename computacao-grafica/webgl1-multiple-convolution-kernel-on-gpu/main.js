@@ -218,9 +218,8 @@ async function main() {
     }
 
     draw()
-    function draw() {
-        gl.viewport(0, 0, gl.canvas.width, gl.canvas.height)
 
+    function draw() {
         gl.clearColor(0, 0, 0, 0)
         gl.clear(gl.COLOR_BUFFER_BIT)
 
@@ -254,8 +253,6 @@ async function main() {
         var offset = 0;        // start at the beginning of the buffer
         gl.vertexAttribPointer(texcoordLocation, size, type, normalize, stride, offset);
 
-        // set the resolution
-        gl.uniform2f(resolutionLocation, gl.canvas.width, gl.canvas.height);
         gl.uniform2f(textureSizeLocation, image.width, image.height);
 
         // start with the original image
@@ -429,4 +426,22 @@ function computeKernelWeight(kernel) {
         return prev + curr;
     });
     return weight <= 0 ? 1 : weight;
+}
+
+/**
+ * @param {WebGLRenderingContext} gl
+ * @returns {WebGLTexture}
+ */
+function CreateAndSetupTexture(gl) {
+    // Create a texture.
+    const texture = gl.createTexture()
+    gl.bindTexture(gl.TEXTURE_2D, texture)
+
+    // Set the parameters so we can render any size image.
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+
+    return texture
 }
