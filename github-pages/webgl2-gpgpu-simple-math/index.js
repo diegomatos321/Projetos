@@ -5,39 +5,20 @@ window.document.addEventListener('DOMContentLoaded', () => {
     main()
 })
 
-async function main() {
+function main() {
+    const dstWidth = 3;
+    const dstHeight = 2;
+
     // make a 3x2 canvas for 6 results
     const canvas = document.createElement('canvas');
     canvas.width = dstWidth;
     canvas.height = dstHeight;
 
-    const gl = canvas.getContext('webgl');
-    if (!gl) {
-        throw new Error('WebGL not supported');
-    }
+    const gl = canvas.getContext('webgl2');
 
-    // check we can use floating point textures
-    const ext1 = gl.getExtension('OES_texture_float');
-    if (!ext1) {
-        alert('Need OES_texture_float');
-        return;
-    }
-    // check we can render to floating point textures
-    const ext2 = gl.getExtension('WEBGL_color_buffer_float');
-    if (!ext2) {
-        alert('Need WEBGL_color_buffer_float');
-        return;
-    }
-    // check we can use textures in a vertex shader
-    if (gl.getParameter(gl.MAX_VERTEX_TEXTURE_IMAGE_UNITS) < 1) {
-        alert('Can not use textures in vertex shaders');
-        return;
-    }
-
-    const program = await CreateProgramFromScript(gl, ['vertex-shader-2d', 'fragment-shader-2d'])
+    const program = CreateProgramFromSources(gl, ['vertex-shader-2d', 'fragment-shader-2d']);
     const positionLoc = gl.getAttribLocation(program, 'position');
     const srcTexLoc = gl.getUniformLocation(program, 'srcTex');
-    const srcDimensionsLoc = gl.getUniformLocation(program, 'srcDimensions');
 
     // setup a full canvas clip space quad
     const buffer = gl.createBuffer();
@@ -50,6 +31,10 @@ async function main() {
         1, -1,
         1, 1,
     ]), gl.STATIC_DRAW);
+
+    // Create a vertex array object (attribute state)
+    const vao = gl.createVertexArray();
+    gl.bindVertexArray(vao);
 
     // setup our attributes to tell WebGL how to pull
     // the data from the buffer above to the position attribute
@@ -68,15 +53,15 @@ async function main() {
     const srcHeight = 2;
     const tex = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, tex);
-    gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1); // see https://webglfundamentals.org/webgl/lessons/webgl-data-textures.html
+    gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1); // see https://webgl2fundamentals.org/webgl/lessons/webgl-data-textures.html
     gl.texImage2D(
         gl.TEXTURE_2D,
         0,                // mip level
-        gl.LUMINANCE,     // internal format
+        gl.R8,            // internal format
         srcWidth,
         srcHeight,
         0,                // border
-        gl.LUMINANCE,     // format
+        gl.RED,           // format
         gl.UNSIGNED_BYTE, // type
         new Uint8Array([
             1, 2, 3,
@@ -89,7 +74,6 @@ async function main() {
 
     gl.useProgram(program);
     gl.uniform1i(srcTexLoc, 0);  // tell the shader the src texture is on texture unit 0
-    gl.uniform2f(srcDimensionsLoc, srcWidth, srcHeight);
 
     gl.drawArrays(gl.TRIANGLES, 0, 6);  // draw 2 triangles (6 vertices)
 
@@ -99,11 +83,17 @@ async function main() {
 
     // print the results
     for (let i = 0; i < dstWidth * dstHeight; ++i) {
-        console.log(results[i * 4]);
+        log(results[i * 4]);
+    }
+
+    function log(...args) {
+        const elem = document.createElement('pre');
+        elem.textContent = args.join(' ');
+        document.getElementById('main').appendChild(elem);
     }
 }
 
-function CreateProgramFromScript(gl, shaderIds) {
+function CreateProgramFromSources(gl, shaderIds) {
     const vertexShader = CreateShaderFromScript(gl, shaderIds[0])
     const fragmentShader = CreateShaderFromScript(gl, shaderIds[1])
     return CreateProgram(gl, vertexShader, fragmentShader)

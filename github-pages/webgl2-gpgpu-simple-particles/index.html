@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webgl2 simple particles - GPGPU</title>
+
+    <script src="https://webgl2fundamentals.org/webgl/resources/m4.js"></script>
+</head>
+<body>
+    <main>
+        <h1>Simple particles running on gpu - Webgl2 GPGPU</h1>
+        <canvas id="canvas"></canvas>
+        <p>Veja o código fonte dos projetos <a href="https://github.com/diegomatos321/Projetos/tree/main/computacao-grafica/webgl2-gpgpu-simple-particles">https://github.com/diegomatos321/Projetos/tree/main/computacao-grafica/webgl2-gpgpu-simple-particles</a></p>
+    </main>
+    <script id="compute-shader-vs" type="x-shader/x-vertex">#version 300 es
+        in vec2 oldPosition;
+        in vec2 velocity;
+        
+        uniform float deltaTime;
+        uniform vec2 canvasDimensions;
+        
+        out vec2 newPosition;
+        
+        vec2 euclideanModulo(vec2 n, vec2 m) {
+            return mod(mod(n, m) + m, m);
+        }
+        
+        void main() {
+            newPosition = euclideanModulo(
+            oldPosition + velocity * deltaTime,
+            canvasDimensions);
+        }
+    </script>
+    <script id="compute-shader-fs" type="x-shader/x-fragment">#version 300 es
+        precision highp float;
+        void main() {
+        }
+    </script>
+    <script id="draw-particles-vs" type="x-shader/x-vertex">#version 300 es
+        in vec4 position;
+        uniform mat4 matrix;
+        
+        void main() {
+            // do the common matrix math
+            gl_Position = matrix * position;
+            gl_PointSize = 10.0;
+        }
+    </script>
+    <script id="draw-particles-fs" type="x-shader/x-fragment">#version 300 es
+        precision highp float;
+        out vec4 outColor;
+        
+        void main() {
+            outColor = vec4(1, 0, 0, 1);
+        }
+    </script>
+    <script src="./index.js"></script>
+</body>
+</html>
