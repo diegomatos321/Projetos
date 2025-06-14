@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Transform feedback technique - Webgl2</title>
+</head>
+
+<body>
+    <main id="main">
+
+    </main>
+
+    <script id="vertex-shader-2d" type="x-shader/x-vertex">#version 300 es
+        in float a;
+        in float b;
+
+        out float sum;
+        out float difference;
+        out float product;
+
+        void main() {
+            sum = a + b;
+            difference = a - b;
+            product = a * b;
+        }
+    </script>
+    <script id="fragment-shader-2d" type="x-shader/x-fragment">#version 300 es
+        precision highp float;
+
+        void main() {
+            
+        }
+    </script>
+    <script type="module" src="index.js"></script>
+</body>
+
+</html>
