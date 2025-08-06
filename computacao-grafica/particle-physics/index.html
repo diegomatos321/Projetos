@@ -62,9 +62,9 @@
                 this.constraints = constraints;
             }
 
-            update() {
+            update(dt) {
                 for (const particle of this.particles) {
-                    particle.update()
+                    particle.update(dt)
                 }
 
                 for (let i = 0; i < 10; i++) {
@@ -121,13 +121,15 @@
                 });
             }
 
-            update() {
+            update(dt) {
                 if (this.pinned) return;
 
                 let tmp = twgl.v3.copy(this.position);
-                let direction = twgl.v3.subtract(this.position, this.previousPosition);
-                let newPosition = twgl.v3.add(this.position, direction);
-                this.position = twgl.v3.add(newPosition, this.gravity);
+                // let direction = twgl.v3.subtract(this.position, this.previousPosition);
+                // let newPosition = twgl.v3.add(this.position, direction);
+                // this.position = twgl.v3.add(newPosition, this.gravity);
+                this.position[0] += 2*this.position[0]-this.previousPosition[0] 
+                this.position[1] += 2*this.position[1]-this.previousPosition[1] + this.gravity[1] * dt**2
                 this.previousPosition = tmp;
             }
 
@@ -250,7 +252,7 @@
             }
 
             for (const body of bodies) {
-                body.update();
+                body.update(deltaTime);
             }
 
             // Rendering
