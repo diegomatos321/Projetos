@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Particle Physics</title>
+
+    <script src="https://twgljs.org/dist/4.x/twgl-full.min.js"></script>
+</head>
+
+<body>
+    <h1>Particle Physics</h1>
+    <p>A simplified implementation of Jakobsen's Advanced Character Physics.</p>
+
+    <canvas id="canvas" width="600" height="600" style="border: 1px solid black;"></canvas>
+
+    <script id="vs" type="x-shader/x-vertex">
+        attribute vec2 a_position;
+
+        uniform vec2 u_resolution;
+
+        void main() {
+            // convert the position from pixels to 0.0 to 1.0
+            vec2 zeroToOne = a_position / u_resolution;
+        
+            // convert from 0->1 to 0->2
+            vec2 zeroToTwo = zeroToOne * 2.0;
+        
+            // convert from 0->2 to -1->+1 (clip space)
+            vec2 clipSpace = zeroToTwo - 1.0;
+        
+            gl_Position = vec4(clipSpace * vec2(1,-1), 0, 1);
+            gl_PointSize = 10.0;
+        }
+    </script>
+    <script id="fs" type="x-shader/x-fragment">
+        precision mediump float;
+
+        // uniform sampler2D u_texture;
+        uniform vec4 u_color;
+
+        void main() {
+            gl_FragColor = u_color;
+        }
+    </script>
+
+    <script>
+        const gl = document.getElementById('canvas').getContext('webgl');
+        const programInfo = twgl.createProgramInfo(gl, ["vs", "fs"]);
+
+        class Body {
+            particles = []
+            constraints = []
+
+            constructor(particles, constraints) {
+                this.particles = particles;
+                this.constraints = constraints;
+            }
+
+            update() {
+                for (const particle of this.particles) {
+                    particle.update()
+                }
+
+                for (let i = 0; i < 10; i++) {
+                    for (const particle of this.particles) {
+                        let x = Math.max(Math.min(particle.position[0], gl.canvas.width), 0);
+                        let y = Math.max(Math.min(particle.position[1], gl.canvas.height), 0);
+                        particle.move(twgl.v3.create(x, y));
+                    }
+                    for (const constraint of this.constraints) {
+                        constraint.relax();
+                    }
+                }
+            }
+
+            draw() {
+                for (const particle of this.particles) {
+                    particle.draw();
+                }
+
+                for (const constraint of this.constraints) {
+                    constraint.draw();
+                }
+            }
+        }
+
+        class Particle {
+            mass = 1;
+            pinned = false;
+            gravity = twgl.v3.create(0, 0.5, 0);
+
+            constructor(position = twgl.v3.create()) {
+                this.position = position;
+                this.previousPosition = twgl.v3.copy(position);
+            }
+
+            update() {
+                if (this.pinned) return;
+
+                let tmp = twgl.v3.copy(this.position);
+                let direction = twgl.v3.subtract(this.position, this.previousPosition);
+                let newPosition = twgl.v3.add(this.position, direction);
+                this.position = twgl.v3.add(newPosition, this.gravity);
+                this.previousPosition = tmp;
+            }
+
+            move(newPosition) {
+                if (this.pinned) return
+
+                // console.log(newPosition[0], newPosition[1])
+                this.position[0] = newPosition[0];
+                this.position[1] = newPosition[1];
+            }
+
+            draw() {
+                const uniforms = {
+                    u_resolution: [gl.canvas.width, gl.canvas.height],
+                    u_color: [1, 0.2, 0.2, 1]
+                    // time: time * 0.001,
+                };
+
+                const bufferInfo = twgl.createBufferInfoFromArrays(gl, {
+                    a_position: {
+                        numComponents: 2,
+                        data: [this.position[0], this.position[1]],
+                    },
+                });
+
+                gl.useProgram(programInfo.program);
+                twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo);
+                twgl.setUniforms(programInfo, uniforms);
+                twgl.drawBufferInfo(gl, bufferInfo, gl.POINTS);
+            }
+        }
+
+        class LinearConstraint {
+            constructor(p0, p1, restitution = 0.5) {
+                this.p0 = p0
+                this.p1 = p1
+                this.s = twgl.v3.distance(p0.position, p1.position)
+                this.restitution = restitution
+
+                this.relax()
+            }
+
+            relax() {
+                let v = twgl.v3.subtract(this.p1.position, this.p0.position)
+                let d = twgl.v3.length(v)
+                let diff = (d - this.s) / d * this.restitution
+                let ratio = this.p1.mass / (this.p0.mass + this.p1.mass)
+                this.p0.move(twgl.v3.add(this.p0.position, twgl.v3.mulScalar(v, ratio * diff)))
+                this.p1.move(twgl.v3.add(this.p1.position, twgl.v3.mulScalar(v, (ratio - 1) * diff)))
+            }
+
+            draw() {
+                const uniforms = {
+                    u_resolution: [gl.canvas.width, gl.canvas.height],
+                    u_color: [0, 0, 0, 1]
+                    // time: time * 0.001,
+                };
+
+                const p1a = [this.p0.position[0], this.p0.position[1] + 1]
+                const p1b = [this.p0.position[0], this.p0.position[1] - 1]
+                const p2a = [this.p1.position[0], this.p1.position[1] + 1]
+                const p2b = [this.p1.position[0], this.p1.position[1] - 1]
+                const bufferInfo = twgl.createBufferInfoFromArrays(gl, {
+                    a_position: {
+                        numComponents: 2,
+                        data: [
+                            ...p1a, ...p1b, ...p2a,
+                            ...p1b, ...p2b, ...p2a,
+                        ],
+                    },
+                });
+                gl.useProgram(programInfo.program);
+                twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo);
+                twgl.setUniforms(programInfo, uniforms);
+                twgl.drawBufferInfo(gl, bufferInfo, gl.TRIANGLES);
+            }
+        }
+
+        let bodies = [];
+        let body1 = trelis(twgl.v3.create(100, 200), twgl.v3.create(100, 100), 4, 4, true)
+        body1.particles[0].pinned = true
+        bodies.push(body1);
+
+        let lastTime = 0
+        function loop(time = 0) {
+            // Physics
+            const deltaTime = (time - lastTime) / 1000
+            lastTime = time;
+
+            for (const body of bodies) {
+                body.update();
+            }
+
+            // Rendering
+            twgl.resizeCanvasToDisplaySize(gl.canvas);
+            gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
+            for (const body of bodies) {
+                body.draw();
+            }
+
+            requestAnimationFrame(loop)
+        }
+        requestAnimationFrame(loop)
+
+        function trelis(corner, size, nx, ny, stiff, reinforce) {
+            let particles = []
+            let constraints = []
+
+            let dx = twgl.v3.create(size[0] / nx, 0)
+            let dy = twgl.v3.create(0, size[1] / ny)
+
+            let m = nx + 1;
+            for (let i = 0; i <= ny; i++) {
+                let q = twgl.v3.add(corner, twgl.v3.mulScalar(dy, i));
+                for (let j = 0; j <= nx; j++) {
+                    let p = twgl.v3.add(q, twgl.v3.mulScalar(dx, j));
+                    particles.push(new Particle(p));
+                    let k = i * m + j;
+                    if (j > 0) constraints.push(new LinearConstraint(particles[k], particles[k - 1]));
+                    if (i > 0) constraints.push(new LinearConstraint(particles[k], particles[k - m]));
+                    if (i > 0 && j > 0 && stiff) constraints.push(new LinearConstraint(particles[k - 1], particles[k - m]),
+                        new LinearConstraint(particles[k], particles[k - m - 1]));
+                }
+            }
+
+            if (nx > 1 && ny > 1 && reinforce) {
+                constraints.push(new LinearConstraint(particles[0], particles[particles.length - 1]),
+                    new LinearConstraint(particles[0], particles[m - 1]),
+                    new LinearConstraint(particles[0], particles[particles.length - m]),
+                    new LinearConstraint(particles[particles.length - m], particles[m - 1]),
+                    new LinearConstraint(particles[m - 1], particles[particles.length - 1]),
+                    new LinearConstraint(particles[particles.length - m], particles[particles.length - 1])
+                );
+            }
+
+            return new Body(particles, constraints)
+        }
+
+
+    </script>
+</body>
+
+</html>
