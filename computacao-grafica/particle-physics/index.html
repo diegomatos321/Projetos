@@ -118,9 +118,6 @@
                 if (this.pinned) return;
 
                 let tmp = twgl.v3.copy(this.position);
-                // let direction = twgl.v3.subtract(this.position, this.previousPosition);
-                // let newPosition = twgl.v3.add(this.position, direction);
-                // this.position = twgl.v3.add(newPosition, this.gravity);
                 this.position[0] = 2 * this.position[0] - this.previousPosition[0]
                 this.position[1] = 2 * this.position[1] - this.previousPosition[1] + this.gravity[1] * dt ** 2
                 this.previousPosition = tmp;
@@ -175,12 +172,19 @@
             }
 
             relax() {
-                let v = twgl.v3.subtract(this.p1.position, this.p0.position)
-                let d = twgl.v3.length(v)
-                let diff = (d - this.restlength) / d * this.restitution
-                let ratio = this.p1.mass / (this.p0.mass + this.p1.mass)
-                this.p0.move(twgl.v3.add(this.p0.position, twgl.v3.mulScalar(v, ratio * diff)))
-                this.p1.move(twgl.v3.add(this.p1.position, twgl.v3.mulScalar(v, (ratio - 1) * diff)))
+                let delta = twgl.v3.subtract(this.p1.position, this.p0.position)
+                let deltalength = twgl.v3.length(delta)
+                let diff = (deltalength - this.restlength) / (deltalength * (1/this.p0.mass + 1/this.p1.mass))
+                // let ratio = this.p1.mass / (this.p0.mass + this.p1.mass)
+                this.p0.move(twgl.v3.add(this.p0.position, twgl.v3.mulScalar(delta, 1/this.p0.mass * diff)))
+                this.p1.move(twgl.v3.subtract(this.p1.position, twgl.v3.mulScalar(delta, 1/this.p1.mass * diff)))
+
+                // let delta = twgl.v3.subtract(this.p1.position, this.p0.position)
+                // let deltalength = twgl.v3.length(delta)
+                // let diff = (deltalength - this.restlength) / deltalength * this.restitution
+
+                // this.p0.move(twgl.v3.add(this.p0.position, twgl.v3.mulScalar(delta, diff)))
+                // this.p1.move(twgl.v3.subtract(this.p1.position, twgl.v3.mulScalar(delta, diff)))
             }
 
             draw() {
@@ -218,7 +222,7 @@
 
         let p1 = new Particle(twgl.v3.create(400, 200))
         let p2 = new Particle(twgl.v3.create(500, 200))
-        let body3 = new Body([p1,p2], [new LinearConstraint(p1, p2)])
+        let body3 = new Body([p1, p2], [new LinearConstraint(p1, p2)])
         body3.particles[1].pinned = true
         bodies.push(body1, body2, body3);
 
