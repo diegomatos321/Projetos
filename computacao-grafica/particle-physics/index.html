@@ -68,26 +68,19 @@
                 }
 
                 for (let i = 0; i < 10; i++) {
+                    for (const constraint of this.constraints) {
+                        constraint.relax();
+                    }
+
                     for (const particle of this.particles) {
                         let x = Math.max(Math.min(particle.position[0], gl.canvas.width), 0);
                         let y = Math.max(Math.min(particle.position[1], gl.canvas.height), 0);
                         particle.move(twgl.v3.create(x, y));
-                        /* 
-                        mix(q, alpha) {
-                            // this vector * (1-alpha) + q * alpha
-                            return new Vector(
-                                this.x * (1 - alpha) + q.x * alpha,
-                                this.y * (1 - alpha) + q.y * alpha
-                            );
-                            }
-                        */
+
                         particle.move(twgl.v3.create(
-                                particle.position[0] * (1-0.5) + x*0.5,
-                                particle.position[1] * (1-0.5) + y*0.5,
+                            particle.position[0] * (1 - 0.5) + x * 0.5,
+                            particle.position[1] * (1 - 0.5) + y * 0.5,
                         ))
-                    }
-                    for (const constraint of this.constraints) {
-                        constraint.relax();
                     }
                 }
             }
@@ -106,7 +99,7 @@
         class Particle {
             mass = 1;
             pinned = false;
-            gravity = twgl.v3.create(0, 0.5, 0);
+            gravity = twgl.v3.create(0, 100, 0);
 
             constructor(position = twgl.v3.create()) {
                 this.position = position;
@@ -116,7 +109,7 @@
                     a_position: {
                         numComponents: 2,
                         data: [position[0], position[1]],
-                        drawType: gl.DYNAMIC_DRAW 
+                        drawType: gl.DYNAMIC_DRAW
                     },
                 });
             }
@@ -128,15 +121,14 @@
                 // let direction = twgl.v3.subtract(this.position, this.previousPosition);
                 // let newPosition = twgl.v3.add(this.position, direction);
                 // this.position = twgl.v3.add(newPosition, this.gravity);
-                this.position[0] += 2*this.position[0]-this.previousPosition[0] 
-                this.position[1] += 2*this.position[1]-this.previousPosition[1] + this.gravity[1] * dt**2
+                this.position[0] = 2 * this.position[0] - this.previousPosition[0]
+                this.position[1] = 2 * this.position[1] - this.previousPosition[1] + this.gravity[1] * dt ** 2
                 this.previousPosition = tmp;
             }
 
             move(newPosition) {
                 if (this.pinned) return
 
-                // console.log(newPosition[0], newPosition[1])
                 this.position[0] = newPosition[0];
                 this.position[1] = newPosition[1];
             }
@@ -161,7 +153,7 @@
             constructor(p0, p1, restitution = 0.5) {
                 this.p0 = p0
                 this.p1 = p1
-                this.s = twgl.v3.distance(p0.position, p1.position)
+                this.restlength = twgl.v3.distance(p0.position, p1.position)
                 this.restitution = restitution
 
                 const p1a = [this.p0.position[0], this.p0.position[1] + 1]
@@ -175,7 +167,7 @@
                             ...p1a, ...p1b, ...p2a,
                             ...p1b, ...p2b, ...p2a,
                         ],
-                        drawType: gl.DYNAMIC_DRAW 
+                        drawType: gl.DYNAMIC_DRAW
                     },
                 });
 
@@ -185,7 +177,7 @@
             relax() {
                 let v = twgl.v3.subtract(this.p1.position, this.p0.position)
                 let d = twgl.v3.length(v)
-                let diff = (d - this.s) / d * this.restitution
+                let diff = (d - this.restlength) / d * this.restitution
                 let ratio = this.p1.mass / (this.p0.mass + this.p1.mass)
                 this.p0.move(twgl.v3.add(this.p0.position, twgl.v3.mulScalar(v, ratio * diff)))
                 this.p1.move(twgl.v3.add(this.p1.position, twgl.v3.mulScalar(v, (ratio - 1) * diff)))
@@ -224,7 +216,11 @@
         body2.particles[0].pinned = true
         body2.particles[4].pinned = true
 
-        bodies.push(body1, body2);
+        let p1 = new Particle(twgl.v3.create(400, 200))
+        let p2 = new Particle(twgl.v3.create(500, 200))
+        let body3 = new Body([p1,p2], [new LinearConstraint(p1, p2)])
+        body3.particles[1].pinned = true
+        bodies.push(body1, body2, body3);
 
         let lastTime = 0
         function loop(time = 0) {
@@ -282,9 +278,9 @@
                     particles.push(new Particle(p));
 
                     let k = i * m + j;
-                    if (j > 0) 
+                    if (j > 0)
                         constraints.push(new LinearConstraint(particles[k], particles[k - 1]));
-                    if (i > 0) 
+                    if (i > 0)
                         constraints.push(new LinearConstraint(particles[k], particles[k - m]));
                     if (i > 0 && j > 0 && stiff) {
                         constraints.push(
