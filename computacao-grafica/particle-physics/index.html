@@ -31,7 +31,7 @@
             vec2 clipSpace = zeroToTwo - 1.0;
         
             gl_Position = vec4(clipSpace * vec2(1,-1), 0, 1);
-            gl_PointSize = 10.0;
+            gl_PointSize = 5.0;
         }
     </script>
     <script id="fs" type="x-shader/x-fragment">
@@ -45,211 +45,39 @@
         }
     </script>
 
-    <script>
+    <script type="module">
+        import Body from "./Body.js"
+        import Particle from "./Particle.js"
+        import LinearConstraint from "./LinearConstraint.js"
+
         const gl = document.getElementById('canvas').getContext('webgl');
-        const programInfo = twgl.createProgramInfo(gl, ["vs", "fs"]);
+        const startTime = Date.now()
 
         let dragged = false
         let sel = null
-        let mousePosition = null
-
-        class Body {
-            particles = []
-            constraints = []
-
-            constructor(particles, constraints) {
-                this.particles = particles;
-                this.constraints = constraints;
-            }
-
-            update(dt) {
-                for (const particle of this.particles) {
-                    particle.update(dt)
-                }
-
-                for (let i = 0; i < 10; i++) {
-                    for (const constraint of this.constraints) {
-                        constraint.relax();
-                    }
-
-                    for (const particle of this.particles) {
-                        let x = Math.max(Math.min(particle.position[0], gl.canvas.width), 0);
-                        let y = Math.max(Math.min(particle.position[1], gl.canvas.height), 0);
-                        particle.move(twgl.v3.create(x, y));
-
-                        particle.move(twgl.v3.create(
-                            particle.position[0] * (1 - 0.5) + x * 0.5,
-                            particle.position[1] * (1 - 0.5) + y * 0.5,
-                        ))
-                    }
-                }
-            }
-
-            draw() {
-                for (const particle of this.particles) {
-                    particle.draw();
-                }
-
-                for (const constraint of this.constraints) {
-                    constraint.draw();
-                }
-            }
-        }
-
-        class Particle {
-            mass = 1;
-            pinned = false;
-            gravity = twgl.v3.create(0, 100, 0);
-
-            constructor(position = twgl.v3.create()) {
-                this.position = position;
-                this.previousPosition = twgl.v3.copy(position);
-
-                this.bufferInfo = twgl.createBufferInfoFromArrays(gl, {
-                    a_position: {
-                        numComponents: 2,
-                        data: [position[0], position[1]],
-                        drawType: gl.DYNAMIC_DRAW
-                    },
-                });
-            }
-
-            update(dt) {
-                if (this.pinned) return;
-
-                let tmp = twgl.v3.copy(this.position);
-                this.position[0] = 2 * this.position[0] - this.previousPosition[0]
-                this.position[1] = 2 * this.position[1] - this.previousPosition[1] + this.gravity[1] * dt ** 2
-                this.previousPosition = tmp;
-            }
-
-            move(newPosition) {
-                if (this.pinned) return
-
-                this.position[0] = newPosition[0];
-                this.position[1] = newPosition[1];
-            }
-
-            draw() {
-                const uniforms = {
-                    u_resolution: [gl.canvas.width, gl.canvas.height],
-                    u_color: [1, 0.2, 0.2, 1]
-                    // time: time * 0.001,
-                };
-
-                gl.useProgram(programInfo.program);
-                twgl.setAttribInfoBufferFromArray(gl, this.bufferInfo.attribs.a_position, [this.position[0], this.position[1]]);
-
-                twgl.setBuffersAndAttributes(gl, programInfo, this.bufferInfo);
-                twgl.setUniforms(programInfo, uniforms);
-                twgl.drawBufferInfo(gl, this.bufferInfo, gl.POINTS);
-            }
-        }
-
-        class LinearConstraint {
-            constructor(p0, p1, restitution = 0.5) {
-                this.p0 = p0
-                this.p1 = p1
-                this.restlength = twgl.v3.distance(p0.position, p1.position)
-                this.restitution = restitution
-
-                const p1a = [this.p0.position[0], this.p0.position[1] + 1]
-                const p1b = [this.p0.position[0], this.p0.position[1] - 1]
-                const p2a = [this.p1.position[0], this.p1.position[1] + 1]
-                const p2b = [this.p1.position[0], this.p1.position[1] - 1]
-                this.bufferInfo = twgl.createBufferInfoFromArrays(gl, {
-                    a_position: {
-                        numComponents: 2,
-                        data: [
-                            ...p1a, ...p1b, ...p2a,
-                            ...p1b, ...p2b, ...p2a,
-                        ],
-                        drawType: gl.DYNAMIC_DRAW
-                    },
-                });
-
-                this.relax()
-            }
-
-            relax() {
-                let delta = twgl.v3.subtract(this.p1.position, this.p0.position)
-                let deltalength = twgl.v3.length(delta)
-                let diff = (deltalength - this.restlength) / (deltalength * (1/this.p0.mass + 1/this.p1.mass))
-                // let ratio = this.p1.mass / (this.p0.mass + this.p1.mass)
-                this.p0.move(twgl.v3.add(this.p0.position, twgl.v3.mulScalar(delta, 1/this.p0.mass * diff)))
-                this.p1.move(twgl.v3.subtract(this.p1.position, twgl.v3.mulScalar(delta, 1/this.p1.mass * diff)))
-
-                // let delta = twgl.v3.subtract(this.p1.position, this.p0.position)
-                // let deltalength = twgl.v3.length(delta)
-                // let diff = (deltalength - this.restlength) / deltalength * this.restitution
-
-                // this.p0.move(twgl.v3.add(this.p0.position, twgl.v3.mulScalar(delta, diff)))
-                // this.p1.move(twgl.v3.subtract(this.p1.position, twgl.v3.mulScalar(delta, diff)))
-            }
-
-            draw() {
-                const uniforms = {
-                    u_resolution: [gl.canvas.width, gl.canvas.height],
-                    u_color: [0, 0, 0, 1]
-                    // time: time * 0.001,
-                };
-
-                const p1a = [this.p0.position[0], this.p0.position[1] + 1]
-                const p1b = [this.p0.position[0], this.p0.position[1] - 1]
-                const p2a = [this.p1.position[0], this.p1.position[1] + 1]
-                const p2b = [this.p1.position[0], this.p1.position[1] - 1]
-
-                gl.useProgram(programInfo.program);
-                twgl.setAttribInfoBufferFromArray(gl, this.bufferInfo.attribs.a_position, [
-                    ...p1a, ...p1b, ...p2a,
-                    ...p1b, ...p2b, ...p2a,
-                ]);
-
-                twgl.setBuffersAndAttributes(gl, programInfo, this.bufferInfo);
-                twgl.setUniforms(programInfo, uniforms);
-                twgl.drawBufferInfo(gl, this.bufferInfo, gl.TRIANGLES);
-            }
-        }
 
         let bodies = [];
-        let body1 = trelis(twgl.v3.create(100, 200), twgl.v3.create(100, 100), 4, 4, true)
+        let body1 = trelis(twgl.v3.create(100, 200), twgl.v3.create(100, 100), 4, 4, true, true)
         body1.particles[0].pinned = true
-        // body1.particles[4].pinned = true
 
-        let body2 = trelis(twgl.v3.create(300, 250), twgl.v3.create(100, 100), 4, 4)
+        let body2 = trelis(twgl.v3.create(400, 250), twgl.v3.create(100, 100), 8, 8)
         body2.particles[0].pinned = true
-        body2.particles[4].pinned = true
+        body2.particles[8].pinned = true
 
-        let p1 = new Particle(twgl.v3.create(400, 200))
-        let p2 = new Particle(twgl.v3.create(500, 200))
-        let body3 = new Body([p1, p2], [new LinearConstraint(p1, p2)])
+        let p1 = new Particle(gl, twgl.v3.create(400, 200))
+        let p2 = new Particle(gl, twgl.v3.create(500, 200))
+        let body3 = new Body(gl, [p1, p2], [new LinearConstraint(gl, p1, p2)])
         body3.particles[1].pinned = true
-        bodies.push(body1, body2, body3);
 
-        let lastTime = 0
-        function loop(time = 0) {
+        let body4 = trelis(twgl.v3.create(200, 10), twgl.v3.create(100, 100), 4, 4, true, true)
+        // body4.particles[4].pinned =  true
+        bodies.push(body1, body2, body3, body4);
+
+        let lastTime = Date.now() - startTime
+        function loop(time) {
             // Physics
             const deltaTime = (time - lastTime) / 1000
             lastTime = time;
-
-            if (mousePosition) {
-                let closest = null
-                let closestDistance = 1e10
-                for (const body of bodies) {
-                    for (const particle of body.particles) {
-                        let d = twgl.v3.distance(particle.position, mousePosition)
-                        if (d < closestDistance) {
-                            closest = particle
-                            closestDistance = d
-                        }
-                    }
-                }
-
-                if (closest) {
-                    closest.pinned = !closest.pinned
-                    sel = closest
-                }
-            }
 
             for (const body of bodies) {
                 body.update(deltaTime);
@@ -279,17 +107,17 @@
                 let q = twgl.v3.add(corner, twgl.v3.mulScalar(dy, i));
                 for (let j = 0; j <= nx; j++) {
                     let p = twgl.v3.add(q, twgl.v3.mulScalar(dx, j));
-                    particles.push(new Particle(p));
+                    particles.push(new Particle(gl, p));
 
                     let k = i * m + j;
                     if (j > 0)
-                        constraints.push(new LinearConstraint(particles[k], particles[k - 1]));
+                        constraints.push(new LinearConstraint(gl, particles[k], particles[k - 1]));
                     if (i > 0)
-                        constraints.push(new LinearConstraint(particles[k], particles[k - m]));
+                        constraints.push(new LinearConstraint(gl, particles[k], particles[k - m]));
                     if (i > 0 && j > 0 && stiff) {
                         constraints.push(
-                            new LinearConstraint(particles[k - 1], particles[k - m]),
-                            new LinearConstraint(particles[k], particles[k - m - 1])
+                            new LinearConstraint(gl, particles[k - 1], particles[k - m]),
+                            new LinearConstraint(gl, particles[k], particles[k - m - 1])
                         );
                     }
                 }
@@ -297,28 +125,62 @@
 
             if (nx > 1 && ny > 1 && reinforce) {
                 constraints.push(
-                    new LinearConstraint(particles[0], particles[particles.length - 1]),
-                    new LinearConstraint(particles[0], particles[m - 1]),
-                    new LinearConstraint(particles[0], particles[particles.length - m]),
-                    new LinearConstraint(particles[particles.length - m], particles[m - 1]),
-                    new LinearConstraint(particles[m - 1], particles[particles.length - 1]),
-                    new LinearConstraint(particles[particles.length - m], particles[particles.length - 1])
+                    new LinearConstraint(gl, particles[0], particles[particles.length - 1]),
+                    new LinearConstraint(gl, particles[0], particles[m - 1]),
+                    new LinearConstraint(gl, particles[0], particles[particles.length - m]),
+                    new LinearConstraint(gl, particles[particles.length - m], particles[m - 1]),
+                    new LinearConstraint(gl, particles[m - 1], particles[particles.length - 1]),
+                    new LinearConstraint(gl, particles[particles.length - m], particles[particles.length - 1])
                 );
             }
 
-            return new Body(particles, constraints)
+            return new Body(gl, particles, constraints)
         }
 
         window.addEventListener("pointerdown", (e) => {
-            mousePosition = twgl.v3.create(e.offsetX, e.offsetY)
+            let mousePosition = twgl.v3.create(e.offsetX, e.offsetY)
+
+            let closest = null
+            let closestDistance = 20
+            for (const body of bodies) {
+                for (const particle of body.particles) {
+                    let d = twgl.v3.distance(particle.position, mousePosition)
+                    if (d < closestDistance) {
+                        closest = particle
+                        closestDistance = d
+                    }
+                }
+
+                for (const constraint of body.constraints) {
+                    let line = twgl.v3.subtract(constraint.p1.position, constraint.p0.position)
+                    let p0_m = twgl.v3.subtract(mousePosition, constraint.p0.position)
+
+                    let proj = twgl.v3.mulScalar(line, twgl.v3.dot(line, p0_m) / twgl.v3.dot(line, line))
+                    let perp = twgl.v3.subtract(p0_m, proj)
+                    let distance = twgl.v3.length(perp)
+
+                    if (distance < closestDistance) {
+                        closest = constraint
+                        closestDistance = distance
+                    }
+                }
+            }
+
+            // body2.constraints[2].isActive = false
+
+            if (closest) {
+                if (closest instanceof Particle) {
+                    closest.pinned = !closest.pinned
+                }
+                if (closest instanceof LinearConstraint) {
+                    closest.isActive = false
+                }
+                sel = closest
+            }
         })
 
-        window.addEventListener("pointerup", (e) => {
-            // if (sel) {
-            //     sel.pinned = false
-            // }
-            mousePosition = null
-        })
+        // window.addEventListener("pointerup", (e) => {
+        // })
     </script>
 </body>
 
