@@ -1,7 +1,7 @@
 export default class Body {
     particles = []
     constraints = []
-    NUM_ITERATIONS = 10
+    NUM_ITERATIONS = 4
 
     constructor(gl, particles, constraints) {
         this.gl = gl

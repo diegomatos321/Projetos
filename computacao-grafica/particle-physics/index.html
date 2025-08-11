@@ -49,6 +49,7 @@
         import Body from "./Body.js"
         import Particle from "./Particle.js"
         import LinearConstraint from "./LinearConstraint.js"
+        import AngularContraint from "./AngularConstraint.js"
 
         const gl = document.getElementById('canvas').getContext('webgl');
         const startTime = Date.now()
@@ -64,14 +65,14 @@
         body2.particles[0].pinned = true
         body2.particles[8].pinned = true
 
+        // Simple stick
         let p1 = new Particle(gl, twgl.v3.create(400, 200))
         let p2 = new Particle(gl, twgl.v3.create(500, 200))
         let body3 = new Body(gl, [p1, p2], [new LinearConstraint(gl, p1, p2)])
         body3.particles[1].pinned = true
 
-        let body4 = trelis(twgl.v3.create(200, 10), twgl.v3.create(100, 100), 4, 4, true, true)
-        // body4.particles[4].pinned =  true
-        bodies.push(body1, body2, body3, body4);
+        let articulateBody = articulatedBody()
+        bodies.push(body1, body2, body3, ...articulateBody);
 
         let lastTime = Date.now() - startTime
         function loop(time) {
@@ -137,36 +138,67 @@
             return new Body(gl, particles, constraints)
         }
 
-        window.addEventListener("pointerdown", (e) => {
-            let mousePosition = twgl.v3.create(e.offsetX, e.offsetY)
+        function articulatedBody() {
+            let p1 = new Particle(gl, twgl.v3.create(200, 200))
+            let p2 = new Particle(gl, twgl.v3.create(250, 200))
+            let p3 = new Particle(gl, twgl.v3.create(200, 250))
+            let p4 = new Particle(gl, twgl.v3.create(250, 250))
+            p2.pinned = true
+            let contraint1 = new LinearConstraint(gl, p1, p2)
+            let contraint5 = new LinearConstraint(gl, p1, p3)
+            let contraint3 = new LinearConstraint(gl, p3, p4)
+            let contraint6 = new LinearConstraint(gl, p2, p4)
+            let contraint2 = new LinearConstraint(gl, p2, p3)
+            let contraint4 = new LinearConstraint(gl, p4, p1)
+            let body1 = new Body(gl, [p1, p2, p3, p4], [contraint1, contraint2, contraint3, contraint4, contraint5, contraint6])
+
+            let p5 = new Particle(gl, twgl.v3.create(300, 200))
+            let p6 = new Particle(gl, twgl.v3.create(350, 250))
+            let contraint7 = new LinearConstraint(gl, p5, p2)
+            let contraint8 = new LinearConstraint(gl, p5, p6)
+            let contraint9 = new LinearConstraint(gl, p6, p2)
+            let contraint10 = new AngularContraint(gl, p5, p4)
+            let body2 = new Body(gl, [p2, p5, p6], [contraint7, contraint8, contraint9, contraint10])
+
+            return [body1, body2]
+        }
+
+        window.addEventListener("mousedown", (e) => {
+            const rect = gl.canvas.getBoundingClientRect();
+            let mousePosition = twgl.v3.create(e.clientX - rect.left, e.clientY - rect.top)
 
             let closest = null
             let closestDistance = 20
-            for (const body of bodies) {
-                for (const particle of body.particles) {
-                    let d = twgl.v3.distance(particle.position, mousePosition)
-                    if (d < closestDistance) {
-                        closest = particle
-                        closestDistance = d
+
+            console.log(e.button)
+            if (e.button === 0) { // pin/unpin particle on mouse left button
+                for (const body of bodies) {
+                    for (const particle of body.particles) {
+                        let d = twgl.v3.distance(particle.position, mousePosition)
+                        if (d < closestDistance) {
+                            closest = particle
+                            closestDistance = d
+                        }
                     }
                 }
+            } else if (e.button === 2) { // destroy a constraint on mouse right button
+                for (const body of bodies) {
+                    for (const constraint of body.constraints) {
+                        let line = twgl.v3.subtract(constraint.p1.position, constraint.p0.position)
+                        let p0_m = twgl.v3.subtract(mousePosition, constraint.p0.position)
 
-                for (const constraint of body.constraints) {
-                    let line = twgl.v3.subtract(constraint.p1.position, constraint.p0.position)
-                    let p0_m = twgl.v3.subtract(mousePosition, constraint.p0.position)
+                        let projx = twgl.v3.dot(line, p0_m) / twgl.v3.dot(line, line)
+                        let proj = twgl.v3.mulScalar(line, projx)
+                        let perp = twgl.v3.subtract(p0_m, proj)
+                        let distance = twgl.v3.length(perp)
 
-                    let proj = twgl.v3.mulScalar(line, twgl.v3.dot(line, p0_m) / twgl.v3.dot(line, line))
-                    let perp = twgl.v3.subtract(p0_m, proj)
-                    let distance = twgl.v3.length(perp)
-
-                    if (distance < closestDistance) {
-                        closest = constraint
-                        closestDistance = distance
+                        if (distance < closestDistance) {
+                            closest = constraint
+                            closestDistance = distance
+                        }
                     }
                 }
             }
-
-            // body2.constraints[2].isActive = false
 
             if (closest) {
                 if (closest instanceof Particle) {
@@ -179,6 +211,7 @@
             }
         })
 
+        window.addEventListener("contextmenu", (e) => e.preventDefault())
         // window.addEventListener("pointerup", (e) => {
         // })
     </script>
