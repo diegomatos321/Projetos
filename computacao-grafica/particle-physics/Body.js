@@ -2,8 +2,9 @@ import Projection from "./Projection.js"
 
 export default class Body {
     particles = []
-    constraints = []
+    constraints = []    
     NUM_ITERATIONS = 4
+    isOverlapping = false
 
     constructor(gl, particles, constraints) {
         this.gl = gl
@@ -36,6 +37,11 @@ export default class Body {
 
     draw() {
         for (const particle of this.particles) {
+            if (this.isOverlapping === true) {
+                particle.color = [1, 0.2, 0.2, 1]
+            } else {
+                particle.color = [0, 0, 1, 1]
+            }
             particle.draw();
         }
 
@@ -47,10 +53,10 @@ export default class Body {
     axes() {
         const axes = []
         for (let i = 0; i < this.particles.length; i++) {
-            const p1 = this.particles[i]
+            const p1 = this.particles[i].position
 
             const nextIndex = i + 1 === this.particles.length ? 0 : 1
-            const p2 = this.particles[nextIndex]
+            const p2 = this.particles[nextIndex].position
 
             const edge = twgl.v3.subtract(p1, p2)
             const normal = twgl.v3.create(-edge[1], edge[0])
@@ -61,11 +67,11 @@ export default class Body {
     }
 
     project(axis) {
-        let min = twgl.v3.dot(this.particles[0], axis)
+        let min = twgl.v3.dot(axis, this.particles[0].position)
         let max = min
 
         for (let i = 1; i < this.particles.length; i++) {
-            const proj = twgl.v3.dot(this.particles[i], axis)
+            const proj = twgl.v3.dot(axis, this.particles[i].position)
             if (proj < min) {
                 min = proj
             } else if (proj > max) {

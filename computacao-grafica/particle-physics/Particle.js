@@ -2,6 +2,8 @@ export default class Particle {
     mass = 1;
     pinned = false;
     gravity = twgl.v3.create(0, 98, 0);
+    // color = [1, 0.2, 0.2, 1]
+    color = [0, 0, 1, 1]
 
     constructor(gl, position = twgl.v3.create()) {
         this.gl = gl
@@ -38,7 +40,7 @@ export default class Particle {
     draw() {
         const uniforms = {
             u_resolution: [this.gl.canvas.width, this.gl.canvas.height],
-            u_color: [1, 0.2, 0.2, 1]
+            u_color: this.color
             // time: time * 0.001,
         };
 
