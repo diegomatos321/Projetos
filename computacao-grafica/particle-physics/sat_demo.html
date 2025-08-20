@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAT Demo</title>
+    <script src="https://twgljs.org/dist/6.x/twgl-full.min.js"></script>
+</head>
+
+<body>
+    <h1>SAT (Separating Axis Theorem) implementation</h1>
+    <canvas id="canvas" width="600" height="600" style="border: 1px solid black;"></canvas>
+
+    <script id="vs" type="x-shader/x-vertex">
+        attribute vec2 a_position;
+
+        uniform vec2 u_resolution;
+
+        void main() {
+            // convert the position from pixels to 0.0 to 1.0
+            vec2 zeroToOne = a_position / u_resolution;
+        
+            // convert from 0->1 to 0->2
+            vec2 zeroToTwo = zeroToOne * 2.0;
+        
+            // convert from 0->2 to -1->+1 (clip space)
+            vec2 clipSpace = zeroToTwo - 1.0;
+        
+            gl_Position = vec4(clipSpace * vec2(1,-1), 0, 1);
+            gl_PointSize = 5.0;
+        }
+    </script>
+    <script id="fs" type="x-shader/x-fragment">
+        precision mediump float;
+
+        // uniform sampler2D u_texture;
+        uniform vec4 u_color;
+
+        void main() {
+            gl_FragColor = u_color;
+        }
+    </script>
+
+
+    <script type="module">
+        import Body from "./Body.js"
+        import Particle from "./Particle.js"
+        import LinearConstraint from "./LinearConstraint.js"
+
+        const gl = document.getElementById('canvas').getContext('webgl');
+        const startTime = Date.now()
+
+        const bodies = []
+        const triangle = TriangleBuilder(100, 100)
+        const triangle2 = TriangleBuilder(400, 100)
+        bodies.push(triangle, triangle2)
+
+        let lastTime = Date.now() - startTime
+        let deltaTime = 0
+        function loop(time) {
+            // Physics
+            deltaTime = (time - lastTime) / 1000
+            lastTime = time;
+
+            if (CollisionDetection_Sat(triangle, triangle2)) {
+                console.log("Collision!")
+            }
+
+            for (const body of bodies) {
+                body.update(deltaTime);
+            }
+
+            // Rendering
+            twgl.resizeCanvasToDisplaySize(gl.canvas);
+            gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
+            for (const body of bodies) {
+                body.draw();
+            }
+
+            requestAnimationFrame(loop)
+        }
+        requestAnimationFrame(loop)
+
+        function TriangleBuilder(x, y) {
+            const v1 = new Particle(gl, twgl.v3.create(x, y))
+            v1.gravity = twgl.v3.create(0, 0)
+            const v2 = new Particle(gl, twgl.v3.create(x + 50, y))
+            v2.gravity = twgl.v3.create(0, 0)
+            const v3 = new Particle(gl, twgl.v3.create(x, y + 50))
+            v3.gravity = twgl.v3.create(0, 0)
+
+            const c1 = new LinearConstraint(gl, v1, v2)
+            const c2 = new LinearConstraint(gl, v2, v3)
+            const c3 = new LinearConstraint(gl, v3, v1)
+
+            return new Body(gl, [v1, v2, v3], [c1, c2, c3])
+        }
+
+        function CollisionDetection_Sat(shape1, shape2) {
+            const axes1 = shape1.axes()
+            const axes2 = shape2.axes()
+
+            for (const axis of axes1) {
+                const proj1 = shape1.project(axis)
+                const proj2 = shape2.project(axis)
+
+                if (proj1.overlap(proj2)) {
+                    return false
+                }
+            }
+
+            for (const axis of axes2) {
+                const proj1 = shape1.project(axis)
+                const proj2 = shape2.project(axis)
+
+                if (proj1.overlap(proj2)) {
+                    return false
+                }
+            }
+
+            return true
+        }
+
+        document.addEventListener("keydown", e => {
+            switch (e.key) {
+                case 'd':
+                    {
+                        const particle = triangle.particles[0]
+                        const x = particle.previousPosition[0] + 100 * deltaTime
+                        particle.move(twgl.v3.create(x, particle.position[1]))
+                    }
+
+                    break;
+                case 'a':
+                    {
+                        const particle = triangle.particles[0]
+                        const x = particle.previousPosition[0] - 100 * deltaTime
+                        particle.move(twgl.v3.create(x, particle.position[1]))
+                    }
+
+                    break;
+                case 'w':
+                    {
+                        const particle = triangle.particles[0]
+                        const y = particle.previousPosition[1] - 100 * deltaTime
+                        particle.move(twgl.v3.create(particle.position[0], y))
+                    }
+
+                    break;
+                case 's':
+                    {
+                        const particle = triangle.particles[0]
+                        const y = particle.previousPosition[1] + 100 * deltaTime
+                        particle.move(twgl.v3.create(particle.position[0], y))
+                    }
+
+                    break;
+                default:
+                    break;
+            }
+        })
+
+        document.addEventListener("keyup", e => {
+            switch (e.key) {
+                case 'd':
+                case 'a':
+                case 'w':
+                case 's':
+                    // Stop all
+                    for (const particle of triangle.particles) {
+                        const old = twgl.v3.copy(particle.previousPosition)
+                        particle.move(old) // do not change position
+                    }
+
+                default:
+                    break;
+            }
+        })
+    </script>
+</body>
+
+</html>

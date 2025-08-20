@@ -1,3 +1,5 @@
+import Projection from "./Projection.js"
+
 export default class Body {
     particles = []
     constraints = []
@@ -40,5 +42,37 @@ export default class Body {
         for (const constraint of this.constraints) {
             constraint.draw();
         }
+    }
+
+    axes() {
+        const axes = []
+        for (let i = 0; i < this.particles.length; i++) {
+            const p1 = this.particles[i]
+
+            const nextIndex = i + 1 === this.particles.length ? 0 : 1
+            const p2 = this.particles[nextIndex]
+
+            const edge = twgl.v3.subtract(p1, p2)
+            const normal = twgl.v3.create(-edge[1], edge[0])
+            axes.push(normal)
+        }
+
+        return axes
+    }
+
+    project(axis) {
+        let min = twgl.v3.dot(this.particles[0], axis)
+        let max = min
+
+        for (let i = 1; i < this.particles.length; i++) {
+            const proj = twgl.v3.dot(this.particles[i], axis)
+            if (proj < min) {
+                min = proj
+            } else if (proj > max) {
+                max = proj
+            }
+        }
+
+        return new Projection(min, max)
     }
 }
