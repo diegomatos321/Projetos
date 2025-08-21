@@ -55,7 +55,7 @@ export default class Body {
         for (let i = 0; i < this.particles.length; i++) {
             const p1 = this.particles[i].position
 
-            const nextIndex = i + 1 === this.particles.length ? 0 : 1
+            const nextIndex = i + 1 === this.particles.length ? 0 : i + 1
             const p2 = this.particles[nextIndex].position
 
             const edge = twgl.v3.subtract(p1, p2)

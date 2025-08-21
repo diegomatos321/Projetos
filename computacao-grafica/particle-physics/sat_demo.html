@@ -63,7 +63,8 @@
             deltaTime = (time - lastTime) / 1000
             lastTime = time;
 
-            if (CollisionDetection_Sat(triangle, triangle2)) {
+            const col = CollisionDetection_Sat(triangle, triangle2)
+            if (col) {
                 triangle.isOverlapping = true
             } else {
                 triangle.isOverlapping = false
@@ -103,13 +104,20 @@
         function CollisionDetection_Sat(shape1, shape2) {
             const axes1 = shape1.axes()
             const axes2 = shape2.axes()
+            
+            let overlap = Infinity
+            let smallest
 
             for (const axis of axes1) {
                 const proj1 = shape1.project(axis)
                 const proj2 = shape2.project(axis)
 
-                if (proj1.overlap(proj2) === false) {
+                let o = proj1.overlaps(proj2)
+                if (o <= 0) {
                     return false
+                } else if (o < overlap) {
+                    overlap = o
+                    smallest = axis
                 }
             }
 
@@ -117,12 +125,16 @@
                 const proj1 = shape1.project(axis)
                 const proj2 = shape2.project(axis)
 
-                if (proj1.overlap(proj2) === false) {
+                let o = proj1.overlaps(proj2)
+                if (o <= 0) {
                     return false
+                } else if (o < overlap) {
+                    overlap = o
+                    smallest = axis
                 }
             }
 
-            return true
+            return { overlap, smallest }
         }
 
         document.addEventListener("keydown", e => {

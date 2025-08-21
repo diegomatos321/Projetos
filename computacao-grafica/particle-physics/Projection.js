@@ -5,8 +5,11 @@ export default class Projection
         this.max = max
     }
 
-    overlap(other) {
-        return this.max >= other.min && other.max >= this.min
-        // return !(this.min > other.max || other.min > this.max);
+    overlaps(other) {
+        if (this.max >= other.min && other.max >= this.min) {
+            return Math.min(this.max, other.max) - Math.max(this.min, other.min);
+        }
+
+        return 0
     }
 }
