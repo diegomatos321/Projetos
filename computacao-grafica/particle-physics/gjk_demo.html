@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAT Demo</title>
+    <script src="https://twgljs.org/dist/6.x/twgl-full.min.js"></script>
+</head>
+
+<body>
+    <h1>GJK (Gilbert-Johnson-Keerthi) implementation</h1>
+    <canvas id="canvas" width="600" height="600" style="border: 1px solid black;"></canvas>
+
+    <script id="vs" type="x-shader/x-vertex">
+        attribute vec2 a_position;
+
+        uniform vec2 u_resolution;
+
+        void main() {
+            // convert the position from pixels to 0.0 to 1.0
+            vec2 zeroToOne = a_position / u_resolution;
+        
+            // convert from 0->1 to 0->2
+            vec2 zeroToTwo = zeroToOne * 2.0;
+        
+            // convert from 0->2 to -1->+1 (clip space)
+            vec2 clipSpace = zeroToTwo - 1.0;
+        
+            gl_Position = vec4(clipSpace * vec2(1,-1), 0, 1);
+            gl_PointSize = 5.0;
+        }
+    </script>
+    <script id="fs" type="x-shader/x-fragment">
+        precision mediump float;
+
+        // uniform sampler2D u_texture;
+        uniform vec4 u_color;
+
+        void main() {
+            gl_FragColor = u_color;
+        }
+    </script>
+
+
+    <script type="module">
+        import Body from "./Body.js"
+        import Particle from "./Particle.js"
+        import LinearConstraint from "./LinearConstraint.js"
+        import Simples from "./Simplex.js"
+
+        const gl = document.getElementById('canvas').getContext('webgl');
+        const startTime = Date.now()
+
+        const bodies = []
+        const triangle = TriangleBuilder(100, 100)
+        const triangle2 = TriangleBuilder(400, 100)
+        bodies.push(triangle, triangle2)
+
+        let lastTime = Date.now() - startTime
+        let deltaTime = 0
+        function loop(time) {
+            // Physics
+            deltaTime = (time - lastTime) / 1000
+            lastTime = time;
+
+            const col = CollisionDetection_Gjk(triangle, triangle2)
+            if (col) {
+                triangle.isOverlapping = true
+            } else {
+                triangle.isOverlapping = false
+            }
+
+            for (const body of bodies) {
+                body.update(deltaTime);
+            }
+
+            // Rendering
+            twgl.resizeCanvasToDisplaySize(gl.canvas);
+            gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
+            for (const body of bodies) {
+                body.draw();
+            }
+
+            requestAnimationFrame(loop)
+        }
+        requestAnimationFrame(loop)
+
+        function TriangleBuilder(x, y) {
+            const v1 = new Particle(gl, twgl.v3.create(x, y))
+            v1.gravity = twgl.v3.create(0, 0)
+            const v2 = new Particle(gl, twgl.v3.create(x + 50, y))
+            v2.gravity = twgl.v3.create(0, 0)
+            const v3 = new Particle(gl, twgl.v3.create(x, y + 50))
+            v3.gravity = twgl.v3.create(0, 0)
+
+            const c1 = new LinearConstraint(gl, v1, v2)
+            const c2 = new LinearConstraint(gl, v2, v3)
+            const c3 = new LinearConstraint(gl, v3, v1)
+
+            return new Body(gl, [v1, v2, v3], [c1, c2, c3])
+        }
+
+        function CollisionDetection_Gjk(A, B) {
+            const simplex = new Simplex()
+            const origin = twgl.v3.create(0, 0)
+
+            // initial search direction equals to the difference of the shapes center
+            let d = twgl.v3.subtract(B.getCenter(), A.getCenter())
+            // get the first Minkowski Difference point
+            simplex.add(support(A, B, d))
+
+            // negate d for the next point
+            d = twgl.v3.negate(d)
+
+            for (let i = 0; i < 30; i++) {
+                // add a new point to the simplex because we haven't terminated yet
+                simplex.add(support(A, B, d))
+
+                // make sure that the last point we added actually passed the origin
+                if (simplex.getLast().dot(d) <= 0) {
+                    return false
+                } else {
+                    // otherwise we need to determine if the origin is in
+                    // the current simplex
+                    if (containsOrigin(simplex, d)) {
+                        return true
+                    }
+                }
+            }
+        }
+
+        function support(shape1, shape2, d) {
+            const p1 = shape1.getFarthestPointInDirection(d);
+            const p2 = shape2.getFarthestPointInDirection(d.negative());
+
+            // perform the Minkowski Difference
+            const p3 = twgl.v3.subtract(p1, p2)
+            
+            // p3 is now a point in Minkowski space on the edge of the Minkowski Difference
+            return p3;
+        }
+
+        function tripleProduct(a, b, c) {
+            let triple1 = twgl.v3.dot(c, a)
+            triple1 = twgl.v3.mulScalar(b, triple1)
+
+            let triple2 = twgl.v3.dot(c, b)
+            triple2 = twgl.v3.mulScalar(a, triple2)
+
+            return twgl.v3.subtract(triple1, triple2)
+        }
+
+        function containsOrigin(simplex, d) {
+            // get the last point added to the simplex
+            const a = simplex.getLast()
+            // compute AO (same thing as -A)
+            const ao = twgl.v3.negate(a)
+
+            if (simplex.points.lenght == 3) {
+                // then its the triangle case
+                // get b and c
+                const b = simplex.getB();
+                const c = simplex.getC();
+
+                // compute the edges
+                const ab = twgl.v3.subtract(b, a)
+                const ac = twgl.v3.subtract(c, a)
+
+                // compute the normals
+                const abPerp = tripleProduct(ac, ab, ab);
+                const acPerp = tripleProduct(ab, ac, ac);
+
+                // is the origin in R4 region?
+                // if (abPerp.dot(ao) & gt; 0) {
+                if (twgl.v3.dot(abPerp, ao) > 0) {
+                    // remove point c
+                    simplex.remove(c);
+                    // set the new direction to abPerp
+                    twgl.v3.copy(abPerp, d)
+                } else {
+                    // is the origin in R3?
+                    // if (acPerp.dot(ao) & gt; 0) {
+                    if (twgl.v3.dot(acPerp, ao) > 0) {
+                        // remove point b
+                        simplex.remove(b);
+                        // set the new direction to acPerp
+                        twgl.v3.copy(acPerp, d)
+                    } else {
+                        // otherwise we know its in R5 so we can return true
+                        return true;
+                    }
+                }
+            } else {
+                // then its the line segment case
+                const b = simplex.getB();
+                // compute AB
+                const ab = twgl.v3.subtract(b, a)
+                // get the perp to AB in the direction of the origin
+                const abPerp = tripleProduct(ab, ao, ab);
+                // set the direction to abPerp
+                twgl.v3.copy(abPerp, d)
+            }
+        }
+
+        document.addEventListener("keydown", e => {
+            switch (e.key) {
+                case 'd':
+                    {
+                        const particle = triangle.particles[0]
+                        const x = particle.previousPosition[0] + 100 * deltaTime
+                        particle.move(twgl.v3.create(x, particle.position[1]))
+                    }
+
+                    break;
+                case 'a':
+                    {
+                        const particle = triangle.particles[0]
+                        const x = particle.previousPosition[0] - 100 * deltaTime
+                        particle.move(twgl.v3.create(x, particle.position[1]))
+                    }
+
+                    break;
+                case 'w':
+                    {
+                        const particle = triangle.particles[0]
+                        const y = particle.previousPosition[1] - 100 * deltaTime
+                        particle.move(twgl.v3.create(particle.position[0], y))
+                    }
+
+                    break;
+                case 's':
+                    {
+                        const particle = triangle.particles[0]
+                        const y = particle.previousPosition[1] + 100 * deltaTime
+                        particle.move(twgl.v3.create(particle.position[0], y))
+                    }
+
+                    break;
+                default:
+                    break;
+            }
+        })
+
+        document.addEventListener("keyup", e => {
+            switch (e.key) {
+                case 'd':
+                case 'a':
+                case 'w':
+                case 's':
+                    // Stop all
+                    for (const particle of triangle.particles) {
+                        const old = twgl.v3.copy(particle.previousPosition)
+                        particle.move(old) // do not change position
+                    }
+
+                default:
+                    break;
+            }
+        })
+    </script>
+</body>
+
+</html>
