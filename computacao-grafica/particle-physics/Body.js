@@ -2,7 +2,7 @@ import Projection from "./Projection.js"
 
 export default class Body {
     particles = []
-    constraints = []    
+    constraints = []
     NUM_ITERATIONS = 4
     isOverlapping = false
 
@@ -80,5 +80,62 @@ export default class Body {
         }
 
         return new Projection(min, max)
+    }
+
+    getCenter() {
+        const A = twgl.v3.mulScalar(this.particles[0].position, 1 / 3)
+        const B = twgl.v3.mulScalar(this.particles[1].position, 1 / 3)
+        const C = twgl.v3.mulScalar(this.particles[2].position, 1 / 3)
+
+        return twgl.v3.add(A, twgl.v3.add(B, C))
+    }
+
+    getFarthestPointInDirection(d) {
+        let maxIndex = 0
+        let n = this.particles.length
+        let max = twgl.v3.dot(d, this.particles[0].position)
+
+        let candidateMax = twgl.v3.dot(d, this.particles[1].position)
+
+        if (max < candidateMax) {
+            // Search to the right
+            while (true) {
+                max = candidateMax
+                maxIndex++
+
+                if (maxIndex + 1 < n) {
+                    candidateMax = twgl.v3.dot(d, this.particles[maxIndex + 1].position)
+                    if (max >= candidateMax) {
+                        break
+                    }
+                } else {
+                    break
+                }
+            }
+        } else {
+            candidateMax = twgl.v3.dot(d, this.particles[n - 1].position)
+
+            if (max < candidateMax) {
+                maxIndex = n
+
+                // Search to the right
+                while (true) {
+                    max = candidateMax
+                    maxIndex--
+
+                    if (maxIndex - 1 > 0) {
+                        candidateMax = twgl.v3.dot(d, this.particles[maxIndex - 1].position)
+                        if (max > candidateMax) {
+                            break
+                        }
+                    } else {
+                        break
+                    }
+                }
+            }
+        }
+        // if neither of the above conditions is met, then the initial index is the maximum
+
+        return this.particles[maxIndex].position
     }
 }
