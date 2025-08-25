@@ -44,7 +44,8 @@
 
 
     <script type="module">
-        import Body from "./Body.js"
+        // import Body from "./Body.js"
+        import PolygonBody from "./PolygonBody.js"
         import Particle from "./Particle.js"
         import LinearConstraint from "./LinearConstraint.js"
 
@@ -52,9 +53,15 @@
         const startTime = Date.now()
 
         const bodies = []
-        const triangle = TriangleBuilder(100, 100)
-        const triangle2 = TriangleBuilder(140, 110)
-        bodies.push(triangle, triangle2)
+        const body1 = new PolygonBody(gl, [
+            [100, 100], [150, 100], [150, 150], [100, 150]
+        ])
+        const body2 = new PolygonBody(gl, [
+            [140, 101], [210, 100], [160, 150]
+        ])
+        // const triangle = TriangleBuilder(100, 100)
+        // const triangle2 = TriangleBuilder(140, 110)
+        bodies.push(body1, body2)
 
         let lastTime = Date.now() - startTime
         let deltaTime = 0
@@ -63,15 +70,15 @@
             deltaTime = (time - lastTime) / 1000
             lastTime = time;
 
-            const col = CollisionDetection_Gjk(triangle, triangle2)
-            if (col) {
-                triangle.isOverlapping = true
-            } else {
-                triangle.isOverlapping = false
-            }
-
             for (const body of bodies) {
                 body.update(deltaTime);
+            }
+
+            const col = CollisionDetection_Gjk(body1, body2)
+            if (col) {
+                body1.isOverlapping = true
+            } else {
+                body1.isOverlapping = false
             }
 
             // Rendering
@@ -82,7 +89,7 @@
                 body.draw();
             }
 
-            // requestAnimationFrame(loop)
+            requestAnimationFrame(loop)
         }
         requestAnimationFrame(loop)
 

@@ -1,15 +1,32 @@
+import Particle from "./Particle.js"
+import LinearConstraint from "./LinearConstraint.js"
 import Projection from "./Projection.js"
 
-export default class Body {
+export default class PolygonBody {
     particles = []
     constraints = []
-    NUM_ITERATIONS = 4
+    NUM_ITERATIONS = 5
     isOverlapping = false
 
-    constructor(gl, particles, constraints) {
+    constructor(gl, vertex_positions) {
         this.gl = gl
-        this.particles = particles;
-        this.constraints = constraints;
+
+        this.particles = vertex_positions.map(v => {
+            const p = new Particle(gl, twgl.v3.create(v[0], v[1]))
+            // p.gravity = twgl.v3.create(0,0)
+            return p
+        })
+
+        for (let i = 0; i < this.particles.length; i++) {
+            const p1 = this.particles[i];
+            const p2 = this.particles[(i + 1) % this.particles.length]
+            this.constraints.push(new LinearConstraint(gl, p1, p2))
+
+            for (let j = i+2; j < this.particles.length-1; j++) {
+                const crossP1 = this.particles[j]
+                this.constraints.push(new LinearConstraint(gl, p1, crossP1))
+            }
+        }
     }
 
     update(dt) {
@@ -82,12 +99,28 @@ export default class Body {
         return new Projection(min, max)
     }
 
+    // Centroid of a Polygon
     getCenter() {
-        const A = twgl.v3.mulScalar(this.particles[0].position, 1 / 3)
-        const B = twgl.v3.mulScalar(this.particles[1].position, 1 / 3)
-        const C = twgl.v3.mulScalar(this.particles[2].position, 1 / 3)
+        let area = 0;
+        let cx = 0;
+        let cy = 0;
 
-        return twgl.v3.add(A, twgl.v3.add(B, C))
+        const n = this.particles.length;
+        for (let i = 0; i < n; i++) {
+            const [x0, y0] = this.particles[i].position;
+            const [x1, y1] = this.particles[(i + 1) % n].position;
+
+            const cross = x0 * y1 - x1 * y0;
+            area += cross;
+            cx += (x0 + x1) * cross;
+            cy += (y0 + y1) * cross;
+        }
+
+        area *= 0.5;
+        cx /= (6 * area);
+        cy /= (6 * area);
+
+        return [cx, cy, 0];
     }
 
     getFarthestPointInDirection(d) {
