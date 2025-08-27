@@ -74,9 +74,10 @@
                 body.update(deltaTime);
             }
 
-            const col = CollisionDetection_Gjk(body1, body2)
-            if (col) {
+            const hit = CollisionDetection_Gjk(body1, body2)
+            if (hit) {
                 body1.isOverlapping = true
+                epa(hit)
             } else {
                 body1.isOverlapping = false
             }
@@ -132,12 +133,45 @@
                     // otherwise we need to determine if the origin is in
                     // the current simplex
                     if (containsOrigin(simplex, d)) {
-                        return true
+                        return simplex
                     }
                 }
             }
 
             return false
+        }
+
+        function epa(simplex) {
+            const TOLERANCE = 1e-6
+            // loop to find the collision information
+            while (true) {
+                // obtain the feature (edge for 2D) closest to the 
+                // origin on the Minkowski Difference
+                const e = findClosestEdge(simplex);
+                // obtain a new support point in the direction of the edge normal
+                const p = support(A, B, e.normal);
+                // check the distance from the origin to the edge against the
+                // distance p is along e.normal
+                // double d = p.dot(e.normal);
+                const d = twgl.v3.dot(p, e.normal)
+                if (d - e.distance < TOLERANCE) {
+                    // the tolerance should be something positive close to zero (ex. 0.00001)
+
+                    // if the difference is less than the tolerance then we can
+                    // assume that we cannot expand the simplex any further and
+                    // we have our solution
+                    return {
+                        normal: e.normal,
+                        depth: d
+                    }
+                } else {
+                    // we haven't reached the edge of the Minkowski Difference
+                    // so continue expanding by adding the new point to the simplex
+                    // in between the points that made the closest edge
+                    // simplex.insert(p, e.index);
+                    simplex.splice(e.index, 0, p)
+                }
+            }
         }
 
         function support(shape1, shape2, d) {
@@ -146,7 +180,7 @@
 
             // perform the Minkowski Difference
             const p3 = twgl.v3.subtract(p1, p2)
-            
+
             // p3 is now a point in Minkowski space on the edge of the Minkowski Difference
             return p3;
         }
@@ -175,7 +209,7 @@
                 if (twgl.v3.dot(abPerp, ao) > 0) {
                     // remove point c
                     // simplex.remove(c);
-                    simplex.splice(0,1)
+                    simplex.splice(0, 1)
                     // set the new direction to abPerp
                     twgl.v3.copy(abPerp, d)
                 } else {
@@ -184,7 +218,7 @@
                     if (twgl.v3.dot(acPerp, ao) > 0) {
                         // remove point b
                         // simplex.remove(b);
-                        simplex.splice(1,1)
+                        simplex.splice(1, 1)
                         // set the new direction to acPerp
                         twgl.v3.copy(acPerp, d)
                     } else {
@@ -202,6 +236,52 @@
                 // set the direction to abPerp
                 twgl.v3.copy(abPerp, d)
             }
+        }
+
+        function findClosestEdge(simplex, vertex = twgl.v3.create(0, 0)) {
+            // Edge closest = new Edge();
+            const closest = {
+                index: 0,
+                distance: 0,
+                normal: twgl.v3.create(0, 0)
+            }
+            // prime the distance of the edge to the max
+            closest.distance = Double.MAX_VALUE;
+            // s is the passed in simplex
+            for (let i = 0; i < simplex.length; i++) {
+                // compute the next points index
+                let j = i + 1 == simplex.length ? 0 : i + 1;
+                // get the current point and the next one
+                //   Vector a = s.get(i);
+                const a = simplex[i]
+                //   Vector b = s.get(j);
+                const b = simplex[j]
+                // create the edge vector
+                //   Vector e = b.subtract(a); // or a.to(b);
+                const e = twgl.v3.subtract(b, a)
+                // get the vector from the origin to a
+                //   Vector oa = a; // or a - ORIGIN
+                const oa = a
+                // get the vector from the edge towards the origin
+                //   Vector n = Vector.tripleProduct(e, oa, e);
+                const n = tripleProduct(e, oa, e)
+                // normalize the vector
+                // n.normalize();
+                twgl.v3.normalize(n, n)
+
+                // calculate the distance from the origin to the edge
+                //   double d = n.dot(a); // could use b or a here
+                const d = twgl.v3.dot(n, a)
+                // check the distance against the other distances
+                if (d < closest.distance) {
+                    // if this edge is closer then use it
+                    closest.distance = d;
+                    closest.normal = n;
+                    closest.index = j;
+                }
+            }
+            // return the closest edge we found
+            return closest;
         }
 
         function tripleProduct(a, b, c) {
