@@ -4,12 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SAT Demo</title>
+    <title>GJK Demo</title>
     <script src="https://twgljs.org/dist/6.x/twgl-full.min.js"></script>
 </head>
 
 <body>
-    <h1>GJK (Gilbert-Johnson-Keerthi) implementation</h1>
+    <h1>GJK (Gilbert-Johnson-Keerthi) Collision Detection and Resolve implementation</h1>
     <canvas id="canvas" width="600" height="600" style="border: 1px solid black;"></canvas>
 
     <script id="vs" type="x-shader/x-vertex">
@@ -54,7 +54,7 @@
 
         const bodies = []
         const body1 = new PolygonBody(gl, [
-            [100, 100], [150, 100], [150, 150], [100, 150]
+            [200, 100], [250, 100], [250, 150], [200, 150]
         ])
         const body2 = new PolygonBody(gl, [
             [140, 101], [210, 100], [160, 150]
@@ -74,10 +74,21 @@
                 body.update(deltaTime);
             }
 
+            // let separationPolygon
             const hit = CollisionDetection_Gjk(body1, body2)
             if (hit) {
                 body1.isOverlapping = true
-                epa(hit)
+                let mvp = epa(body1, body2, hit)
+                
+                let edge1 = body1.getFarthestEdgeInDirection(twgl.v3.negate(mvp.normal))
+                edge1.forEach(p => {
+                    p.move(twgl.v3.add(p.position, twgl.v3.mulScalar(twgl.v3.negate(mvp.normal), mvp.depth)))
+                })
+
+                let edge2 = body2.getFarthestEdgeInDirection(mvp.normal)            
+                edge2.forEach(p => {
+                    p.move(twgl.v3.add(p.position, twgl.v3.mulScalar(mvp.normal, mvp.depth)))
+                })
             } else {
                 body1.isOverlapping = false
             }
@@ -86,6 +97,7 @@
             twgl.resizeCanvasToDisplaySize(gl.canvas);
             gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
+            // separationPolygon.draw()
             for (const body of bodies) {
                 body.draw();
             }
@@ -115,6 +127,7 @@
 
             // initial search direction equals to the difference of the shapes center
             let d = twgl.v3.subtract(B.getCenter(), A.getCenter())
+            d = twgl.v3.normalize(d)
             // get the first Minkowski Difference point
             simplex.push(support(A, B, d))
 
@@ -122,56 +135,23 @@
             d = twgl.v3.negate(d)
 
             for (let i = 0; i < 30; i++) {
+                let a = support(A, B, d)
                 // add a new point to the simplex because we haven't terminated yet
-                simplex.push(support(A, B, d))
+                simplex.push(a)
 
                 // make sure that the last point we added actually passed the origin
-                const last = simplex[simplex.length - 1]
-                if (twgl.v3.dot(last, d) <= 0) {
+                if (twgl.v3.dot(a, d) <= 0) {
                     return false
-                } else {
-                    // otherwise we need to determine if the origin is in
-                    // the current simplex
-                    if (containsOrigin(simplex, d)) {
-                        return simplex
-                    }
+                }
+
+                // otherwise we need to determine if the origin is in
+                // the current simplex
+                if (containsOrigin(simplex, d)) {
+                    return simplex
                 }
             }
 
             return false
-        }
-
-        function epa(simplex) {
-            const TOLERANCE = 1e-6
-            // loop to find the collision information
-            while (true) {
-                // obtain the feature (edge for 2D) closest to the 
-                // origin on the Minkowski Difference
-                const e = findClosestEdge(simplex);
-                // obtain a new support point in the direction of the edge normal
-                const p = support(A, B, e.normal);
-                // check the distance from the origin to the edge against the
-                // distance p is along e.normal
-                // double d = p.dot(e.normal);
-                const d = twgl.v3.dot(p, e.normal)
-                if (d - e.distance < TOLERANCE) {
-                    // the tolerance should be something positive close to zero (ex. 0.00001)
-
-                    // if the difference is less than the tolerance then we can
-                    // assume that we cannot expand the simplex any further and
-                    // we have our solution
-                    return {
-                        normal: e.normal,
-                        depth: d
-                    }
-                } else {
-                    // we haven't reached the edge of the Minkowski Difference
-                    // so continue expanding by adding the new point to the simplex
-                    // in between the points that made the closest edge
-                    // simplex.insert(p, e.index);
-                    simplex.splice(e.index, 0, p)
-                }
-            }
         }
 
         function support(shape1, shape2, d) {
@@ -186,55 +166,96 @@
         }
 
         function containsOrigin(simplex, d) {
+            if (simplex.length == 3) {
+                return triangleCase(simplex, d)
+            }
+
+            return lineCase(simplex, d)
+        }
+
+        function triangleCase(simplex, d) {
             // get the last point added to the simplex
-            const a = simplex[simplex.length - 1]
+            const [c, b, a] = simplex
             // compute AO (same thing as -A)
             const ao = twgl.v3.negate(a)
 
-            if (simplex.length == 3) {
-                // then its the triangle case
-                // get b and c
-                const b = simplex[1];
-                const c = simplex[0];
+            // compute the edges
+            const ab = twgl.v3.subtract(b, a)
+            const ac = twgl.v3.subtract(c, a)
 
-                // compute the edges
-                const ab = twgl.v3.subtract(b, a)
-                const ac = twgl.v3.subtract(c, a)
+            // compute the normals
+            const abPerp = tripleProduct(ac, ab, ab);
+            const acPerp = tripleProduct(ab, ac, ac);
 
-                // compute the normals
-                const abPerp = tripleProduct(ac, ab, ab);
-                const acPerp = tripleProduct(ab, ac, ac);
-
-                // is the origin in R4 region?
-                if (twgl.v3.dot(abPerp, ao) > 0) {
-                    // remove point c
-                    // simplex.remove(c);
-                    simplex.splice(0, 1)
-                    // set the new direction to abPerp
-                    twgl.v3.copy(abPerp, d)
-                } else {
-                    // is the origin in R3?
-                    // if (acPerp.dot(ao) & gt; 0) {
-                    if (twgl.v3.dot(acPerp, ao) > 0) {
-                        // remove point b
-                        // simplex.remove(b);
-                        simplex.splice(1, 1)
-                        // set the new direction to acPerp
-                        twgl.v3.copy(acPerp, d)
-                    } else {
-                        // otherwise we know its in R5 so we can return true
-                        return true;
-                    }
-                }
-            } else {
-                // then its the line segment case
-                const b = simplex[0];
-                // compute AB
-                const ab = twgl.v3.subtract(b, a)
-                // get the perp to AB in the direction of the origin
-                const abPerp = tripleProduct(ab, ao, ab);
-                // set the direction to abPerp
+            // is the origin in R4 region?
+            if (twgl.v3.dot(abPerp, ao) > 0) {
+                // remove point c
+                simplex.splice(0, 1)
+                // set the new direction to abPerp
                 twgl.v3.copy(abPerp, d)
+
+                return false
+            }
+
+            // is the origin in R3?
+            if (twgl.v3.dot(acPerp, ao) > 0) {
+                // remove point b
+                simplex.splice(1, 1)
+                // set the new direction to acPerp
+                twgl.v3.copy(acPerp, d)
+
+                return false
+            }
+
+            // otherwise we know its in R5 so we can return true
+            return true;
+        }
+
+        function lineCase(simplex, d) {
+            // get the last point added to the simplex
+            const [b, a] = simplex
+            // compute AO (same thing as -A)
+            const ao = twgl.v3.negate(a)
+            // compute AB
+            const ab = twgl.v3.subtract(b, a)
+            // get the perp to AB in the direction of the origin
+            const abPerp = tripleProduct(ab, ao, ab);
+            // set the direction to abPerp
+            twgl.v3.copy(abPerp, d)
+
+            return false
+        }
+
+        function epa(A, B, simplex) {
+            const TOLERANCE = 1e-6
+            // loop to find the collision information
+            while (true) {
+                // obtain the feature (edge for 2D) closest to the 
+                // origin on the Minkowski Difference
+                const e = findClosestEdge(simplex);
+
+                // obtain a new support point in the direction of the edge normal
+                const p = support(A, B, e.normal);
+
+                // check the distance from the origin to the edge against the
+                // distance p is along e.normal
+                const d = twgl.v3.dot(p, e.normal)
+                if (Math.abs(d - e.distance) < TOLERANCE) {
+                    // the tolerance should be something positive close to zero (ex. 0.00001)
+
+                    // if the difference is less than the tolerance then we can
+                    // assume that we cannot expand the simplex any further and
+                    // we have our solution
+                    return {
+                        normal: e.normal,
+                        depth: d
+                    }
+                } else {
+                    // we haven't reached the edge of the Minkowski Difference
+                    // so continue expanding by adding the new point to the simplex
+                    // in between the points that made the closest edge
+                    simplex.splice(e.index, 0, p)
+                }
             }
         }
 
@@ -242,36 +263,32 @@
             // Edge closest = new Edge();
             const closest = {
                 index: 0,
-                distance: 0,
+                // prime the distance of the edge to the max
+                distance: Number.POSITIVE_INFINITY,
                 normal: twgl.v3.create(0, 0)
             }
-            // prime the distance of the edge to the max
-            closest.distance = Double.MAX_VALUE;
-            // s is the passed in simplex
+
             for (let i = 0; i < simplex.length; i++) {
                 // compute the next points index
-                let j = i + 1 == simplex.length ? 0 : i + 1;
+                let j = (i + 1) % simplex.length
+
                 // get the current point and the next one
-                //   Vector a = s.get(i);
                 const a = simplex[i]
-                //   Vector b = s.get(j);
                 const b = simplex[j]
+
                 // create the edge vector
-                //   Vector e = b.subtract(a); // or a.to(b);
                 const e = twgl.v3.subtract(b, a)
+
                 // get the vector from the origin to a
-                //   Vector oa = a; // or a - ORIGIN
-                const oa = a
+                const oa = a // or a - ORIGIN
+
                 // get the vector from the edge towards the origin
-                //   Vector n = Vector.tripleProduct(e, oa, e);
                 const n = tripleProduct(e, oa, e)
-                // normalize the vector
-                // n.normalize();
                 twgl.v3.normalize(n, n)
 
                 // calculate the distance from the origin to the edge
-                //   double d = n.dot(a); // could use b or a here
                 const d = twgl.v3.dot(n, a)
+
                 // check the distance against the other distances
                 if (d < closest.distance) {
                     // if this edge is closer then use it
@@ -280,6 +297,7 @@
                     closest.index = j;
                 }
             }
+
             // return the closest edge we found
             return closest;
         }

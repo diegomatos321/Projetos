@@ -35,7 +35,8 @@ export default class LinearConstraint {
         let deltalength = twgl.v3.length(delta)
         let diff = (deltalength - this.restlength) / (deltalength * (1 / this.p0.mass + 1 / this.p1.mass))
         this.p0.move(twgl.v3.add(this.p0.position, twgl.v3.mulScalar(delta, 1 / this.p0.mass * diff * this.restitution)))
-        this.p1.move(twgl.v3.subtract(this.p1.position, twgl.v3.mulScalar(delta, 1 / this.p1.mass * diff * this.restitution)))    }
+        this.p1.move(twgl.v3.subtract(this.p1.position, twgl.v3.mulScalar(delta, 1 / this.p1.mass * diff * this.restitution)))
+    }
 
     draw() {
         if (this.isActive === false) return

@@ -72,7 +72,7 @@ export default class PolygonBody {
         for (let i = 0; i < this.particles.length; i++) {
             const p1 = this.particles[i].position
 
-            const nextIndex = i + 1 === this.particles.length ? 0 : i + 1
+            const nextIndex = (i + 1) % this.particles.length
             const p2 = this.particles[nextIndex].position
 
             const edge = twgl.v3.subtract(p1, p2)
@@ -136,5 +136,31 @@ export default class PolygonBody {
         }
 
         return best
+    }
+
+    getFarthestEdgeInDirection(d) {
+        let max = Number.NEGATIVE_INFINITY
+        let max2 = Number.NEGATIVE_INFINITY
+        let best, best2
+
+        for (const particle of this.particles) {
+            let candidate = twgl.v3.dot(d, particle.position)
+            if (candidate > max) {
+                max2 = max
+                best2 = best
+
+                max = candidate
+                best = particle
+            } else if (candidate > max2) {
+                max2 = candidate
+                best2 = particle
+            }
+        }
+
+        if (Math.abs(max - max2) < 0.01) {
+            return [best2, best]
+        }
+
+        return [best]
     }
 }
